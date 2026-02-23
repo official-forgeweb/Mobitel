@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
 
@@ -103,7 +103,7 @@ export default function BannerCarousel() {
                 <p className="mt-2 text-sm sm:text-base text-white/80 max-w-md">
                   {banner.subtitle}
                 </p>
-                <button className="mt-5 bg-white text-primary font-semibold text-sm px-6 py-2.5 rounded-full hover:bg-light transition-colors">
+                <button className="mt-5 bg-white text-primary font-semibold text-sm px-6 py-2.5 rounded-full hover:bg-primary-light transition-colors">
                   {banner.cta}
                 </button>
               </div>

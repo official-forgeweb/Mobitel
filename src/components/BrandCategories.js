@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 
@@ -102,7 +102,7 @@ export default function BrandCategories() {
           <h2 className="text-2xl sm:text-3xl font-bold text-dark">
             Select Your Brand
           </h2>
-          <p className="text-secondary text-sm mt-1">
+          <p className="text-muted text-sm mt-1">
             Choose your phone brand to explore repair services
           </p>
         </div>
@@ -135,7 +135,7 @@ export default function BrandCategories() {
             href="#"
             className="group flex flex-col items-center gap-3 p-4 bg-white rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200"
           >
-            <div className="w-16 h-16 flex items-center justify-center rounded-xl bg-light group-hover:bg-primary/5 transition-colors">
+            <div className="w-16 h-16 flex items-center justify-center rounded-xl bg-surface group-hover:bg-primary/5 transition-colors">
               <BrandLogo brand={brand} />
             </div>
             <span className="text-xs sm:text-sm font-medium text-dark group-hover:text-primary transition-colors text-center">
