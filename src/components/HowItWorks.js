@@ -99,9 +99,9 @@ export default function HowItWorks() {
                     onClick={() => setActiveStep(idx)}
                     onMouseEnter={() => setActiveStep(idx)}
                   >
-                    <h3 className={`text-2xl transition-all duration-500 ease-out ${isActive ? 'text-dark font-semibold' : 'text-dark/30 font-medium group-hover:text-dark/50'}`}>
+                    <div className={`text-2xl transition-all duration-500 ease-out ${isActive ? 'text-dark font-semibold' : 'text-dark/30 font-medium group-hover:text-dark/50'}`}>
                       {step.title}
-                    </h3>
+                    </div>
                     <p className={`text-[13px] mt-3 leading-relaxed transition-all duration-500 ease-out max-w-xs mx-auto lg:mx-0 ${isActive ? 'text-dark/70 font-medium' : 'text-dark/20 font-medium group-hover:text-dark/40'}`}>
                       {step.desc}
                     </p>
