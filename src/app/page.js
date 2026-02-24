@@ -7,7 +7,6 @@ import PopularServices from "@/components/PopularServices";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import Testimonials from "@/components/Testimonials";
 import FAQ from "@/components/FAQ";
-import StatsBar from "@/components/StatsBar";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -16,12 +15,31 @@ export default function Home() {
       <Navbar />
       <QuickActions />
       <BannerCarousel />
-      <StatsBar />
       <BrandCategories />
+
+      {/* Separator */}
+      <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent my-[-1px] relative z-10" />
+
       <HowItWorks />
+
+      {/* Separator */}
+      <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent my-[-1px] relative z-10" />
+
       <PopularServices />
+
+      {/* Separator */}
+      <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent my-[-1px] relative z-10" />
+
       <WhyChooseUs />
+
+      {/* Separator */}
+      <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent my-[-1px] relative z-10" />
+
       <Testimonials />
+
+      {/* Separator */}
+      <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent my-[-1px] relative z-10" />
+
       <FAQ />
       <Footer />
     </div>

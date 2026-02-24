@@ -42,12 +42,16 @@ export default function Navbar() {
     navigator.geolocation.getCurrentPosition(
       async ({ coords: { latitude, longitude } }) => {
         try {
-          const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
-          );
+          const res = await fetch(`/api/location?lat=${latitude}&lon=${longitude}`);
           const data = await res.json();
-          const city = data.address.city || data.address.town || data.address.village || data.address.county || "Unknown";
-          setLocation(`${city}`);
+          const addr = data.address;
+
+          const building = addr.house_number || addr.building || "";
+          const street = addr.road || addr.suburb || addr.neighbourhood || "";
+          const cityPlace = addr.city || addr.town || addr.village || "";
+
+          const parts = [building, street, cityPlace].filter(Boolean);
+          setLocation(parts.length > 0 ? parts.join(", ") : "Unknown Location");
         } catch { setLocation("Location error"); }
       },
       () => setLocation("Location denied")
@@ -58,16 +62,15 @@ export default function Navbar() {
     <>
       {/* Announcement bar */}
       <div className="bg-primary text-white text-xs text-center py-1.5 px-4 font-medium tracking-wide">
-         50% off on all screen repairs this week &nbsp;&nbsp; Free doorstep pickup &amp; delivery
+        50% off on all screen repairs this week &nbsp;&nbsp; Free doorstep pickup &amp; delivery
       </div>
 
       {/* Main navbar */}
       <header
-        className={`sticky top-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-white/90 nav-blur shadow-[0_2px_20px_rgba(0,0,0,0.08)]"
-            : "bg-white shadow-sm"
-        }`}
+        className={`sticky top-0 z-50 transition-all duration-300 ${scrolled
+          ? "bg-white/90 nav-blur shadow-[0_2px_20px_rgba(0,0,0,0.08)]"
+          : "bg-white shadow-sm"
+          }`}
       >
         {/* Top row */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

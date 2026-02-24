@@ -8,7 +8,7 @@ const banners = [
     title: "50% Off Screen Repairs",
     subtitle: "Limited time offer on all screen replacements",
     cta: "Grab the Deal",
-    gradient: "from-[#B04A4A] to-[#C88686]",
+    image: "/banners/banner1.png",
     icon: (
       <svg className="w-16 h-16 text-white/30" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3" />
@@ -21,7 +21,7 @@ const banners = [
     title: "Free Pickup & Drop",
     subtitle: "We come to your doorstep — no extra charges",
     cta: "Book Now",
-    gradient: "from-[#2B1B1E] to-[#B04A4A]",
+    image: "/banners/banner2.png",
     icon: (
       <svg className="w-16 h-16 text-white/30" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
@@ -33,7 +33,7 @@ const banners = [
     title: "Battery Replacement ₹499",
     subtitle: "Original batteries with 6-month warranty",
     cta: "Get Yours",
-    gradient: "from-[#C88686] to-[#B04A4A]",
+    image: "/banners/banner3.png",
     icon: (
       <svg className="w-16 h-16 text-white/30" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d="M21 10.5h.375c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125H21M3.75 18h15A2.25 2.25 0 0021 15.75v-6a2.25 2.25 0 00-2.25-2.25h-15A2.25 2.25 0 001.5 9.75v6A2.25 2.25 0 003.75 18z" />
@@ -46,7 +46,7 @@ const banners = [
     title: "Flat 30% Off on Accessories",
     subtitle: "Cases, chargers, tempered glass & more",
     cta: "Shop Now",
-    gradient: "from-[#B04A4A] to-[#2B1B1E]",
+    image: "/banners/banner4.png",
     icon: (
       <svg className="w-16 h-16 text-white/30" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
@@ -94,20 +94,25 @@ export default function BannerCarousel() {
           {banners.map((banner) => (
             <div
               key={banner.id}
-              className={`min-w-full bg-gradient-to-r ${banner.gradient} p-8 sm:p-12 flex items-center justify-between`}
+              className="relative min-w-full p-8 sm:p-12 flex items-center justify-between min-h-[300px]"
             >
-              <div className="flex-1">
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight">
+              <div className="absolute inset-0 z-0">
+                <img src={banner.image} alt={banner.title} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-black/60 mix-blend-multiply"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+              </div>
+              <div className="relative z-10 flex-1">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight drop-shadow-md">
                   {banner.title}
                 </h2>
-                <p className="mt-2 text-sm sm:text-base text-white/80 max-w-md">
+                <p className="mt-2 text-sm sm:text-base text-white/90 max-w-md drop-shadow-md">
                   {banner.subtitle}
                 </p>
-                <button className="mt-5 bg-white text-primary font-semibold text-sm px-6 py-2.5 rounded-full hover:bg-primary-light transition-colors">
+                <button className="mt-5 bg-primary text-white font-semibold text-sm px-6 py-2.5 rounded-full hover:bg-primary-dark shadow-lg transition-colors">
                   {banner.cta}
                 </button>
               </div>
-              <div className="hidden sm:block">{banner.icon}</div>
+              <div className="relative z-10 hidden sm:block opacity-80">{banner.icon}</div>
             </div>
           ))}
         </div>
@@ -140,9 +145,8 @@ export default function BannerCarousel() {
             <button
               key={i}
               onClick={() => goTo(i)}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                i === current ? "w-6 bg-white" : "w-2 bg-white/50"
-              }`}
+              className={`h-2 rounded-full transition-all duration-300 ${i === current ? "w-6 bg-white" : "w-2 bg-white/50"
+                }`}
               aria-label={`Go to slide ${i + 1}`}
             />
           ))}

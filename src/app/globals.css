@@ -3,9 +3,9 @@
 :root {
   --background: #FFFFFF;
   --surface: #F6F6F7;
-  --primary: #D4373C;
-  --primary-light: #FDEEF0;
-  --primary-dark: #AA2428;
+  --primary: #800000;
+  --primary-light: #F2E6E6;
+  --primary-dark: #4D0000;
   --dark: #111315;
   --body: #44474D;
   --muted: #9299A3;
@@ -22,8 +22,7 @@
   --color-body: var(--body);
   --color-muted: var(--muted);
   --color-border: var(--border);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-poppins);
 }
 
 * { box-sizing: border-box; }
@@ -31,7 +30,7 @@
 body {
   background: var(--background);
   color: var(--dark);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-poppins), sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
