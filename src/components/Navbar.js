@@ -67,9 +67,9 @@ export default function Navbar() {
   return (
     <>
       {/* Announcement bar + Mobile Location */}
-      <div className="bg-primary text-white text-xs py-1.5 px-4 font-medium tracking-wide flex items-center justify-between md:justify-center">
+      <div className="bg-primary font-sans text-white text-xs py-1.5 px-4 font-medium tracking-wide flex items-center justify-between md:justify-center">
         <div className="hidden md:block">
-          50% off on all screen repairs this week &nbsp;&nbsp; Free doorstep pickup &amp; delivery &nbsp;&nbsp; Call: <a href="tel:+919876543210" className="text-white hover:text-gray-200">9876543210</a>
+          50% off on all screen repairs this week &nbsp;&nbsp; Free doorstep pickup &amp; delivery &nbsp;&nbsp; Call: <a href="tel:+919876543210" className="text-white hover:text-gray-200 cursor-pointer">9876543210</a>
         </div>
 
         {/* Mobile-only location topbar */}
@@ -79,7 +79,7 @@ export default function Navbar() {
           </svg>
           <div className="flex flex-col flex-1 min-w-0">
             <div className="flex items-center gap-1 opacity-90">
-              <span className="text-[11px] font-bold text-white truncate leading-tight">
+              <span className="text-[11px] font-medium text-white truncate leading-tight">
                 {location === "Unknown Location" ? "Set Location" : location.split(",")[0]}
               </span>
               <svg className="w-2.5 h-2.5 text-white shrink-0" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
@@ -94,13 +94,13 @@ export default function Navbar() {
 
         {/* Mobile-only call to action */}
         <div className="md:hidden">
-          <a href="tel:+919876543210" className="bg-white/20 px-3 py-1 rounded-full text-[10px] font-bold">Call Now</a>
+          <a href="tel:+919876543210" className="bg-white/20 px-3 py-1 rounded-full text-[10px] font-medium cursor-pointer">Call Now</a>
         </div>
       </div>
 
       {/* Main navbar */}
       <header
-        className={`sticky top-0 z-50 transition-all duration-300 ${scrolled
+        className={`sticky top-0 z-50 font-sans transition-all duration-300 ${scrolled
           ? "bg-white/90 nav-blur shadow-[0_2px_20px_rgba(0,0,0,0.08)]"
           : "bg-white shadow-sm"
           }`}
@@ -110,14 +110,14 @@ export default function Navbar() {
           <div className="flex items-center gap-4 h-16">
 
             {/* Logo */}
-            <a href="/" className="flex items-center gap-2 shrink-0">
+            <a href="/" className="flex items-center gap-2 shrink-0 cursor-pointer">
               <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-sm">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
                 </svg>
               </div>
               <div className="leading-none">
-                <span className="text-lg font-black text-dark tracking-tight">Mobi<span className="text-primary">tel</span></span>
+                <span className="text-lg font-semibold text-dark tracking-tight">Mobi<span className="text-primary">tel</span></span>
                 <div className="text-[9px] font-medium text-muted tracking-widest uppercase">Repair Experts</div>
               </div>
             </a>
@@ -141,14 +141,14 @@ export default function Navbar() {
 
             {/* Location block - Zomato style */}
             <button
-              className="hidden lg:flex items-center gap-2 hover:bg-surface px-3 py-1.5 rounded-xl transition-colors group text-left"
+              className="hidden lg:flex items-center gap-2 hover:bg-surface px-3 py-1.5 rounded-xl transition-colors group text-left cursor-pointer"
             >
               <svg className="w-5 h-5 text-primary shrink-0 transition-transform group-hover:scale-110" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
               </svg>
               <div className="flex flex-col max-w-[280px]">
                 <div className="flex items-center gap-1">
-                  <span className="text-[15px] font-bold text-dark truncate leading-tight">
+                  <span className="text-[15px] font-medium text-dark truncate leading-tight">
                     {location === "Unknown Location" ? "Set Location" : location.split(",")[0]}
                   </span>
                   <svg className="w-3.5 h-3.5 text-dark shrink-0" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
@@ -172,7 +172,7 @@ export default function Navbar() {
                   <Link
                     key={link.label}
                     href={link.href}
-                    className={`text-[13px] font-bold transition-all relative py-1 ${isActive ? "text-primary" : "text-dark/80 hover:text-primary"
+                    className={`text-[13px] font-medium cursor-pointer transition-all relative py-1 ${isActive ? "text-primary" : "text-dark/80 hover:text-primary"
                       }`}
                   >
                     {link.label}
@@ -189,7 +189,7 @@ export default function Navbar() {
             {/* CTA Button */}
             <a
               href="#book"
-              className="hidden md:flex items-center gap-1.5 bg-primary text-white text-[13px] font-bold px-6 py-2.5 rounded-xl hover:bg-dark transition-all duration-300 shadow-sm shrink-0 ml-2"
+              className="hidden md:flex items-center gap-1.5 bg-primary text-white text-[13px] font-medium cursor-pointer px-6 py-2.5 rounded-xl hover:bg-dark transition-all duration-300 shadow-sm shrink-0 ml-2"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
@@ -200,7 +200,7 @@ export default function Navbar() {
             {/* Mobile search toggle */}
             <button
               onClick={() => setSearchOpen(!searchOpen)}
-              className="md:hidden p-2 rounded-xl hover:bg-surface transition-colors"
+              className="md:hidden p-2 rounded-xl hover:bg-surface transition-colors cursor-pointer"
               aria-label="Search"
             >
               <svg className="w-5 h-5 text-body" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -213,7 +213,7 @@ export default function Navbar() {
             {/* Hamburger for mobile */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden w-9 h-9 rounded-xl bg-surface flex items-center justify-center hover:bg-primary-light transition-colors"
+              className="md:hidden w-9 h-9 rounded-xl bg-surface flex items-center justify-center hover:bg-primary-light transition-colors cursor-pointer"
               aria-label="Toggle menu"
             >
               <svg className="w-5 h-5 text-dark" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -229,7 +229,7 @@ export default function Navbar() {
           {/* Mobile search bar - slides down */}
           {searchOpen && (
             <div className="md:hidden pb-3">
-              <div className="flex items-center bg-surface border border-border rounded-xl px-4 py-2.5 gap-2 focus-within:border-primary transition-all">
+              <div className="flex items-center bg-surface border border-border rounded-xl px-4 py-2.5 gap-2 focus-within:border-primary transition-all cursor-text">
                 <svg className="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                 </svg>
@@ -251,7 +251,7 @@ export default function Navbar() {
               <Link
                 key={link.label}
                 href={link.href}
-                className="text-xs font-semibold text-dark hover:text-white whitespace-nowrap px-3 py-1.5 rounded-lg hover:bg-primary transition-all duration-300"
+                className="text-xs font-medium cursor-pointer text-dark hover:text-white whitespace-nowrap px-3 py-1.5 rounded-lg hover:bg-primary transition-all duration-300"
               >
                 {link.label}
               </Link>
@@ -282,9 +282,9 @@ export default function Navbar() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
                   </svg>
                 </div>
-                <span className="font-black text-dark">Mobi<span className="text-primary">tel</span></span>
+                <span className="font-semibold text-dark">Mobi<span className="text-primary">tel</span></span>
               </div>
-              <button onClick={() => setMenuOpen(false)} className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center">
+              <button onClick={() => setMenuOpen(false)} className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center cursor-pointer">
                 <svg className="w-4 h-4 text-body" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -298,7 +298,7 @@ export default function Navbar() {
                   key={link.label}
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-body hover:text-primary hover:bg-primary-light transition-all"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-body hover:text-primary hover:bg-primary-light transition-all cursor-pointer"
                 >
                   {link.label}
                 </Link>
@@ -317,7 +317,7 @@ export default function Navbar() {
               <a
                 href="#book"
                 onClick={() => setMenuOpen(false)}
-                className="w-full flex items-center justify-center gap-2 bg-primary text-white text-sm font-semibold py-3 rounded-xl hover:bg-primary-dark transition-colors"
+                className="w-full flex items-center justify-center gap-2 bg-primary text-white text-sm font-medium py-3 rounded-xl hover:bg-primary-dark transition-colors cursor-pointer"
               >
                 Book a Repair
               </a>
