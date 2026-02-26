@@ -85,117 +85,117 @@ export default function TrackRepairPage() {
     const st = repair ? statusConfig[repair.status] : null;
 
     return (
-        <div className="bg-background min-h-screen">
-            {/* Hero Section */}
-            <section className="relative bg-gradient-to-br from-primary-dark via-primary to-primary-dark overflow-hidden">
-                {/* Decorative elements */}
-                <div className="absolute inset-0">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
-                    <div className="absolute top-1/2 left-1/2 w-[600px] h-[600px] bg-white/[0.02] rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+        <div className="bg-surface min-h-screen font-sans selection:bg-primary/20">
+            {/* Elegant Light Hero Section */}
+            <section className="relative bg-white overflow-hidden pt-20 pb-32 border-b border-gray-100">
+                {/* Subtle Decorative Background */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-primary/5 rounded-full blur-[100px]"></div>
+                    <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[80px]"></div>
+                    <div className="absolute top-[20%] left-[10%] w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px] animate-pulse duration-[8000ms]"></div>
+                    <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-surface to-transparent"></div>
                 </div>
 
-                <div className="relative w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 text-center">
-                    <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-6">
-                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                        <span className="text-white/90 text-xs font-medium">Live Tracking Available</span>
+                <div className="relative w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10 mt-12">
+                    <div className="inline-flex items-center gap-2 bg-primary/5 border border-primary/10 rounded-full px-5 py-2 mb-8 shadow-sm">
+                        <div className="relative flex h-2.5 w-2.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
+                        </div>
+                        <span className="text-primary text-xs font-bold tracking-widest uppercase">Live Tracking</span>
                     </div>
 
-                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
+                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-dark mb-6 tracking-tight">
                         Track Your Repair
                     </h1>
-                    <p className="text-white/70 text-base sm:text-lg mb-10 max-w-xl mx-auto">
-                        Enter your repair tracking ID to get real-time updates on the status of your device repair
+                    <p className="text-muted text-lg sm:text-xl mb-12 max-w-2xl mx-auto font-medium">
+                        Enter your tracking ID below to get real-time, step-by-step updates on your device's journey.
                     </p>
 
-                    {/* Search Box */}
-                    <form onSubmit={handleSearch} className="max-w-xl mx-auto">
-                        <div className="relative flex items-center">
-                            <div className="absolute left-4 text-white/40">
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    {/* Premium Light Search Box */}
+                    <form onSubmit={handleSearch} className="max-w-2xl mx-auto relative group">
+                        <div className="absolute inset-0 bg-primary/5 rounded-3xl blur-[20px] scale-105 opacity-50 group-hover:opacity-100 transition duration-500"></div>
+                        <div className="relative flex items-center bg-white border border-gray-200 rounded-3xl p-2.5 shadow-xl shadow-gray-200/50 transition-all duration-300 hover:shadow-2xl hover:border-primary/20 hover:shadow-primary/10">
+                            <div className="pl-5 pr-3 text-muted">
+                                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                             </div>
                             <input
                                 type="text"
                                 value={trackingId}
                                 onChange={(e) => { setTrackingId(e.target.value); setError(""); }}
-                                placeholder="e.g. MOB-2024-7821"
-                                className="w-full pl-12 pr-36 py-4 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:bg-white/15 transition-all text-base"
+                                placeholder="Tracking ID (e.g. MOB-2024-7821)"
+                                className="w-full py-4 bg-transparent text-dark placeholder-muted focus:outline-none text-lg font-semibold tracking-wide"
                             />
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="absolute right-2 px-6 py-2.5 bg-white text-primary font-semibold rounded-xl hover:bg-gray-100 active:scale-[0.97] transition-all text-sm disabled:opacity-70 disabled:cursor-not-allowed"
+                                className="shrink-0 px-8 py-4 bg-primary text-white font-bold rounded-2xl hover:bg-primary-dark hover:scale-[0.98] active:scale-95 transition-all text-sm disabled:opacity-70 disabled:hover:scale-100 shadow-md shadow-primary/20"
                             >
                                 {loading ? (
                                     <span className="flex items-center gap-2">
-                                        <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                        Searching
+                                        <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                        Locating...
                                     </span>
-                                ) : "Track Now"}
+                                ) : "Track Device"}
                             </button>
                         </div>
 
                         {/* Error Message */}
                         {error && (
-                            <div className="mt-4 flex items-center justify-center gap-2 text-red-300 text-sm bg-red-500/10 border border-red-400/20 rounded-xl px-4 py-3">
-                                <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            <div className="absolute top-full left-0 right-0 mt-4 flex items-center justify-center gap-2 text-red-600 text-sm bg-red-50 border border-red-200 rounded-2xl px-5 py-3 animate-in slide-in-from-top-2 shadow-sm">
+                                <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                 </svg>
                                 {error}
                             </div>
                         )}
 
                         {/* Demo hint */}
-                        <p className="mt-4 text-white/40 text-xs">
-                            Try: <button type="button" onClick={() => setTrackingId("MOB-2024-7821")} className="text-white/70 underline underline-offset-2 hover:text-white transition-colors">MOB-2024-7821</button> or <button type="button" onClick={() => setTrackingId("MOB-2024-5493")} className="text-white/70 underline underline-offset-2 hover:text-white transition-colors">MOB-2024-5493</button>
-                        </p>
+                        <div className="mt-8 flex items-center justify-center gap-3 text-sm font-medium text-muted bg-gray-50/80 inline-flex mx-auto px-4 py-2 rounded-full border border-gray-100">
+                            <span>Demo IDs:</span>
+                            <button type="button" onClick={() => setTrackingId("MOB-2024-7821")} className="text-primary hover:text-primary-dark transition-colors font-bold tracking-wide">MOB-2024-7821</button>
+                            <span className="text-gray-300">|</span>
+                            <button type="button" onClick={() => setTrackingId("MOB-2024-5493")} className="text-primary hover:text-primary-dark transition-colors font-bold tracking-wide">MOB-2024-5493</button>
+                        </div>
                     </form>
                 </div>
+
             </section>
 
             {/* Results Section */}
-            <section className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <section className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 -mt-10 relative z-20">
                 {!repair && !loading && !error && (
-                    /* Empty State */
-                    <div className="text-center py-16">
-                        <div className="w-24 h-24 bg-surface rounded-3xl flex items-center justify-center mx-auto mb-6 border border-border">
-                            <svg className="w-10 h-10 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                            </svg>
-                        </div>
-                        <h3 className="text-xl font-semibold text-dark mb-2">Enter Your Tracking ID</h3>
-                        <p className="text-muted text-sm max-w-md mx-auto">Your tracking ID was shared with you via SMS and email when you booked a repair</p>
-
-                        {/* Feature Cards */}
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-12 max-w-3xl mx-auto">
-                            <div className="p-5 rounded-2xl bg-white border border-border text-center">
-                                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mx-auto mb-3">
-                                    <svg className="w-6 h-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    /* Elegant Empty State Grid */
+                    <div className="text-center pb-16 pt-10">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                            <div className="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 hover:-translate-y-1 transition-transform duration-300">
+                                <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-5 text-blue-500">
+                                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
                                     </svg>
                                 </div>
-                                <h4 className="font-semibold text-dark text-sm mb-1">Real-Time Updates</h4>
-                                <p className="text-xs text-muted">Get live status updates on every step of the repair</p>
+                                <h4 className="font-bold text-dark text-lg mb-2">Real-Time Updates</h4>
+                                <p className="text-sm text-muted leading-relaxed">Watch your device move through our repair stages with live, to-the-minute updates.</p>
                             </div>
-                            <div className="p-5 rounded-2xl bg-white border border-border text-center">
-                                <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mx-auto mb-3">
-                                    <svg className="w-6 h-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            <div className="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 hover:-translate-y-1 transition-transform duration-300">
+                                <div className="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center mx-auto mb-5 text-green-500">
+                                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                     </svg>
                                 </div>
-                                <h4 className="font-semibold text-dark text-sm mb-1">Secure Tracking</h4>
-                                <p className="text-xs text-muted">Your data is encrypted and protected at all times</p>
+                                <h4 className="font-bold text-dark text-lg mb-2">Complete Transparency</h4>
+                                <p className="text-sm text-muted leading-relaxed">No hidden steps. You see exactly what our technicians are working on.</p>
                             </div>
-                            <div className="p-5 rounded-2xl bg-white border border-border text-center">
-                                <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mx-auto mb-3">
-                                    <svg className="w-6 h-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                            <div className="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 hover:-translate-y-1 transition-transform duration-300">
+                                <div className="w-16 h-16 bg-purple-50 rounded-2xl flex items-center justify-center mx-auto mb-5 text-purple-500">
+                                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                                     </svg>
                                 </div>
-                                <h4 className="font-semibold text-dark text-sm mb-1">SMS & Email Alerts</h4>
-                                <p className="text-xs text-muted">Receive notifications at every milestone</p>
+                                <h4 className="font-bold text-dark text-lg mb-2">Instant Notifications</h4>
+                                <p className="text-sm text-muted leading-relaxed">Get pinged via SMS and Email the moment a repair milestone is reached.</p>
                             </div>
                         </div>
                     </div>
@@ -203,151 +203,185 @@ export default function TrackRepairPage() {
 
                 {/* Loading State */}
                 {loading && (
-                    <div className="text-center py-16">
-                        <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-6"></div>
-                        <p className="text-muted text-sm">Searching for your repair...</p>
+                    <div className="text-center py-20 bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100">
+                        <div className="relative w-20 h-20 mx-auto mb-6">
+                            <div className="absolute inset-0 border-4 border-gray-100 rounded-full"></div>
+                            <div className="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                        <h3 className="text-xl font-bold text-dark mb-2">Locating Your Device</h3>
+                        <p className="text-muted text-sm">Securely fetching your repair details...</p>
                     </div>
                 )}
 
                 {/* Repair Details */}
                 {repair && (
-                    <div className="space-y-6">
+                    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-500">
                         {/* Status Banner */}
-                        <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl border ${st.border} ${st.bg}`}>
-                            <div className="flex items-center gap-3">
-                                <div className={`w-3 h-3 rounded-full ${st.dot} ${repair.status === 'in-progress' ? 'animate-pulse' : ''}`}></div>
+                        <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl border-2 shadow-lg ${st.border} ${st.bg} bg-opacity-50 backdrop-blur-sm`}>
+                            <div className="flex items-center gap-5">
+                                <div className="relative flex items-center justify-center">
+                                    <div className={`absolute w-full h-full rounded-full opacity-30 ${st.dot} ${repair.status === 'in-progress' ? 'animate-ping' : ''}`}></div>
+                                    <div className={`w-5 h-5 rounded-full ${st.dot} shadow-md`}></div>
+                                </div>
                                 <div>
-                                    <span className={`font-bold text-lg ${st.color}`}>{st.label}</span>
-                                    <p className="text-sm text-muted mt-0.5">Tracking ID: <span className="font-mono font-semibold text-dark">{repair.id}</span></p>
+                                    <span className={`font-black tracking-tight text-2xl ${st.color}`}>{st.label}</span>
+                                    <p className="text-sm text-muted mt-1 font-medium">Tracking ID: <span className="font-mono font-bold text-dark px-2 py-0.5 bg-white rounded-md shadow-sm ml-1">{repair.id}</span></p>
                                 </div>
                             </div>
-                            <div className="text-right">
-                                <p className="text-xs text-muted">Estimated Delivery</p>
-                                <p className="font-semibold text-dark">{repair.estimatedDelivery}</p>
+                            <div className="text-right bg-white px-5 py-3 rounded-2xl shadow-sm border border-gray-100 w-full sm:w-auto">
+                                <p className="text-xs text-muted font-semibold uppercase tracking-wider mb-1">Estimated Delivery</p>
+                                <p className="font-bold text-dark text-lg">{repair.estimatedDelivery}</p>
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                             {/* Left Column: Device & Repair Info */}
-                            <div className="lg:col-span-1 space-y-5">
+                            <div className="lg:col-span-5 space-y-6">
                                 {/* Device Info Card */}
-                                <div className="bg-white rounded-2xl border border-border p-5">
-                                    <h3 className="font-semibold text-dark text-base mb-4 flex items-center gap-2">
-                                        <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                        </svg>
-                                        Device Details
-                                    </h3>
-                                    <div className="space-y-3">
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-muted">Brand</span>
-                                            <span className="font-medium text-dark">{repair.brand}</span>
+                                <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/40 overflow-hidden">
+                                    <div className="bg-gradient-to-r from-gray-50 to-white px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+                                        <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                            </svg>
                                         </div>
-                                        <div className="w-full h-px bg-border"></div>
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-muted">Model</span>
-                                            <span className="font-medium text-dark">{repair.model}</span>
+                                        <h3 className="font-bold text-dark text-lg">Device Details</h3>
+                                    </div>
+                                    <div className="p-6 space-y-4">
+                                        <div className="flex justify-between items-center bg-gray-50/50 p-3 rounded-xl">
+                                            <span className="text-sm font-medium text-muted">Brand</span>
+                                            <span className="font-bold text-dark">{repair.brand}</span>
                                         </div>
-                                        <div className="w-full h-px bg-border"></div>
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-muted">Issue</span>
-                                            <span className="font-medium text-dark">{repair.issue}</span>
+                                        <div className="flex justify-between items-center bg-gray-50/50 p-3 rounded-xl">
+                                            <span className="text-sm font-medium text-muted">Model</span>
+                                            <span className="font-bold text-dark">{repair.model}</span>
                                         </div>
-                                        <div className="w-full h-px bg-border"></div>
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-muted">Service</span>
-                                            <span className="font-medium text-dark">{repair.serviceType}</span>
+                                        <div className="flex justify-between items-center bg-gray-50/50 p-3 rounded-xl">
+                                            <span className="text-sm font-medium text-muted">Reported Issue</span>
+                                            <span className="font-bold text-primary bg-primary/10 px-3 py-1 rounded-lg text-sm">{repair.issue}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center bg-gray-50/50 p-3 rounded-xl">
+                                            <span className="text-sm font-medium text-muted">Service Type</span>
+                                            <span className="font-bold text-dark flex items-center gap-2">
+                                                {repair.serviceType === "Home Service" ? "🏠" : "🏪"}
+                                                {repair.serviceType}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Cost & Date Card */}
-                                <div className="bg-white rounded-2xl border border-border p-5">
-                                    <h3 className="font-semibold text-dark text-base mb-4 flex items-center gap-2">
-                                        <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                                        </svg>
-                                        Billing Info
-                                    </h3>
-                                    <div className="space-y-3">
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-muted">Repair Cost</span>
-                                            <span className="font-bold text-dark text-lg">{repair.estimatedCost}</span>
+                                <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/40 overflow-hidden">
+                                    <div className="p-6 space-y-5">
+                                        <div className="flex justify-between items-end border-b border-gray-100 pb-5">
+                                            <div>
+                                                <p className="text-sm font-semibold text-muted mb-1 uppercase tracking-wider">Estimated Cost</p>
+                                                <p className="text-3xl font-black text-dark">{repair.estimatedCost}</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-sm font-semibold text-muted mb-1 uppercase tracking-wider">Booked On</p>
+                                                <p className="font-bold text-dark">{repair.date}</p>
+                                            </div>
                                         </div>
-                                        <div className="w-full h-px bg-border"></div>
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-muted">Booked On</span>
-                                            <span className="font-medium text-dark">{repair.date}</span>
-                                        </div>
-                                        <div className="w-full h-px bg-border"></div>
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-muted">Technician</span>
-                                            <span className="font-medium text-dark">{repair.technician}</span>
+
+                                        <div className="flex items-center gap-4 bg-blue-50/50 p-4 rounded-2xl border border-blue-100/50">
+                                            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-lg">
+                                                {repair.technician.charAt(0)}
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-semibold text-blue-600 uppercase tracking-widest mb-0.5">Assigned Expert</p>
+                                                <p className="font-bold text-dark text-lg">{repair.technician}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Need Help */}
-                                <div className="bg-primary/5 rounded-2xl border border-primary/10 p-5 text-center">
-                                    <p className="text-sm font-medium text-dark mb-2">Need Help?</p>
-                                    <p className="text-xs text-muted mb-4">Our support team is available 24/7</p>
-                                    <a href="tel:+919876543210" className="inline-flex items-center gap-2 text-sm text-primary font-semibold hover:underline">
-                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                                        </svg>
-                                        Call +91 98765 43210
-                                    </a>
+                                <div className="relative overflow-hidden bg-gradient-to-br from-dark to-[#1a1d24] rounded-3xl p-6 sm:p-8 text-white shadow-2xl">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/30 rounded-full blur-[40px] mix-blend-screen"></div>
+                                    <div className="relative z-10 flex flex-col items-center text-center">
+                                        <h4 className="text-xl font-bold mb-2">Need Assistance?</h4>
+                                        <p className="text-white/70 text-sm mb-6">Our support heroes are available 24/7 to answer your queries.</p>
+                                        <a href="tel:+919876543210" className="inline-flex items-center justify-center gap-2 w-full bg-white text-dark font-bold py-3.5 px-6 rounded-xl hover:bg-gray-100 active:scale-95 transition-all shadow-lg hover:shadow-white/20">
+                                            <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                            </svg>
+                                            Call +91 98765 43210
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Right Column: Timeline */}
-                            <div className="lg:col-span-2">
-                                <div className="bg-white rounded-2xl border border-border p-6 sm:p-8">
-                                    <h3 className="font-semibold text-dark text-base mb-8 flex items-center gap-2">
-                                        <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                        </svg>
-                                        Repair Timeline
+                            {/* Right Column: Premium Glowing Timeline */}
+                            <div className="lg:col-span-7">
+                                <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/40 p-6 sm:p-10 h-full">
+                                    <h3 className="font-bold text-dark text-xl mb-10 flex items-center gap-3">
+                                        <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                            </svg>
+                                        </div>
+                                        Live Repair Timeline
                                     </h3>
 
-                                    <div className="relative">
+                                    <div className="relative pl-4 sm:pl-8">
                                         {repair.timeline.map((item, idx) => {
                                             const isLast = idx === repair.timeline.length - 1;
-                                            const isActive = item.done && (isLast || !repair.timeline[idx + 1]?.done);
+                                            const isActive = item.done && (!repair.timeline[idx + 1]?.done);
+                                            const isFuture = !item.done;
 
                                             return (
-                                                <div key={idx} className="flex gap-4 sm:gap-6 pb-8 last:pb-0 relative">
-                                                    {/* Vertical Line */}
+                                                <div key={idx} className="flex gap-6 sm:gap-8 pb-10 last:pb-0 relative group">
+                                                    {/* Vertical Glowing Line */}
                                                     {!isLast && (
-                                                        <div className={`absolute left-[19px] sm:left-[23px] top-10 bottom-0 w-0.5 ${item.done ? 'bg-primary' : 'bg-border'}`}></div>
+                                                        <div className={`absolute left-[19px] sm:left-[27px] top-12 bottom-0 w-1 rounded-full ${isFuture ? 'bg-gray-100' : 'bg-gradient-to-b from-primary to-primary/50 opacity-50'}`}></div>
+                                                    )}
+
+                                                    {/* Glow effect for active line */}
+                                                    {!isLast && item.done && repair.timeline[idx + 1]?.done && (
+                                                        <div className="absolute left-[19px] sm:left-[27px] top-12 bottom-0 w-1 rounded-full bg-primary shadow-[0_0_10px_rgba(128,0,0,0.5)]"></div>
+                                                    )}
+                                                    {!isLast && isActive && (
+                                                        <div className="absolute left-[19px] sm:left-[27px] top-12 bottom-[50%] w-1 rounded-full bg-gradient-to-b from-primary to-transparent"></div>
                                                     )}
 
                                                     {/* Circle Icon */}
-                                                    <div className={`relative shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center border-2 transition-all ${item.done
-                                                            ? (isActive ? 'bg-primary border-primary text-white shadow-lg shadow-primary/30 scale-110' : 'bg-primary border-primary text-white')
-                                                            : 'bg-surface border-border text-muted'
-                                                        }`}>
-                                                        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
-                                                        </svg>
+                                                    <div className="relative shrink-0 z-10 w-10 h-10 sm:w-14 sm:h-14 mt-1">
                                                         {isActive && (
-                                                            <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-green-400 border-2 border-white rounded-full animate-pulse"></span>
+                                                            <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping scale-150"></div>
                                                         )}
+                                                        <div className={`relative w-full h-full rounded-full flex items-center justify-center border-4 transition-all duration-500 shadow-md ${isFuture
+                                                            ? 'bg-white border-gray-100 text-gray-400'
+                                                            : isActive
+                                                                ? 'bg-primary border-primary min-w-[3.5rem] min-h-[3.5rem] text-white shadow-xl shadow-primary/40 -translate-x-1 sm:-translate-x-0 sm:scale-110'
+                                                                : 'bg-primary border-white ring-4 ring-primary/20 text-white'
+                                                            }`}>
+                                                            <svg className={`w-5 h-5 sm:w-6 sm:h-6 ${isActive ? 'animate-bounce' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d={item.icon} />
+                                                            </svg>
+                                                        </div>
                                                     </div>
 
                                                     {/* Content */}
-                                                    <div className={`flex-1 pt-1.5 ${!item.done ? 'opacity-50' : ''}`}>
-                                                        <div className="flex items-center justify-between flex-wrap gap-2">
-                                                            <h4 className={`font-semibold text-sm sm:text-base ${item.done ? 'text-dark' : 'text-muted'}`}>
-                                                                {item.step}
-                                                            </h4>
-                                                            {isActive && (
-                                                                <span className="text-xs font-semibold text-primary bg-primary/10 px-2.5 py-1 rounded-full">Current</span>
-                                                            )}
+                                                    <div className={`flex-1 pt-1 sm:pt-2 transition-all duration-300 ${isFuture ? 'opacity-40 grayscale' : 'opacity-100'}`}>
+                                                        <div className={`p-4 sm:p-5 rounded-2xl border transition-all ${isActive
+                                                            ? 'bg-primary/5 border-primary/20 shadow-lg shadow-primary/5'
+                                                            : 'bg-white border-transparent hover:border-gray-100'
+                                                            }`}>
+                                                            <div className="flex items-center justify-between flex-wrap gap-2 mb-1">
+                                                                <h4 className={`font-bold text-base sm:text-lg ${isFuture ? 'text-gray-500' : 'text-dark'}`}>
+                                                                    {item.step}
+                                                                </h4>
+                                                                {isActive && (
+                                                                    <span className="text-xs font-bold text-white bg-primary px-3 py-1 rounded-full shadow-sm">
+                                                                        Current Stage
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <p className={`text-sm ${isActive ? 'text-primary/70 font-medium' : 'text-muted'}`}>
+                                                                {item.time}
+                                                            </p>
                                                         </div>
-                                                        <p className={`text-xs sm:text-sm mt-1 ${item.done ? 'text-body' : 'text-muted'}`}>
-                                                            {item.time}
-                                                        </p>
                                                     </div>
                                                 </div>
                                             );
@@ -358,10 +392,10 @@ export default function TrackRepairPage() {
                         </div>
 
                         {/* Back to search */}
-                        <div className="text-center pt-4">
+                        <div className="text-center pt-8 pb-4">
                             <button
-                                onClick={() => { setRepair(null); setTrackingId(""); }}
-                                className="inline-flex items-center gap-2 text-sm text-primary font-medium hover:underline"
+                                onClick={() => { setRepair(null); setTrackingId(""); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                className="inline-flex items-center gap-2 text-sm text-dark font-bold bg-white px-6 py-3 rounded-xl border border-gray-200 hover:border-primary hover:text-primary hover:shadow-lg transition-all"
                             >
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
