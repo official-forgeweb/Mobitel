@@ -356,17 +356,37 @@ function BrandLogo({ brand }) {
 
 export default function BrandCategories() {
   const [selectedBrand, setSelectedBrand] = useState(null);
+  const [selectedModel, setSelectedModel] = useState(null);
+
+  // Common repair issues to display after a model is selected
+  const repairIssues = [
+    { id: 'screen', name: 'Screen Replacement', price: '₹2,499 - ₹8,999', time: '45-60 Mins', icon: 'M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z' },
+    { id: 'battery', name: 'Battery Replacement', price: '₹999 - ₹2,499', time: '30-45 Mins', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
+    { id: 'charging', name: 'Charging Port Issue', price: '₹799 - ₹1,499', time: '45-60 Mins', icon: 'M13 10V3L4 14h7v7l9-11h-7z' }, // using a generic icon here
+    { id: 'camera', name: 'Camera Repair', price: '₹1,299 - ₹4,499', time: '60-90 Mins', icon: 'M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z' },
+    { id: 'speaker', name: 'Speaker Not Working', price: '₹699 - ₹1,499', time: '30-45 Mins', icon: 'M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
+  ];
 
   useEffect(() => {
     if (selectedBrand) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
+      setSelectedModel(null); // Reset model when brand modal is closed
     }
     return () => {
       document.body.style.overflow = "unset";
     };
   }, [selectedBrand]);
+
+  const handleCloseModal = () => {
+    setSelectedBrand(null);
+    setSelectedModel(null);
+  };
+
+  const handleBack = () => {
+    setSelectedModel(null);
+  };
 
   return (
     <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative">
@@ -442,31 +462,41 @@ export default function BrandCategories() {
         </a>
       </div>
 
-      {/* Models Modal Popup */}
+      {/* Modal Popup for Models & Issues */}
       {selectedBrand && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-sm cursor-pointer"
-            onClick={() => setSelectedBrand(null)}
+            onClick={handleCloseModal}
           ></div>
-          <div className="relative bg-white border border-border w-full max-w-4xl max-h-[85vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col z-10 scale-100 animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between p-6 border-b border-border bg-surface/50">
+
+          <div className="relative bg-white border border-border w-full max-w-4xl max-h-[85vh] rounded-3xl shadow-2xl flex flex-col z-10 scale-100 animate-in fade-in zoom-in-95 duration-200">
+            {/* Header */}
+            <div className="flex items-center justify-between p-5 border-b border-border bg-surface/50 rounded-t-3xl shrink-0">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm border border-border">
-                  <BrandLogo brand={selectedBrand} />
-                </div>
+                {selectedModel ? (
+                  <button onClick={handleBack} className="w-10 h-10 flex items-center justify-center rounded-full bg-white text-dark hover:bg-gray-100 transition-colors focus:outline-none border border-border shadow-sm">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                  </button>
+                ) : (
+                  <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm border border-border shrink-0">
+                    <BrandLogo brand={selectedBrand} />
+                  </div>
+                )}
                 <div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-dark">
-                    {selectedBrand.name} Models
+                  <h3 className="text-xl sm:text-2xl font-bold text-dark flex items-center gap-2">
+                    {selectedModel ? selectedModel.name : `${selectedBrand.name} Models`}
                   </h3>
                   <p className="text-sm text-muted">
-                    Select your device model to continue
+                    {selectedModel ? "Select the issue you are facing" : "Select your device model to continue"}
                   </p>
                 </div>
               </div>
               <button
-                onClick={() => setSelectedBrand(null)}
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-surface text-muted hover:bg-red-50 hover:text-red-500 transition-colors focus:outline-none"
+                onClick={handleCloseModal}
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-white text-muted hover:bg-red-50 hover:text-red-500 transition-colors focus:outline-none shrink-0 border border-transparent hover:border-red-100 shadow-sm"
               >
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -474,38 +504,110 @@ export default function BrandCategories() {
               </button>
             </div>
 
-            <div className="p-6 overflow-y-auto custom-scrollbar">
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
-                {selectedBrand.models && selectedBrand.models.map((model, idx) => (
+            {/* Body */}
+            <div className="p-6 overflow-y-auto custom-scrollbar flex-1 min-h-0">
+              {!selectedModel ? (
+                /* Step 1: Model Selection */
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
+                  {selectedBrand.models && selectedBrand.models.map((model, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSelectedModel(model)}
+                      className="flex flex-col items-center justify-start p-4 rounded-xl border border-gray-100 bg-white hover:border-primary/40 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 group gap-3"
+                    >
+                      <div className="w-full aspect-[3/4] max-h-24 sm:max-h-32 bg-surface rounded-lg flex items-center justify-center mb-1 group-hover:bg-white transition-colors border border-transparent group-hover:border-primary/10 overflow-hidden">
+                        <img src={model.image} alt={model.name} className="w-full h-full object-contain mix-blend-multiply drop-shadow-sm group-hover:scale-105 transition-transform duration-300" />
+                      </div>
+                      <span className="text-xs sm:text-sm font-medium text-dark text-center line-clamp-2 w-full group-hover:text-primary transition-colors">
+                        {model.name}
+                      </span>
+                    </button>
+                  ))}
+
+                  {/* "Other" Option */}
                   <button
-                    key={idx}
+                    onClick={() => setSelectedModel({ name: "Other / Unlisted Model" })}
                     className="flex flex-col items-center justify-start p-4 rounded-xl border border-gray-100 bg-white hover:border-primary/40 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 group gap-3"
                   >
-                    <div className="w-full aspect-[3/4] max-h-24 sm:max-h-32 bg-surface rounded-lg flex items-center justify-center mb-1 group-hover:bg-white transition-colors border border-transparent group-hover:border-primary/10 overflow-hidden">
-                      <img src={model.image} alt={model.name} className="w-full h-full object-contain mix-blend-multiply" />
+                    <div className="w-full aspect-[3/4] max-h-24 sm:max-h-32 bg-surface rounded-lg flex items-center justify-center p-2 mb-1 group-hover:bg-white transition-colors border border-transparent group-hover:border-primary/10">
+                      <div className="w-10 h-10 sm:w-14 sm:h-14 flex items-center justify-center rounded-full bg-gray-100 group-hover:bg-primary/10 transition-colors">
+                        <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                      </div>
                     </div>
                     <span className="text-xs sm:text-sm font-medium text-dark text-center line-clamp-2 w-full group-hover:text-primary transition-colors">
-                      {model.name}
+                      Other Model
                     </span>
                   </button>
-                ))}
+                </div>
+              ) : (
+                /* Step 2: Issue Selection */
+                <div className="animate-in slide-in-from-right-8 duration-300">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {repairIssues.map((issue) => (
+                      <button
+                        key={issue.id}
+                        className="flex flex-col text-left p-5 rounded-2xl border border-gray-100 bg-white hover:border-primary/40 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 group"
+                      >
+                        <div className="flex items-start justify-between w-full mb-3">
+                          <div className="w-10 h-10 rounded-full bg-surface flex items-center justify-center group-hover:bg-white group-hover:text-primary text-gray-500 transition-colors shadow-sm">
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={issue.icon} />
+                            </svg>
+                          </div>
+                          <div className="text-right">
+                            <span className="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full whitespace-nowrap">
+                              {issue.time}
+                            </span>
+                          </div>
+                        </div>
 
-                {/* "Other" Option */}
-                <button
-                  className="flex flex-col items-center justify-start p-4 rounded-xl border border-gray-100 bg-white hover:border-primary/40 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 group gap-3"
-                >
-                  <div className="w-full aspect-[3/4] max-h-24 sm:max-h-32 bg-surface rounded-lg flex items-center justify-center p-2 mb-1 group-hover:bg-white transition-colors border border-transparent group-hover:border-primary/10">
-                    <div className="w-10 h-10 sm:w-14 sm:h-14 flex items-center justify-center rounded-full bg-gray-100 group-hover:bg-primary/10 transition-colors">
-                      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                      </svg>
-                    </div>
+                        <h4 className="font-semibold text-dark text-base mb-1 group-hover:text-primary transition-colors">
+                          {issue.name}
+                        </h4>
+
+                        <div className="mt-auto pt-3 flex items-center justify-between w-full border-t border-gray-50 group-hover:border-primary/10">
+                          <span className="text-xs text-muted">Est. Cost</span>
+                          <span className="font-bold text-dark text-sm">{issue.price}</span>
+                        </div>
+                      </button>
+                    ))}
+
+                    {/* Other Issue Option */}
+                    <button
+                      className="flex flex-col text-left p-5 rounded-2xl border border-gray-100 bg-white hover:border-primary/40 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 group"
+                    >
+                      <div className="flex items-start justify-between w-full mb-3">
+                        <div className="w-10 h-10 rounded-full bg-surface flex items-center justify-center group-hover:bg-white group-hover:text-primary text-gray-500 transition-colors shadow-sm">
+                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded-full whitespace-nowrap">
+                            Varies
+                          </span>
+                        </div>
+                      </div>
+
+                      <h4 className="font-semibold text-dark text-base mb-1 group-hover:text-primary transition-colors">
+                        Other Issue
+                      </h4>
+
+                      <div className="mt-auto pt-3 flex items-center justify-between w-full border-t border-gray-50 group-hover:border-primary/10">
+                        <span className="text-xs text-muted">Est. Cost</span>
+                        <span className="font-bold text-dark text-sm">Upon Inspection</span>
+                      </div>
+                    </button>
                   </div>
-                  <span className="text-xs sm:text-sm font-medium text-dark text-center line-clamp-2 w-full group-hover:text-primary transition-colors">
-                    Other Model
-                  </span>
-                </button>
-              </div>
+
+                  {/* Continue Button */}
+                  <div className="mt-8 flex justify-end shrink-0">
+                    {/* For now this handles both the selected issue visually, in a real app this would store the selected issue id into state and navigate the user */}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
