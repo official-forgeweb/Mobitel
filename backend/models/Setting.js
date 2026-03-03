@@ -6,9 +6,8 @@ const SettingSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Prevent mongoose from over-writing mixed-type changes
-SettingSchema.pre('save', function (next) {
+SettingSchema.pre('save', function () {
     this.markModified('value');
-    next();
 });
 
 module.exports = mongoose.model('Setting', SettingSchema);
