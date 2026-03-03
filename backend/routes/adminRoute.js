@@ -18,11 +18,12 @@ router.get('/stats', async (req, res) => {
             Worker.countDocuments({ status: 'active' })
         ]);
 
-        const recentActivity = recentBookings.map((b, i) => ({
-            id: i + 1,
-            action: `${b.serviceType} - ${b.brand} ${b.model} (${b.trackingToken || 'N/A'})`,
-            user: b.customerName,
-            status: b.status,
+            const recentActivity = recentBookings.map((b, i) => ({
+                id: i + 1,
+                trackingToken: b.trackingToken,
+                action: `${b.serviceType} - ${b.brand} ${b.model}`,
+                user: b.customerName,
+                status: b.status,
             time: getTimeAgo(b.createdAt),
             type: b.status === 'Completed' ? 'success' : b.status === 'Cancelled' ? 'error' : 'info'
         }));

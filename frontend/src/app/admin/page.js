@@ -43,25 +43,27 @@ export default function AdminDashboard() {
     return (
         <div className="animate-in fade-in duration-500">
             <header className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
-                <p className="text-gray-500 dark:text-gray-400 mt-1">Welcome back. Here's what's happening.</p>
+                <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+                <p className="text-gray-500 mt-1">Welcome back. Here's what's happening.</p>
             </header>
 
             {/* Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
                 {statCards.map((card, i) => {
                     const c = colorMap[card.color];
+                    const bgClass = c.bg.split(' ')[0];
+                    const textClass = c.text.split(' ')[0];
                     return (
-                        <div key={i} className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow">
-                            <div className={`w-10 h-10 ${c.bg} rounded-lg flex items-center justify-center mb-3`}>
-                                <svg className={`w-5 h-5 ${c.text}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <div key={i} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                            <div className={`w-10 h-10 ${bgClass} rounded-lg flex items-center justify-center mb-3`}>
+                                <svg className={`w-5 h-5 ${textClass}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d={card.icon} />
                                 </svg>
                             </div>
-                            <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                                {loading ? <span className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded h-8 w-12 block"></span> : card.value}
+                            <p className="text-2xl font-bold text-gray-900">
+                                {loading ? <span className="animate-pulse bg-gray-200 rounded h-8 w-12 block"></span> : card.value}
                             </p>
-                            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mt-1">{card.label}</p>
+                            <p className="text-xs font-medium text-gray-500 mt-1">{card.label}</p>
                         </div>
                     );
                 })}
@@ -69,15 +71,15 @@ export default function AdminDashboard() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Recent Bookings */}
-                <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-                    <div className="p-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Bookings</h2>
+                <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="p-5 border-b border-gray-100 flex justify-between items-center">
+                        <h2 className="text-lg font-semibold text-gray-900">Recent Bookings</h2>
                         <a href="/admin/bookings" className="text-sm text-primary hover:underline font-medium">View All →</a>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead>
-                                <tr className="bg-gray-50 dark:bg-gray-900/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">
+                                <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
                                     <th className="p-3 font-medium">Token</th>
                                     <th className="p-3 font-medium">Customer</th>
                                     <th className="p-3 font-medium">Device</th>
@@ -85,14 +87,14 @@ export default function AdminDashboard() {
                                     <th className="p-3 font-medium">Time</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                            <tbody className="divide-y divide-gray-100">
                                 {(bookingStats?.recentBookings || stats?.recentActivity || []).slice(0, 8).map((item, i) => {
                                     const isBooking = item.trackingToken;
                                     return (
-                                        <tr key={i} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors text-sm">
+                                        <tr key={i} className="hover:bg-gray-50 transition-colors text-sm">
                                             <td className="p-3 font-mono text-xs font-bold text-primary">{isBooking ? item.trackingToken : '-'}</td>
-                                            <td className="p-3 text-gray-900 dark:text-gray-200">{isBooking ? item.customerName : item.user}</td>
-                                            <td className="p-3 text-gray-600 dark:text-gray-400">{isBooking ? `${item.brand} ${item.model}` : item.action?.substring(0, 30)}</td>
+                                            <td className="p-3 text-gray-900">{isBooking ? item.customerName : item.user}</td>
+                                            <td className="p-3 text-gray-600">{isBooking ? `${item.brand} ${item.model}` : item.action?.substring(0, 30)}</td>
                                             <td className="p-3">
                                                 <StatusBadge status={isBooking ? item.status : item.status} />
                                             </td>
@@ -109,19 +111,19 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Worker Status */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-                    <div className="p-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Workers</h2>
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="p-5 border-b border-gray-100 flex justify-between items-center">
+                        <h2 className="text-lg font-semibold text-gray-900">Workers</h2>
                         <a href="/admin/workers" className="text-sm text-primary hover:underline font-medium">Manage →</a>
                     </div>
                     <div className="p-4 space-y-3">
                         {(bookingStats?.workers || []).map((w, i) => (
-                            <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
+                            <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50">
                                 <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
                                     {w.name?.charAt(0)}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{w.name}</p>
+                                    <p className="text-sm font-medium text-gray-900 truncate">{w.name}</p>
                                     <p className="text-xs text-gray-500">{w.activeJobCount} active job{w.activeJobCount !== 1 ? 's' : ''}</p>
                                 </div>
                                 <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${w.activeJobCount > 3 ? 'bg-red-100 text-red-700' : w.activeJobCount > 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}`}>
