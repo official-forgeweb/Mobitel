@@ -1,0 +1,79 @@
+{
+  "bannerCarousel": [
+    {
+      "id": 1,
+      "title": "50% Off Screen Repairs",
+      "subtitle": "Limited time offer on all screen replacements",
+      "cta": "Grab the Deal",
+      "image": "/banners/banner1.png"
+    },
+    {
+      "id": 2,
+      "title": "Free Pickup & Drop",
+      "subtitle": "We come to your doorstep — no extra charges",
+      "cta": "Book Now",
+      "image": "/banners/banner2.png"
+    },
+    {
+      "id": 3,
+      "title": "Battery Replacement ₹499",
+      "subtitle": "Original batteries with 6-month warranty",
+      "cta": "Get Yours",
+      "image": "/banners/banner3.png"
+    },
+    {
+      "id": 4,
+      "title": "Flat 30% Off on Accessories",
+      "subtitle": "Cases, chargers, tempered glass & more",
+      "cta": "Shop Now",
+      "image": "/banners/banner4.png"
+    }
+  ],
+  "howItWorks": {
+    "title": "How it works in 3 easy steps",
+    "steps": [
+      {
+        "id": 1,
+        "title": "Book a Repair",
+        "description": "Tell us about your device issue and get an instant quote."
+      },
+      {
+        "id": 2,
+        "title": "Free Pickup",
+        "description": "We collect the device from your home or office for free."
+      },
+      {
+        "id": 3,
+        "title": "Quick Return",
+        "description": "Get your fixed device delivered back, often on the same day."
+      }
+    ]
+  },
+  "brandCategories": {
+    "title": "We Repair All Major Brands",
+    "subtitle": "Expert service for Apple, Samsung, OnePlus & more."
+  },
+  "popularServices": {
+    "title": "Popular Services",
+    "subtitle": "Most requested repairs by our customers."
+  },
+  "whyChooseUs": {
+    "title": "Why Choose Mobitel",
+    "features": [
+      { "id": 1, "title": "Expert Technicians", "description": "Highly trained and certified professionals." },
+      { "id": 2, "title": "Genuine Parts", "description": "We use only high-quality, original components." },
+      { "id": 3, "title": "6-Month Warranty", "description": "Peace of mind with a guarantee on all repairs." }
+    ]
+  },
+  "appDownload": {
+    "title": "Get the Mobitel App",
+    "subtitle": "Book repairs and track status directly from your phone.",
+    "buttonText": "Download Now"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "items": [
+      { "id": 1, "question": "How long does a screen repair take?", "answer": "Most screen repairs can be completed in under an hour." }
+    ]
+  }
+}

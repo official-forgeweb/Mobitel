@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "name": "Mobitel Main Service Center",
+    "address": "123 Tech Street, Silicon Valley Block, Metro City",
+    "contact": "+91-9876543210"
+  },
+  {
+    "id": 2,
+    "name": "Mobitel Quick Fix Kiosk",
+    "address": "Ground Floor, City Mall, MG Road",
+    "contact": "+91-9876543211"
+  }
+]
