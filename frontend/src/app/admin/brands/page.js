@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from 'react';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001';
 
 export default function BrandsPage() {
     const [brands, setBrands] = useState([]);
@@ -85,74 +85,110 @@ export default function BrandsPage() {
     return (
         <div className="animate-in fade-in">
             <header className="mb-6">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Brands & Models</h1>
+                <h1 className="text-2xl font-bold text-gray-900">Brands & Models</h1>
                 <p className="text-sm text-gray-500">Manage device brands and their models</p>
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Brands */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-                    <div className="p-4 border-b dark:border-gray-700 flex justify-between items-center">
-                        <h2 className="font-semibold text-gray-900 dark:text-white">Brands ({brands.length})</h2>
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                        <h2 className="font-bold text-gray-900 flex items-center gap-2">
+                             <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                             Brands ({brands.length})
+                        </h2>
                         <button onClick={() => { setBrandForm({ name: '', logo: '', displayOrder: 0 }); setEditingBrand(null); setShowBrandForm(true); }}
-                            className="px-3 py-1.5 text-xs bg-primary text-white rounded-lg hover:bg-primary/90">+ Add Brand</button>
+                            className="px-4 py-2 text-xs bg-primary text-white rounded-lg font-bold hover:bg-primary/90 shadow-sm transition-all">+ Add Brand</button>
                     </div>
-                    <div className="divide-y dark:divide-gray-700 max-h-[60vh] overflow-y-auto">
+                    <div className="divide-y divide-gray-100 max-h-[60vh] overflow-y-auto">
                         {brands.map(b => (
                             <div key={b._id} onClick={() => setSelectedBrand(b)}
-                                className={`p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${selectedBrand?._id === b._id ? 'bg-blue-50 dark:bg-blue-900/20 border-l-2 border-primary' : ''}`}>
-                                <div className="flex items-center gap-3">
-                                    {b.logo ? <img src={b.logo} alt={b.name} className="w-8 h-8 object-contain rounded" /> :
-                                        <div className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center text-xs font-bold">{b.name.charAt(0)}</div>}
-                                    <span className="font-medium text-sm text-gray-900 dark:text-white">{b.name}</span>
-                                    {!b.isActive && <span className="px-1.5 py-0.5 bg-red-100 text-red-600 text-xs rounded">Inactive</span>}
+                                className={`p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors ${selectedBrand?._id === b._id ? 'bg-blue-50/50 border-l-4 border-primary' : 'border-l-4 border-transparent'}`}>
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 bg-white border border-gray-100 rounded-lg flex items-center justify-center p-1 shadow-sm">
+                                        {b.logo ? <img src={b.logo} alt={b.name} className="w-full h-full object-contain" /> :
+                                            <span className="text-lg font-bold text-primary">{b.name.charAt(0)}</span>}
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-sm text-gray-900">{b.name}</p>
+                                        {!b.isActive && <span className="inline-block px-2 py-0.5 bg-red-50 text-red-600 text-[10px] font-bold uppercase tracking-wider rounded border border-red-100">Hidden</span>}
+                                    </div>
                                 </div>
-                                <div className="flex gap-1" onClick={e => e.stopPropagation()}>
-                                    <button onClick={() => toggleBrandActive(b)} className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded text-xs">
-                                        {b.isActive ? '🟢' : '🔴'}
+                                <div className="flex gap-2" onClick={e => e.stopPropagation()}>
+                                    <button onClick={() => toggleBrandActive(b)} title={b.isActive ? 'Deactivate' : 'Activate'} 
+                                        className={`p-1.5 rounded-lg transition-colors ${b.isActive ? 'text-green-500 hover:bg-green-50' : 'text-gray-400 hover:bg-gray-100'}`}>
+                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                     </button>
                                     <button onClick={() => { setBrandForm({ name: b.name, logo: b.logo || '', displayOrder: b.displayOrder || 0 }); setEditingBrand(b._id); setShowBrandForm(true); }}
-                                        className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded text-xs">✏️</button>
-                                    <button onClick={() => deleteBrand(b._id)} className="p-1 hover:bg-red-100 dark:hover:bg-red-900/30 rounded text-xs">🗑️</button>
+                                        className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">
+                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                    </button>
+                                    <button onClick={() => deleteBrand(b._id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    </button>
                                 </div>
                             </div>
                         ))}
-                        {!loading && !brands.length && <p className="p-6 text-center text-gray-500 text-sm">No brands yet</p>}
+                        {!loading && !brands.length && (
+                            <div className="p-12 text-center text-gray-500">
+                                <svg className="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                                <p className="text-sm font-medium">No brands found</p>
+                            </div>
+                        )}
                     </div>
                 </div>
 
                 {/* Models */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-                    <div className="p-4 border-b dark:border-gray-700 flex justify-between items-center">
-                        <h2 className="font-semibold text-gray-900 dark:text-white">
-                            {selectedBrand ? `${selectedBrand.name} Models (${models.length})` : 'Select a brand'}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                        <h2 className="font-bold text-gray-900 flex items-center gap-2">
+                            <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                            {selectedBrand ? `${selectedBrand.name} Models (${models.length})` : 'Models List'}
                         </h2>
                         {selectedBrand && (
                             <button onClick={() => { setModelForm({ name: '', image: '', displayOrder: 0 }); setEditingModel(null); setShowModelForm(true); }}
-                                className="px-3 py-1.5 text-xs bg-primary text-white rounded-lg hover:bg-primary/90">+ Add Model</button>
+                                className="px-4 py-2 text-xs bg-primary text-white rounded-lg font-bold hover:bg-primary/90 shadow-sm transition-all">+ Add Model</button>
                         )}
                     </div>
-                    <div className="divide-y dark:divide-gray-700 max-h-[60vh] overflow-y-auto">
+                    <div className="divide-y divide-gray-100 max-h-[60vh] overflow-y-auto">
                         {models.map(m => (
-                            <div key={m._id} className="p-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                                <div className="flex items-center gap-3">
-                                    {m.image ? <img src={m.image} alt={m.name} className="w-8 h-8 object-contain rounded" /> :
-                                        <div className="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center text-xs">📱</div>}
-                                    <span className="font-medium text-sm text-gray-900 dark:text-white">{m.name}</span>
-                                    {!m.isActive && <span className="px-1.5 py-0.5 bg-red-100 text-red-600 text-xs rounded">Inactive</span>}
+                            <div key={m._id} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 bg-white border border-gray-100 rounded-lg flex items-center justify-center p-1 shadow-sm">
+                                        {m.image ? <img src={m.image} alt={m.name} className="w-full h-full object-contain" /> :
+                                            <span className="text-sm font-bold text-gray-400">📱</span>}
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-sm text-gray-900">{m.name}</p>
+                                        {!m.isActive && <span className="inline-block px-2 py-0.5 bg-red-50 text-red-600 text-[10px] font-bold uppercase tracking-wider rounded border border-red-100">Inactive</span>}
+                                    </div>
                                 </div>
-                                <div className="flex gap-1">
+                                <div className="flex gap-2">
                                     <button onClick={() => { setModelForm({ name: m.name, image: m.image || '', displayOrder: m.displayOrder || 0 }); setEditingModel(m._id); setShowModelForm(true); }}
-                                        className="p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded text-xs">✏️</button>
-                                    <button onClick={() => deleteModel(m._id)} className="p-1 hover:bg-red-100 dark:hover:bg-red-900/30 rounded text-xs">🗑️</button>
+                                        className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">
+                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                    </button>
+                                    <button onClick={() => deleteModel(m._id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    </button>
                                 </div>
                             </div>
                         ))}
-                        {selectedBrand && !models.length && <p className="p-6 text-center text-gray-500 text-sm">No models for this brand</p>}
-                        {!selectedBrand && <p className="p-6 text-center text-gray-400 text-sm">← Select a brand to see its models</p>}
+                        {selectedBrand && !models.length && (
+                            <div className="p-12 text-center text-gray-500 italic">
+                                <p className="text-sm">No models added for {selectedBrand.name}</p>
+                            </div>
+                        )}
+                        {!selectedBrand && (
+                            <div className="p-12 text-center text-gray-400">
+                                <svg className="w-12 h-12 mx-auto mb-3 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" /></svg>
+                                <p className="text-sm font-medium">Select a brand from the list to manage its models</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
+
 
             {/* Brand Form Modal */}
             {showBrandForm && (

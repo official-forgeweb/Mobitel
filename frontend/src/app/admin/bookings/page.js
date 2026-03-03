@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from 'react';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001';
 const STATUSES = ['Received', 'Diagnosing', 'Waiting for Parts', 'In Progress', 'Testing', 'Ready for Pickup', 'Completed', 'Cancelled'];
 const PRIORITIES = ['Low', 'Medium', 'High', 'Urgent'];
 
@@ -109,7 +109,7 @@ export default function BookingsPage() {
         <div className="animate-in fade-in">
             <header className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Bookings</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">Bookings</h1>
                     <p className="text-sm text-gray-500">{total} total bookings</p>
                 </div>
             </header>
@@ -118,14 +118,14 @@ export default function BookingsPage() {
             <div className="flex flex-wrap gap-3 mb-5">
                 <input type="text" placeholder="Search by name, phone, token..." value={filters.search}
                     onChange={e => setFilters({ ...filters, search: e.target.value })}
-                    className="border rounded-lg px-3 py-2 text-sm w-64 dark:bg-gray-800 dark:border-gray-600 dark:text-white" />
+                    className="border rounded-lg px-3 py-2 text-sm w-64 bg-white border-gray-300 text-gray-900" />
                 <select value={filters.status} onChange={e => setFilters({ ...filters, status: e.target.value })}
-                    className="border rounded-lg px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                    className="border rounded-lg px-3 py-2 text-sm bg-white border-gray-300 text-gray-900">
                     <option value="">All Statuses</option>
                     {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
                 <select value={filters.priority} onChange={e => setFilters({ ...filters, priority: e.target.value })}
-                    className="border rounded-lg px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                    className="border rounded-lg px-3 py-2 text-sm bg-white border-gray-300 text-gray-900">
                     <option value="">All Priorities</option>
                     {PRIORITIES.map(p => <option key={p} value={p}>{p}</option>)}
                 </select>
@@ -133,11 +133,11 @@ export default function BookingsPage() {
 
             <div className="flex gap-6">
                 {/* Bookings Table */}
-                <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden ${selected ? 'w-1/2 hidden lg:block' : 'w-full'}`}>
+                <div className={`bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden ${selected ? 'w-1/2 hidden lg:block' : 'w-full'}`}>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm">
                             <thead>
-                                <tr className="bg-gray-50 dark:bg-gray-900/50 text-xs uppercase text-gray-500 tracking-wider">
+                                <tr className="bg-gray-50 text-xs uppercase text-gray-500 tracking-wider">
                                     <th className="p-3">Token</th>
                                     <th className="p-3">Customer</th>
                                     <th className="p-3">Device</th>
@@ -147,21 +147,21 @@ export default function BookingsPage() {
                                     <th className="p-3">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                            <tbody className="divide-y divide-gray-100">
                                 {bookings.map(b => (
-                                    <tr key={b._id} className={`hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors ${selected?._id === b._id ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
+                                    <tr key={b._id} className={`hover:bg-gray-50 cursor-pointer transition-colors ${selected?._id === b._id ? 'bg-blue-50' : ''}`}
                                         onClick={() => viewBooking(b._id)}>
                                         <td className="p-3 font-mono text-xs font-bold text-primary">{b.trackingToken}</td>
                                         <td className="p-3">
-                                            <div className="text-gray-900 dark:text-white">{b.customerName}</div>
+                                            <div className="text-gray-900">{b.customerName}</div>
                                             <div className="text-xs text-gray-400">{b.phone}</div>
                                         </td>
-                                        <td className="p-3 text-gray-600 dark:text-gray-300">{b.brand} {b.model}</td>
+                                        <td className="p-3 text-gray-600">{b.brand} {b.model}</td>
                                         <td className="p-3"><span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusColor(b.status)}`}>{b.status}</span></td>
                                         <td className={`p-3 text-xs font-medium ${priorityColor(b.priority)}`}>{b.priority}</td>
                                         <td className="p-3 text-xs text-gray-500">{b.assignedWorker?.name || <span className="italic text-gray-400">Unassigned</span>}</td>
                                         <td className="p-3" onClick={e => e.stopPropagation()}>
-                                            <select className="text-xs border rounded px-1 py-0.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                            <select className="text-xs border rounded px-1 py-0.5 bg-white border-gray-300 text-gray-900"
                                                 value={b.status} onChange={e => updateStatus(b._id, e.target.value)}>
                                                 {STATUSES.map(s => <option key={s}>{s}</option>)}
                                             </select>
@@ -176,13 +176,13 @@ export default function BookingsPage() {
                     </div>
                     {/* Pagination */}
                     {totalPages > 1 && (
-                        <div className="p-3 border-t dark:border-gray-700 flex justify-between items-center text-sm">
+                        <div className="p-3 border-t border-gray-100 flex justify-between items-center text-sm">
                             <span className="text-gray-500">Page {page} of {totalPages}</span>
                             <div className="flex gap-2">
                                 <button disabled={page <= 1} onClick={() => { setPage(page - 1); fetchBookings(page - 1); }}
-                                    className="px-3 py-1 rounded border text-xs disabled:opacity-50 hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700">Prev</button>
+                                    className="px-3 py-1 rounded border border-gray-300 text-xs disabled:opacity-50 hover:bg-gray-50">Prev</button>
                                 <button disabled={page >= totalPages} onClick={() => { setPage(page + 1); fetchBookings(page + 1); }}
-                                    className="px-3 py-1 rounded border text-xs disabled:opacity-50 hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700">Next</button>
+                                    className="px-3 py-1 rounded border border-gray-300 text-xs disabled:opacity-50 hover:bg-gray-50">Next</button>
                             </div>
                         </div>
                     )}
@@ -190,8 +190,8 @@ export default function BookingsPage() {
 
                 {/* Detail Panel */}
                 {selected && (
-                    <div className="w-full lg:w-1/2 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-y-auto max-h-[80vh] sticky top-20">
-                        <div className="p-5 border-b dark:border-gray-700 flex justify-between items-start">
+                    <div className="w-full lg:w-1/2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-y-auto max-h-[80vh] sticky top-20">
+                        <div className="p-5 border-b border-gray-100 flex justify-between items-start">
                             <div>
                                 <p className="text-lg font-bold text-primary font-mono">{selected.trackingToken}</p>
                                 <p className="text-sm text-gray-500">{selected.customerName} • {selected.phone}</p>
@@ -212,14 +212,14 @@ export default function BookingsPage() {
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
                                     <label className="block text-xs font-medium text-gray-500 mb-1">Status</label>
-                                    <select value={selected.status} className="w-full border rounded-lg px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    <select value={selected.status} className="w-full border rounded-lg px-3 py-2 text-sm bg-white border-gray-300 text-gray-900"
                                         onChange={e => updateStatus(selected._id, e.target.value)}>
                                         {STATUSES.map(s => <option key={s}>{s}</option>)}
                                     </select>
                                 </div>
                                 <div>
                                     <label className="block text-xs font-medium text-gray-500 mb-1">Assign Worker</label>
-                                    <select value={selected.assignedWorker?._id || ''} className="w-full border rounded-lg px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    <select value={selected.assignedWorker?._id || ''} className="w-full border rounded-lg px-3 py-2 text-sm bg-white border-gray-300 text-gray-900"
                                         onChange={e => assignWorker(selected._id, e.target.value)}>
                                         <option value="">Unassigned</option>
                                         {workers.map(w => <option key={w._id} value={w._id}>{w.name}</option>)}
@@ -227,7 +227,7 @@ export default function BookingsPage() {
                                 </div>
                                 <div>
                                     <label className="block text-xs font-medium text-gray-500 mb-1">Priority</label>
-                                    <select value={selected.priority} className="w-full border rounded-lg px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    <select value={selected.priority} className="w-full border rounded-lg px-3 py-2 text-sm bg-white border-gray-300 text-gray-900"
                                         onChange={e => updatePriority(selected._id, e.target.value)}>
                                         {PRIORITIES.map(p => <option key={p}>{p}</option>)}
                                     </select>
@@ -244,16 +244,16 @@ export default function BookingsPage() {
 
                             {/* Timeline */}
                             <div>
-                                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Timeline</h3>
+                                <h3 className="text-sm font-semibold text-gray-700 mb-3">Timeline</h3>
                                 <div className="space-y-3">
                                     {updates.map((u, i) => (
                                         <div key={i} className="flex gap-3 text-sm">
                                             <div className="flex flex-col items-center">
                                                 <div className={`w-2.5 h-2.5 rounded-full mt-1.5 ${u.status === 'Completed' ? 'bg-green-500' : u.status === 'Cancelled' ? 'bg-red-500' : 'bg-blue-500'}`}></div>
-                                                {i < updates.length - 1 && <div className="w-px h-full bg-gray-200 dark:bg-gray-600 flex-1 mt-1"></div>}
+                                                {i < updates.length - 1 && <div className="w-px h-full bg-gray-200 flex-1 mt-1"></div>}
                                             </div>
                                             <div className="pb-4">
-                                                <p className="font-medium text-gray-900 dark:text-white">{u.status || 'Note'}</p>
+                                                <p className="font-medium text-gray-900">{u.status || 'Note'}</p>
                                                 <p className="text-gray-500 text-xs">{u.note}</p>
                                                 <p className="text-gray-400 text-xs mt-1">
                                                     {u.updatedBy?.name || 'System'} • {new Date(u.createdAt).toLocaleString()}
@@ -272,17 +272,17 @@ export default function BookingsPage() {
             {/* Note Modal */}
             {showNoteModal && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowNoteModal(false)}>
-                    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md mx-4 shadow-xl" onClick={e => e.stopPropagation()}>
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Add Note</h3>
+                    <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4 shadow-xl" onClick={e => e.stopPropagation()}>
+                        <h3 className="text-lg font-bold text-gray-900 mb-4">Add Note</h3>
                         <textarea rows={4} value={noteData.note} onChange={e => setNoteData({ ...noteData, note: e.target.value })}
-                            className="w-full border rounded-lg p-3 text-sm mb-3 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Enter note..." />
-                        <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 mb-4">
+                            className="w-full border border-gray-300 rounded-lg p-3 text-sm mb-3 bg-white text-gray-900" placeholder="Enter note..." />
+                        <label className="flex items-center gap-2 text-sm text-gray-600 mb-4">
                             <input type="checkbox" checked={noteData.isVisibleToCustomer}
                                 onChange={e => setNoteData({ ...noteData, isVisibleToCustomer: e.target.checked })} className="rounded" />
                             Visible to customer
                         </label>
                         <div className="flex gap-3 justify-end">
-                            <button onClick={() => setShowNoteModal(false)} className="px-4 py-2 text-sm border rounded-lg hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700">Cancel</button>
+                            <button onClick={() => setShowNoteModal(false)} className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
                             <button onClick={addNote} disabled={!noteData.note} className="px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary/90 disabled:opacity-50">Add Note</button>
                         </div>
                     </div>

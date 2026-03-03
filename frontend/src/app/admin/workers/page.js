@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from 'react';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001';
 
 export default function WorkersPage() {
     const [workers, setWorkers] = useState([]);
@@ -121,14 +121,14 @@ export default function WorkersPage() {
             {/* Workers Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {workers.map(w => (
-                    <div key={w._id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 hover:shadow-md transition-shadow">
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow">
                         <div className="flex items-start justify-between mb-3">
                             <div className="flex items-center gap-3">
                                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary text-lg font-bold">
                                     {w.name?.charAt(0)}
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold text-gray-900 dark:text-white">{w.name}</h3>
+                                    <h3 className="font-semibold text-gray-900">{w.name}</h3>
                                     <p className="text-xs text-gray-500">{w.phone}</p>
                                 </div>
                             </div>
@@ -141,13 +141,13 @@ export default function WorkersPage() {
                         {w.specialization?.length > 0 && (
                             <div className="flex flex-wrap gap-1 mb-3">
                                 {w.specialization.map((s, i) => (
-                                    <span key={i} className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-xs text-gray-600 dark:text-gray-300">{s}</span>
+                                    <span key={i} className="px-2 py-0.5 bg-gray-100 rounded text-xs text-gray-600 font-medium">{s}</span>
                                 ))}
                             </div>
                         )}
-                        <div className="flex gap-2 pt-2 border-t dark:border-gray-700">
-                            <button onClick={() => editWorker(w)} className="flex-1 px-3 py-1.5 text-xs border rounded-lg hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700 dark:text-gray-300">Edit</button>
-                            <button onClick={() => deleteWorker(w._id)} className="px-3 py-1.5 text-xs border border-red-200 text-red-600 rounded-lg hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-900/20">Delete</button>
+                        <div className="flex gap-2 pt-2 border-t border-gray-100">
+                            <button onClick={() => editWorker(w)} className="flex-1 px-3 py-1.5 text-xs border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 font-medium">Edit</button>
+                            <button onClick={() => deleteWorker(w._id)} className="px-3 py-1.5 text-xs border border-red-200 text-red-600 rounded-lg hover:bg-red-50 font-medium">Delete</button>
                         </div>
                     </div>
                 ))}

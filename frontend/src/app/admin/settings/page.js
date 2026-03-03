@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from 'react';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001';
 
 export default function SettingsPage() {
     const [settings, setSettings] = useState({});
