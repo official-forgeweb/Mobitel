@@ -12,7 +12,7 @@ export default function CmsEditorPage() {
 
     const fetchCmsData = (slug) => {
         setLoading(true);
-        fetch(`http://localhost:5000/api/cms/${slug}`)
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/cms/${slug}`)
             .then(res => res.json())
             .then(data => {
                 setCmsData(data || {});
@@ -73,7 +73,7 @@ export default function CmsEditorPage() {
     const handleSave = async () => {
         setSaving(true);
         try {
-            const res = await fetch(`http://localhost:5000/api/cms/${pageSlug}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/cms/${pageSlug}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(cmsData),
@@ -168,7 +168,7 @@ export default function CmsEditorPage() {
         formData.append('image', file);
 
         try {
-            const res = await fetch("http://localhost:5000/api/upload", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/upload`, {
                 method: "POST",
                 body: formData
             });

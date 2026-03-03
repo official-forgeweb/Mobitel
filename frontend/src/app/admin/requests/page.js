@@ -9,7 +9,7 @@ export default function RequestsAdminPage() {
 
     const fetchRequests = async () => {
         try {
-            const res = await fetch("http://localhost:5000/api/requests");
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/requests`);
             const data = await res.json();
             setRequests(data);
         } catch (err) {
@@ -26,7 +26,7 @@ export default function RequestsAdminPage() {
     const handleUpdateStatus = async (id, newStatus) => {
         setUpdating(id);
         try {
-            const res = await fetch(`http://localhost:5000/api/requests/${id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/requests/${id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status: newStatus }),

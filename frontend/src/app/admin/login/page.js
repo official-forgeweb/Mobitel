@@ -14,7 +14,7 @@ export default function AdminLogin() {
         const token = localStorage.getItem("adminToken");
         if (token) {
             // Very basic verify attempt
-            fetch("http://localhost:5000/api/admin/verify", {
+            fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/admin/verify`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
                 .then(res => res.json())
@@ -33,7 +33,7 @@ export default function AdminLogin() {
         setError("");
 
         try {
-            const res = await fetch("http://localhost:5000/api/admin/login", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/admin/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password })

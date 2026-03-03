@@ -16,7 +16,7 @@ export default function AboutPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch("http://localhost:5000/api/cms/about")
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/cms/about`)
             .then(res => res.json())
             .then(data => {
                 setCmsData(data);

@@ -1,27 +1,64 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const Booking = require('../models/Booking');
+const Worker = require('../models/Worker');
 
-// Mock stats for the admin dashboard
-router.get('/stats', (req, res) => {
-    res.json({
-        totalUsers: 1234,
-        revenue: '₹45,678',
-        activeRepairs: 56,
-        recentActivity: [
-            { id: 1, action: 'Device repair completed (Order #1234)', user: 'Alice Smith', status: 'Completed', time: '5 hours ago', type: 'success' },
-            { id: 2, action: 'New user sign up', user: 'John Doe', status: 'Info', time: '2 hours ago', type: 'info' }
-        ]
-    });
+// Dashboard stats — now with real data
+router.get('/stats', async (req, res) => {
+    try {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const [totalBookings, activeRepairs, completedToday, recentBookings, workerCount] = await Promise.all([
+            Booking.countDocuments(),
+            Booking.countDocuments({ status: { $in: ['Received', 'Diagnosing', 'Waiting for Parts', 'In Progress', 'Testing'] } }),
+            Booking.countDocuments({ status: 'Completed', updatedAt: { $gte: today } }),
+            Booking.find().sort({ createdAt: -1 }).limit(5).populate('assignedWorker', 'name'),
+            Worker.countDocuments({ status: 'active' })
+        ]);
+
+        const recentActivity = recentBookings.map((b, i) => ({
+            id: i + 1,
+            action: `${b.serviceType} - ${b.brand} ${b.model} (${b.trackingToken || 'N/A'})`,
+            user: b.customerName,
+            status: b.status,
+            time: getTimeAgo(b.createdAt),
+            type: b.status === 'Completed' ? 'success' : b.status === 'Cancelled' ? 'error' : 'info'
+        }));
+
+        res.json({
+            totalUsers: totalBookings,
+            revenue: `${completedToday} completed today`,
+            activeRepairs,
+            workerCount,
+            recentActivity
+        });
+    } catch (err) {
+        console.error('Error fetching admin stats:', err);
+        res.json({
+            totalUsers: 0,
+            revenue: '₹0',
+            activeRepairs: 0,
+            recentActivity: []
+        });
+    }
 });
+
+function getTimeAgo(date) {
+    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+    if (seconds < 60) return 'just now';
+    if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+    return `${Math.floor(seconds / 86400)} days ago`;
+}
 
 // Admin login endpoint
 router.post('/login', (req, res) => {
     const { username, password } = req.body;
 
-    // Compare with credentials stored in .env
     if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
-        const token = jwt.sign({ role: 'admin' }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
+        const token = jwt.sign({ role: 'admin', name: 'Admin' }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
         return res.json({ success: true, token });
     }
 

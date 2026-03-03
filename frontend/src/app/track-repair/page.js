@@ -1,83 +1,50 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-// Demo repair data for simulation
-const demoRepairs = {
-    "MOB-2024-7821": {
-        id: "MOB-2024-7821",
-        brand: "Apple",
-        model: "iPhone 15 Pro Max",
-        issue: "Screen Replacement",
-        serviceType: "Home Service",
-        status: "in-progress",
-        estimatedCost: "₹8,499",
-        date: "Feb 24, 2026",
-        estimatedDelivery: "Feb 27, 2026",
-        technician: "Rahul Sharma",
-        timeline: [
-            { step: "Booking Confirmed", time: "Feb 24, 10:30 AM", done: true, icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
-            { step: "Technician Assigned", time: "Feb 24, 11:00 AM", done: true, icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" },
-            { step: "Device Picked Up", time: "Feb 24, 2:00 PM", done: true, icon: "M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" },
-            { step: "Repair In Progress", time: "Feb 25, 10:00 AM", done: true, icon: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" },
-            { step: "Quality Check", time: "Pending", done: false, icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" },
-            { step: "Delivered", time: "Pending", done: false, icon: "M5 13l4 4L19 7" },
-        ],
-    },
-    "MOB-2024-5493": {
-        id: "MOB-2024-5493",
-        brand: "Samsung",
-        model: "Galaxy S24 Ultra",
-        issue: "Battery Replacement",
-        serviceType: "Visit Shop",
-        status: "completed",
-        estimatedCost: "₹2,199",
-        date: "Feb 20, 2026",
-        estimatedDelivery: "Feb 21, 2026",
-        technician: "Priya Verma",
-        timeline: [
-            { step: "Booking Confirmed", time: "Feb 20, 9:00 AM", done: true, icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
-            { step: "Device Received at Shop", time: "Feb 20, 10:30 AM", done: true, icon: "M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" },
-            { step: "Repair In Progress", time: "Feb 20, 11:00 AM", done: true, icon: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" },
-            { step: "Quality Check", time: "Feb 20, 12:30 PM", done: true, icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" },
-            { step: "Ready for Pickup", time: "Feb 20, 1:00 PM", done: true, icon: "M5 13l4 4L19 7" },
-            { step: "Delivered", time: "Feb 21, 10:00 AM", done: true, icon: "M5 13l4 4L19 7" },
-        ],
-    },
-};
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 const statusConfig = {
-    "in-progress": { label: "In Progress", color: "text-amber-600", bg: "bg-amber-50", border: "border-amber-200", dot: "bg-amber-400" },
-    "completed": { label: "Completed", color: "text-green-600", bg: "bg-green-50", border: "border-green-200", dot: "bg-green-500" },
-    "pending": { label: "Pending", color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-200", dot: "bg-blue-400" },
-    "cancelled": { label: "Cancelled", color: "text-red-600", bg: "bg-red-50", border: "border-red-200", dot: "bg-red-400" },
+    "Received": { label: "Received", color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-200", dot: "bg-blue-400" },
+    "Diagnosing": { label: "Diagnosing", color: "text-indigo-600", bg: "bg-indigo-50", border: "border-indigo-200", dot: "bg-indigo-400" },
+    "Waiting for Parts": { label: "Waiting for Parts", color: "text-yellow-600", bg: "bg-yellow-50", border: "border-yellow-200", dot: "bg-yellow-400" },
+    "In Progress": { label: "In Progress", color: "text-amber-600", bg: "bg-amber-50", border: "border-amber-200", dot: "bg-amber-400" },
+    "Testing": { label: "Testing", color: "text-purple-600", bg: "bg-purple-50", border: "border-purple-200", dot: "bg-purple-500" },
+    "Ready for Pickup": { label: "Ready for Pickup", color: "text-teal-600", bg: "bg-teal-50", border: "border-teal-200", dot: "bg-teal-500" },
+    "Completed": { label: "Completed", color: "text-green-600", bg: "bg-green-50", border: "border-green-200", dot: "bg-green-500" },
+    "Cancelled": { label: "Cancelled", color: "text-red-600", bg: "bg-red-50", border: "border-red-200", dot: "bg-red-400" },
 };
+
+const TIMELINE_STEPS = [
+    { key: "Received", label: "Booking Confirmed", icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
+    { key: "Diagnosing", label: "Diagnosing Device", icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" },
+    { key: "Waiting for Parts", label: "Waiting for Parts", icon: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" },
+    { key: "In Progress", label: "Repair In Progress", icon: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" },
+    { key: "Testing", label: "Quality Check", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" },
+    { key: "Ready for Pickup", label: "Ready for Pickup", icon: "M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" },
+    { key: "Completed", label: "Delivered", icon: "M5 13l4 4L19 7" },
+];
 
 export default function TrackRepairPage() {
     const [trackingId, setTrackingId] = useState("");
     const [repair, setRepair] = useState(null);
+    const [updates, setUpdates] = useState([]);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [cmsData, setCmsData] = useState(null);
-    const [pageLoading, setPageLoading] = useState(true);
 
     useEffect(() => {
-        fetch("http://localhost:5000/api/cms/track-repair")
+        fetch(`${API}/api/cms/track-repair`)
             .then(res => res.json())
-            .then(data => {
-                setCmsData(data);
-                setPageLoading(false);
-            })
-            .catch(err => {
-                console.error("Failed to fetch track-repair cms", err);
-                setPageLoading(false);
-            });
+            .then(data => setCmsData(data))
+            .catch(err => console.error("Failed to fetch CMS", err));
     }, []);
 
-    const handleSearch = (e) => {
+    const handleSearch = async (e) => {
         e.preventDefault();
         setError("");
         setRepair(null);
+        setUpdates([]);
 
         if (!trackingId.trim()) {
             setError("Please enter a tracking ID");
@@ -85,25 +52,42 @@ export default function TrackRepairPage() {
         }
 
         setLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            const found = demoRepairs[trackingId.trim().toUpperCase()];
-            if (found) {
-                setRepair(found);
+        try {
+            const res = await fetch(`${API}/api/bookings/track/${trackingId.trim().toUpperCase()}`);
+            const data = await res.json();
+            if (data.error) {
+                setError(data.error);
             } else {
-                setError("No repair found with this tracking ID. Please check and try again.");
+                setRepair(data.booking);
+                setUpdates(data.updates || []);
             }
-            setLoading(false);
-        }, 1200);
+        } catch (err) {
+            setError("No repair found with this tracking ID. Please check and try again.");
+        }
+        setLoading(false);
     };
 
-    const st = repair ? statusConfig[repair.status] : null;
+    // Build timeline from booking status and updates
+    const buildTimeline = () => {
+        if (!repair) return [];
+        const statusIdx = TIMELINE_STEPS.findIndex(s => s.key === repair.status);
+        
+        return TIMELINE_STEPS.filter(s => s.key !== "Waiting for Parts" || repair.status === "Waiting for Parts" || updates.some(u => u.status === "Waiting for Parts")).map((step, idx) => {
+            const stepIdx = TIMELINE_STEPS.findIndex(s => s.key === step.key);
+            const isDone = stepIdx <= statusIdx;
+            const update = updates.find(u => u.status === step.key);
+            const time = update ? new Date(update.createdAt).toLocaleString() : (isDone ? '' : 'Pending');
+            return { ...step, done: isDone, time, note: update?.note };
+        });
+    };
+
+    const st = repair ? statusConfig[repair.status] || statusConfig["Received"] : null;
+    const timeline = buildTimeline();
 
     return (
         <div className="bg-surface min-h-screen font-sans selection:bg-primary/20">
             {/* Elegant Light Hero Section */}
             <section className="relative bg-white overflow-hidden pt-20 pb-32 border-b border-gray-100">
-                {/* Subtle Decorative Background */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                     <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-primary/5 rounded-full blur-[100px]"></div>
                     <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[80px]"></div>
@@ -127,7 +111,7 @@ export default function TrackRepairPage() {
                         {cmsData?.hero?.subtitle || "Enter your tracking ID below to get real-time, step-by-step updates on your device's journey."}
                     </p>
 
-                    {/* Premium Light Search Box */}
+                    {/* Search Box */}
                     <form onSubmit={handleSearch} className="max-w-2xl mx-auto relative group">
                         <div className="absolute inset-0 bg-primary/5 rounded-3xl blur-[20px] scale-105 opacity-50 group-hover:opacity-100 transition duration-500"></div>
                         <div className="relative flex items-center bg-white border border-gray-200 rounded-3xl p-2.5 shadow-xl shadow-gray-200/50 transition-all duration-300 hover:shadow-2xl hover:border-primary/20 hover:shadow-primary/10">
@@ -140,7 +124,7 @@ export default function TrackRepairPage() {
                                 type="text"
                                 value={trackingId}
                                 onChange={(e) => { setTrackingId(e.target.value); setError(""); }}
-                                placeholder="Tracking ID (e.g. MOB-2024-7821)"
+                                placeholder="Tracking ID (e.g. MOB-2026-XXXX)"
                                 className="w-full py-4 bg-transparent text-dark placeholder-muted focus:outline-none text-lg font-semibold tracking-wide"
                             />
                             <button
@@ -157,7 +141,6 @@ export default function TrackRepairPage() {
                             </button>
                         </div>
 
-                        {/* Error Message */}
                         {error && (
                             <div className="absolute top-full left-0 right-0 mt-4 flex items-center justify-center gap-2 text-red-600 text-sm bg-red-50 border border-red-200 rounded-2xl px-5 py-3 animate-in slide-in-from-top-2 shadow-sm">
                                 <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -166,23 +149,13 @@ export default function TrackRepairPage() {
                                 {error}
                             </div>
                         )}
-
-                        {/* Demo hint */}
-                        <div className="mt-8 flex items-center justify-center gap-3 text-sm font-medium text-muted bg-gray-50/80 inline-flex mx-auto px-4 py-2 rounded-full border border-gray-100">
-                            <span>Demo IDs:</span>
-                            <button type="button" onClick={() => setTrackingId("MOB-2024-7821")} className="text-primary hover:text-primary-dark transition-colors font-bold tracking-wide">MOB-2024-7821</button>
-                            <span className="text-gray-300">|</span>
-                            <button type="button" onClick={() => setTrackingId("MOB-2024-5493")} className="text-primary hover:text-primary-dark transition-colors font-bold tracking-wide">MOB-2024-5493</button>
-                        </div>
                     </form>
                 </div>
-
             </section>
 
             {/* Results Section */}
             <section className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 -mt-10 relative z-20">
                 {!repair && !loading && !error && (
-                    /* Elegant Empty State Grid */
                     <div className="text-center pb-16 pt-10">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                             {(cmsData?.features?.length > 0 ? cmsData.features : [
@@ -196,7 +169,6 @@ export default function TrackRepairPage() {
                                     { bg: "bg-purple-50", text: "text-purple-500", path: "M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" }
                                 ];
                                 const c = colors[idx % colors.length];
-
                                 return (
                                     <div key={idx} className="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 hover:-translate-y-1 transition-transform duration-300">
                                         <div className={`w-16 h-16 ${c.bg} rounded-2xl flex items-center justify-center mx-auto mb-5 ${c.text}`}>
@@ -213,7 +185,6 @@ export default function TrackRepairPage() {
                     </div>
                 )}
 
-                {/* Loading State */}
                 {loading && (
                     <div className="text-center py-20 bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100">
                         <div className="relative w-20 h-20 mx-auto mb-6">
@@ -225,31 +196,29 @@ export default function TrackRepairPage() {
                     </div>
                 )}
 
-                {/* Repair Details */}
                 {repair && (
                     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-500">
                         {/* Status Banner */}
                         <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-3xl border-2 shadow-lg ${st.border} ${st.bg} bg-opacity-50 backdrop-blur-sm`}>
                             <div className="flex items-center gap-5">
                                 <div className="relative flex items-center justify-center">
-                                    <div className={`absolute w-full h-full rounded-full opacity-30 ${st.dot} ${repair.status === 'in-progress' ? 'animate-ping' : ''}`}></div>
+                                    <div className={`absolute w-full h-full rounded-full opacity-30 ${st.dot} ${['In Progress', 'Diagnosing', 'Testing'].includes(repair.status) ? 'animate-ping' : ''}`}></div>
                                     <div className={`w-5 h-5 rounded-full ${st.dot} shadow-md`}></div>
                                 </div>
                                 <div>
                                     <span className={`font-black tracking-tight text-2xl ${st.color}`}>{st.label}</span>
-                                    <p className="text-sm text-muted mt-1 font-medium">Tracking ID: <span className="font-mono font-bold text-dark px-2 py-0.5 bg-white rounded-md shadow-sm ml-1">{repair.id}</span></p>
+                                    <p className="text-sm text-muted mt-1 font-medium">Tracking ID: <span className="font-mono font-bold text-dark px-2 py-0.5 bg-white rounded-md shadow-sm ml-1">{repair.trackingToken}</span></p>
                                 </div>
                             </div>
                             <div className="text-right bg-white px-5 py-3 rounded-2xl shadow-sm border border-gray-100 w-full sm:w-auto">
-                                <p className="text-xs text-muted font-semibold uppercase tracking-wider mb-1">Estimated Delivery</p>
-                                <p className="font-bold text-dark text-lg">{repair.estimatedDelivery}</p>
+                                <p className="text-xs text-muted font-semibold uppercase tracking-wider mb-1">Booked On</p>
+                                <p className="font-bold text-dark text-lg">{new Date(repair.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' })}</p>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                             {/* Left Column: Device & Repair Info */}
                             <div className="lg:col-span-5 space-y-6">
-                                {/* Device Info Card */}
                                 <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/40 overflow-hidden">
                                     <div className="bg-gradient-to-r from-gray-50 to-white px-6 py-4 border-b border-gray-100 flex items-center gap-3">
                                         <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
@@ -269,42 +238,40 @@ export default function TrackRepairPage() {
                                             <span className="font-bold text-dark">{repair.model}</span>
                                         </div>
                                         <div className="flex justify-between items-center bg-gray-50/50 p-3 rounded-xl">
-                                            <span className="text-sm font-medium text-muted">Reported Issue</span>
-                                            <span className="font-bold text-primary bg-primary/10 px-3 py-1 rounded-lg text-sm">{repair.issue}</span>
+                                            <span className="text-sm font-medium text-muted">Service</span>
+                                            <span className="font-bold text-primary bg-primary/10 px-3 py-1 rounded-lg text-sm">{repair.serviceType}</span>
                                         </div>
-                                        <div className="flex justify-between items-center bg-gray-50/50 p-3 rounded-xl">
-                                            <span className="text-sm font-medium text-muted">Service Type</span>
-                                            <span className="font-bold text-dark flex items-center gap-2">
-                                                {repair.serviceType === "Home Service" ? "🏠" : "🏪"}
-                                                {repair.serviceType}
-                                            </span>
-                                        </div>
+                                        {repair.issue && (
+                                            <div className="flex justify-between items-center bg-gray-50/50 p-3 rounded-xl">
+                                                <span className="text-sm font-medium text-muted">Issue</span>
+                                                <span className="font-bold text-dark text-right max-w-[60%]">{repair.issue}</span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
-                                {/* Cost & Date Card */}
+                                {/* Assignment & Cost */}
                                 <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/40 overflow-hidden">
                                     <div className="p-6 space-y-5">
-                                        <div className="flex justify-between items-end border-b border-gray-100 pb-5">
-                                            <div>
-                                                <p className="text-sm font-semibold text-muted mb-1 uppercase tracking-wider">Estimated Cost</p>
-                                                <p className="text-3xl font-black text-dark">{repair.estimatedCost}</p>
+                                        {repair.estimatedCost && (
+                                            <div className="flex justify-between items-end border-b border-gray-100 pb-5">
+                                                <div>
+                                                    <p className="text-sm font-semibold text-muted mb-1 uppercase tracking-wider">Estimated Cost</p>
+                                                    <p className="text-3xl font-black text-dark">₹{repair.estimatedCost}</p>
+                                                </div>
                                             </div>
-                                            <div className="text-right">
-                                                <p className="text-sm font-semibold text-muted mb-1 uppercase tracking-wider">Booked On</p>
-                                                <p className="font-bold text-dark">{repair.date}</p>
+                                        )}
+                                        {repair.assignedWorker && (
+                                            <div className="flex items-center gap-4 bg-blue-50/50 p-4 rounded-2xl border border-blue-100/50">
+                                                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-lg">
+                                                    {repair.assignedWorker.name?.charAt(0) || 'T'}
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs font-semibold text-blue-600 uppercase tracking-widest mb-0.5">Assigned Expert</p>
+                                                    <p className="font-bold text-dark text-lg">{repair.assignedWorker.name}</p>
+                                                </div>
                                             </div>
-                                        </div>
-
-                                        <div className="flex items-center gap-4 bg-blue-50/50 p-4 rounded-2xl border border-blue-100/50">
-                                            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-lg">
-                                                {repair.technician.charAt(0)}
-                                            </div>
-                                            <div>
-                                                <p className="text-xs font-semibold text-blue-600 uppercase tracking-widest mb-0.5">Assigned Expert</p>
-                                                <p className="font-bold text-dark text-lg">{repair.technician}</p>
-                                            </div>
-                                        </div>
+                                        )}
                                     </div>
                                 </div>
 
@@ -318,13 +285,13 @@ export default function TrackRepairPage() {
                                             <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                             </svg>
-                                            Call +91 98765 43210
+                                            Call Support
                                         </a>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Right Column: Premium Glowing Timeline */}
+                            {/* Right Column: Timeline */}
                             <div className="lg:col-span-7">
                                 <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/40 p-6 sm:p-10 h-full">
                                     <h3 className="font-bold text-dark text-xl mb-10 flex items-center gap-3">
@@ -337,27 +304,23 @@ export default function TrackRepairPage() {
                                     </h3>
 
                                     <div className="relative pl-4 sm:pl-8">
-                                        {repair.timeline.map((item, idx) => {
-                                            const isLast = idx === repair.timeline.length - 1;
-                                            const isActive = item.done && (!repair.timeline[idx + 1]?.done);
+                                        {timeline.map((item, idx) => {
+                                            const isLast = idx === timeline.length - 1;
+                                            const isActive = item.done && (!timeline[idx + 1]?.done);
                                             const isFuture = !item.done;
 
                                             return (
                                                 <div key={idx} className="flex gap-6 sm:gap-8 pb-10 last:pb-0 relative group">
-                                                    {/* Vertical Glowing Line */}
                                                     {!isLast && (
                                                         <div className={`absolute left-[19px] sm:left-[27px] top-12 bottom-0 w-1 rounded-full ${isFuture ? 'bg-gray-100' : 'bg-gradient-to-b from-primary to-primary/50 opacity-50'}`}></div>
                                                     )}
-
-                                                    {/* Glow effect for active line */}
-                                                    {!isLast && item.done && repair.timeline[idx + 1]?.done && (
+                                                    {!isLast && item.done && timeline[idx + 1]?.done && (
                                                         <div className="absolute left-[19px] sm:left-[27px] top-12 bottom-0 w-1 rounded-full bg-primary shadow-[0_0_10px_rgba(128,0,0,0.5)]"></div>
                                                     )}
                                                     {!isLast && isActive && (
                                                         <div className="absolute left-[19px] sm:left-[27px] top-12 bottom-[50%] w-1 rounded-full bg-gradient-to-b from-primary to-transparent"></div>
                                                     )}
 
-                                                    {/* Circle Icon */}
                                                     <div className="relative shrink-0 z-10 w-10 h-10 sm:w-14 sm:h-14 mt-1">
                                                         {isActive && (
                                                             <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping scale-150"></div>
@@ -374,7 +337,6 @@ export default function TrackRepairPage() {
                                                         </div>
                                                     </div>
 
-                                                    {/* Content */}
                                                     <div className={`flex-1 pt-1 sm:pt-2 transition-all duration-300 ${isFuture ? 'opacity-40 grayscale' : 'opacity-100'}`}>
                                                         <div className={`p-4 sm:p-5 rounded-2xl border transition-all ${isActive
                                                             ? 'bg-primary/5 border-primary/20 shadow-lg shadow-primary/5'
@@ -382,7 +344,7 @@ export default function TrackRepairPage() {
                                                             }`}>
                                                             <div className="flex items-center justify-between flex-wrap gap-2 mb-1">
                                                                 <h4 className={`font-bold text-base sm:text-lg ${isFuture ? 'text-gray-500' : 'text-dark'}`}>
-                                                                    {item.step}
+                                                                    {item.label}
                                                                 </h4>
                                                                 {isActive && (
                                                                     <span className="text-xs font-bold text-white bg-primary px-3 py-1 rounded-full shadow-sm">
@@ -393,12 +355,30 @@ export default function TrackRepairPage() {
                                                             <p className={`text-sm ${isActive ? 'text-primary/70 font-medium' : 'text-muted'}`}>
                                                                 {item.time}
                                                             </p>
+                                                            {item.note && (
+                                                                <p className="text-xs text-gray-500 mt-1 italic">{item.note}</p>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>
                                             );
                                         })}
                                     </div>
+
+                                    {/* Customer-visible notes from updates */}
+                                    {updates.filter(u => u.isVisibleToCustomer && u.note).length > 0 && (
+                                        <div className="mt-8 pt-6 border-t border-gray-100">
+                                            <h4 className="font-semibold text-dark mb-3 text-sm">Updates from Technician</h4>
+                                            <div className="space-y-2">
+                                                {updates.filter(u => u.isVisibleToCustomer && u.note).map((u, i) => (
+                                                    <div key={i} className="bg-gray-50 rounded-xl p-3 text-sm">
+                                                        <p className="text-dark">{u.note}</p>
+                                                        <p className="text-xs text-muted mt-1">{new Date(u.createdAt).toLocaleString()}</p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>

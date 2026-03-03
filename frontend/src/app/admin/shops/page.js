@@ -17,7 +17,7 @@ export default function ShopsAdminPage() {
 
     const fetchShops = async () => {
         try {
-            const res = await fetch("http://localhost:5000/api/shops");
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/shops`);
             const data = await res.json();
             setShops(data);
         } catch (err) {
@@ -35,7 +35,7 @@ export default function ShopsAdminPage() {
         e.preventDefault();
         setAdding(true);
         try {
-            const res = await fetch("http://localhost:5000/api/shops", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/shops`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
@@ -59,7 +59,7 @@ export default function ShopsAdminPage() {
         if (!confirm("Are you sure you want to delete this shop?")) return;
         setDeleting(id);
         try {
-            const res = await fetch(`http://localhost:5000/api/shops/${id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/shops/${id}`, {
                 method: "DELETE",
             });
 

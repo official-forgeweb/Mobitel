@@ -14,7 +14,7 @@ export default function DeliveryPartnersPage() {
 
     const fetchPartners = async () => {
         try {
-            const res = await fetch("http://localhost:5000/api/partners");
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/partners`);
             const data = await res.json();
             setPartners(data);
         } catch (err) {
@@ -34,7 +34,7 @@ export default function DeliveryPartnersPage() {
         setErrorMsg("");
 
         try {
-            const res = await fetch("http://localhost:5000/api/partners", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/partners`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),

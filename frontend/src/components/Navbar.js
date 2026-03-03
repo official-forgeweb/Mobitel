@@ -44,7 +44,7 @@ export default function Navbar() {
     navigator.geolocation.getCurrentPosition(
       async ({ coords: { latitude, longitude } }) => {
         try {
-          const res = await fetch(`http://localhost:5000/api/location?lat=${latitude}&lon=${longitude}`);
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/location?lat=${latitude}&lon=${longitude}`);
           const data = await res.json();
           if (data && data.display_name) {
             const parts = data.display_name.split(", ").slice(0, 3);
