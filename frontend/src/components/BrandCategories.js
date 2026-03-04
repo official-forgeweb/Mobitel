@@ -155,7 +155,7 @@ export default function BrandCategories({ data }) {
 
       {/* Brand Grid */}
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
-        {brandsList.map((brand) => (
+        {(brandsList && Array.isArray(brandsList) ? brandsList : []).map((brand) => (
           <button key={brand._id || brand.name} onClick={() => setSelectedBrand(brand)} className="group flex flex-col items-center gap-3 p-4 bg-white rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 outline-none w-full cursor-pointer">
             <div className="w-16 h-16 flex items-center justify-center rounded-xl bg-surface group-hover:bg-primary/5 transition-colors">
               <BrandLogo brand={brand} />
@@ -213,7 +213,7 @@ export default function BrandCategories({ data }) {
               {/* ── STEP 1: Model Selection ── */}
               {!selectedModel && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
-                  {modelsList.map((model, idx) => (
+                  {(modelsList && Array.isArray(modelsList) ? modelsList : []).map((model, idx) => (
                     <button key={model._id || idx} onClick={() => setSelectedModel(model)} className="flex flex-col items-center justify-start p-4 rounded-xl border border-gray-100 bg-white hover:border-primary/40 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 group gap-3">
                       <div className="w-full aspect-[3/4] max-h-24 sm:max-h-32 bg-surface rounded-lg flex items-center justify-center mb-1 group-hover:bg-white transition-colors border border-transparent group-hover:border-primary/10 overflow-hidden">
                         <img src={model.image || 'https://via.placeholder.com/150'} alt={model.name} className="w-full h-full object-contain mix-blend-multiply drop-shadow-sm group-hover:scale-105 transition-transform duration-300" />
@@ -237,7 +237,7 @@ export default function BrandCategories({ data }) {
               {/* ── STEP 2: Issue Selection ── */}
               {selectedModel && !selectedIssue && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  {repairIssuesList.map((issue) => (
+                  {(repairIssuesList && Array.isArray(repairIssuesList) ? repairIssuesList : []).map((issue) => (
                     <button key={issue._id || issue.name} onClick={() => setSelectedIssue(issue)} className="flex flex-col text-left p-5 rounded-2xl border border-gray-100 bg-white hover:border-primary/40 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 group">
                       <div className="flex items-start justify-between w-full mb-3">
                         <div className="w-10 h-10 rounded-full bg-surface flex items-center justify-center group-hover:bg-white group-hover:text-primary text-gray-500 transition-colors shadow-sm">

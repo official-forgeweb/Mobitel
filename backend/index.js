@@ -26,13 +26,13 @@ const reportsRoute = require('./routes/reportsRoute');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const allowedOrigins = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : ['http://localhost:3000', 'http://127.0.0.1:3000'];
+const allowedOrigins = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',').map(url => url.trim()) : ['http://localhost:3000', 'http://127.0.0.1:3000'];
 app.use(cors({
     origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
+        if (!origin || allowedOrigins.some(o => origin.startsWith(o))) {
             callback(null, true);
         } else {
-            callback(new Error('Not allowed by CORS'));
+            callback(new Error('CORS_ERROR'));
         }
     },
     credentials: true,
@@ -63,6 +63,15 @@ app.use('/api/reports', reportsRoute);
 // Basic route
 app.get('/', (req, res) => {
     res.send('Mobitel Backend API is running');
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    if (err.message === 'CORS_ERROR') {
+        return res.status(403).json({ error: 'Origin not allowed by CORS' });
+    }
+    console.error('Server error:', err);
+    res.status(500).json({ error: 'Internal Server Error', details: err.message });
 });
 
 // MongoDB Connection
