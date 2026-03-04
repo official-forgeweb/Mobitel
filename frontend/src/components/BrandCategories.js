@@ -43,6 +43,7 @@ export default function BrandCategories({ data }) {
 
   const [brandsList, setBrandsList] = useState([]);
   const [modelsList, setModelsList] = useState([]);
+  const [isLoadingModels, setIsLoadingModels] = useState(false);
   const [repairIssuesList, setRepairIssuesList] = useState([]);
 
   useEffect(() => {
@@ -61,7 +62,17 @@ export default function BrandCategories({ data }) {
   useEffect(() => {
     if (selectedBrand) {
       if (selectedBrand._id) {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/device-models?brandId=${selectedBrand._id}&active=true`).then(r => r.json()).then(setModelsList).catch(console.error);
+        setIsLoadingModels(true);
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/device-models?brandId=${selectedBrand._id}&active=true`)
+          .then(r => r.json())
+          .then(data => {
+            setModelsList(data);
+            setIsLoadingModels(false);
+          })
+          .catch(err => {
+            console.error(err);
+            setIsLoadingModels(false);
+          });
       } else {
         setModelsList([]);
       }
@@ -212,11 +223,17 @@ export default function BrandCategories({ data }) {
 
               {/* ── STEP 1: Model Selection ── */}
               {!selectedModel && (
+                isLoadingModels ? (
+                  <div className="flex flex-col items-center justify-center py-24 w-full">
+                    <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <p className="mt-4 text-sm font-medium text-muted animate-pulse">Loading {selectedBrand?.name} models...</p>
+                  </div>
+                ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
                   {(modelsList && Array.isArray(modelsList) ? modelsList : []).map((model, idx) => (
                     <button key={model._id || idx} onClick={() => setSelectedModel(model)} className="flex flex-col items-center justify-start p-4 rounded-xl border border-gray-100 bg-white hover:border-primary/40 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 group gap-3">
                       <div className="w-full aspect-[3/4] max-h-24 sm:max-h-32 bg-surface rounded-lg flex items-center justify-center mb-1 group-hover:bg-white transition-colors border border-transparent group-hover:border-primary/10 overflow-hidden">
-                        <img src={model.image || 'https://via.placeholder.com/150'} alt={model.name} className="w-full h-full object-contain mix-blend-multiply drop-shadow-sm group-hover:scale-105 transition-transform duration-300" />
+                        <img src={model.image || 'https://via.placeholder.com/150'} alt={model.name} loading="lazy" className="w-full h-full object-contain mix-blend-multiply drop-shadow-sm group-hover:scale-105 transition-transform duration-300" />
                       </div>
                       <span className="text-xs sm:text-sm font-medium text-dark text-center line-clamp-2 w-full group-hover:text-primary transition-colors">{model.name}</span>
                     </button>
@@ -232,6 +249,7 @@ export default function BrandCategories({ data }) {
                     <span className="text-xs sm:text-sm font-medium text-dark text-center line-clamp-2 w-full group-hover:text-primary transition-colors">Other Model</span>
                   </button>
                 </div>
+                )
               )}
 
               {/* ── STEP 2: Issue Selection ── */}
