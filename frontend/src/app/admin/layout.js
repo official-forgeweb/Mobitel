@@ -91,11 +91,13 @@ export default function AdminLayout({ children }) {
             </div>
 
             {/* Sidebar */}
-            <aside className={`${mobileMenuOpen ? 'block' : 'hidden'} md:block w-full md:w-64 bg-white shadow-lg flex-col md:flex md:sticky md:top-0 md:h-screen overflow-y-auto z-40 border-r border-gray-100`}>
-                <div className="hidden md:block p-6 text-xl font-bold border-b border-gray-100 text-gray-900">
-                    Mobitel <span className="text-primary text-sm bg-primary/10 px-2 py-0.5 rounded ml-1 align-middle">Admin</span>
+            <aside className={`${mobileMenuOpen ? 'block' : 'hidden'} md:flex w-full md:w-72 bg-gradient-to-b from-[#4a0000] to-[#2a0000] text-white shadow-2xl flex-col md:sticky md:top-0 md:h-screen overflow-y-auto z-40 relative`}>
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 pointer-events-none"></div>
+                <div className="md:block p-8 text-2xl font-black tracking-tight border-b border-white/10 z-10 relative flex items-center justify-between">
+                    <div>Mobi<span className="text-[#F8D272]">tel</span></div>
+                    <span className="text-[10px] uppercase tracking-widest bg-white/10 px-2 py-1 rounded-full font-bold">Admin</span>
                 </div>
-                <nav className="p-4 space-y-1 flex-1">
+                <nav className="p-5 space-y-2 flex-1 z-10 relative">
                     {navItems.map(item => {
                         const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
                         return (
@@ -103,12 +105,12 @@ export default function AdminLayout({ children }) {
                                 key={item.href}
                                 href={item.href}
                                 onClick={() => setMobileMenuOpen(false)}
-                                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${isActive
-                                    ? 'bg-primary text-white shadow-md shadow-primary/20'
-                                    : 'text-gray-600 hover:bg-gray-50 hover:text-primary'
+                                className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl text-sm font-semibold transition-all duration-300 ${isActive
+                                    ? 'bg-white/10 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur-md border border-white/20 translate-x-1'
+                                    : 'text-white/60 hover:bg-white/5 hover:text-white hover:translate-x-1 border border-transparent'
                                 }`}
                             >
-                                <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={isActive ? "2" : "1.5"}>
+                                <svg className={`w-5 h-5 shrink-0 transition-colors ${isActive ? 'text-[#F8D272]' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={isActive ? "2" : "1.5"}>
                                     <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
                                 </svg>
                                 {item.label}
@@ -116,34 +118,17 @@ export default function AdminLayout({ children }) {
                         );
                     })}
 
-                    <div className="pt-4 mt-4 border-t border-gray-100">
-                        <p className="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Legacy Content</p>
-                        {oldNavItems.map(item => (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                onClick={() => setMobileMenuOpen(false)}
-                                className={`block px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${pathname === item.href
-                                    ? 'bg-gray-100 text-gray-900'
-                                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
-                                }`}
-                            >
-                                {item.label}
-                            </Link>
-                        ))}
-                    </div>
-
-                    <div className="pt-4 mt-4 border-t border-gray-100">
-                        <Link href="/" className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-500 hover:text-primary hover:bg-primary/5 rounded-xl transition-all">
+                    <div className="pt-6 mt-6 border-t border-white/10">
+                        <Link href="/" className="flex items-center gap-3 px-5 py-3 text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 rounded-2xl transition-all border border-transparent">
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-                            Back to Main Site
+                            Client Website
                         </Link>
                     </div>
                 </nav>
-                <div className="p-4 border-t border-gray-100 mt-auto bg-gray-50/50">
-                    <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors font-semibold text-sm">
+                <div className="p-5 border-t border-white/10 mt-auto z-10 relative bg-black/20 backdrop-blur-sm">
+                    <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-red-200 hover:bg-red-500/20 hover:text-white hover:border-red-500/30 border border-transparent transition-all font-bold text-sm">
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-                        Logout
+                        Secure Logout
                     </button>
                 </div>
             </aside>

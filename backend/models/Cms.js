@@ -6,8 +6,9 @@ const CmsSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Prevent mongoose from over-writing mixed-type changes
-CmsSchema.pre('save', function () {
+CmsSchema.pre('save', function (next) {
     this.markModified('data');
+    next();
 });
 
 module.exports = mongoose.model('Cms', CmsSchema);
