@@ -193,18 +193,18 @@ export default function BrandsPage() {
             {/* Brand Form Modal */}
             {showBrandForm && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowBrandForm(false)}>
-                    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md mx-4 shadow-xl" onClick={e => e.stopPropagation()}>
-                        <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">{editingBrand ? 'Edit' : 'Add'} Brand</h3>
+                    <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4 shadow-xl" onClick={e => e.stopPropagation()}>
+                        <h3 className="text-lg font-bold mb-4 text-gray-900">{editingBrand ? 'Edit' : 'Add'} Brand</h3>
                         <form onSubmit={saveBrand} className="space-y-3">
                             <input required placeholder="Brand name *" value={brandForm.name} onChange={e => setBrandForm({ ...brandForm, name: e.target.value })}
-                                className="w-full border rounded-lg px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                className="w-full border rounded-lg px-3 py-2 text-sm" />
                             <input placeholder="Logo URL" value={brandForm.logo} onChange={e => setBrandForm({ ...brandForm, logo: e.target.value })}
-                                className="w-full border rounded-lg px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                className="w-full border rounded-lg px-3 py-2 text-sm" />
                             <input type="number" placeholder="Display order" value={brandForm.displayOrder}
                                 onChange={e => setBrandForm({ ...brandForm, displayOrder: parseInt(e.target.value) || 0 })}
-                                className="w-full border rounded-lg px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                className="w-full border rounded-lg px-3 py-2 text-sm" />
                             <div className="flex justify-end gap-3 pt-2">
-                                <button type="button" onClick={() => setShowBrandForm(false)} className="px-4 py-2 text-sm border rounded-lg dark:border-gray-600">Cancel</button>
+                                <button type="button" onClick={() => setShowBrandForm(false)} className="px-4 py-2 text-sm border rounded-lg hover:bg-gray-50">Cancel</button>
                                 <button type="submit" className="px-4 py-2 text-sm bg-primary text-white rounded-lg">Save</button>
                             </div>
                         </form>
@@ -215,18 +215,18 @@ export default function BrandsPage() {
             {/* Model Form Modal */}
             {showModelForm && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowModelForm(false)}>
-                    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md mx-4 shadow-xl" onClick={e => e.stopPropagation()}>
-                        <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">{editingModel ? 'Edit' : 'Add'} Model for {selectedBrand?.name}</h3>
+                    <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4 shadow-xl" onClick={e => e.stopPropagation()}>
+                        <h3 className="text-lg font-bold mb-4 text-gray-900">{editingModel ? 'Edit' : 'Add'} Model for {selectedBrand?.name}</h3>
                         <form onSubmit={saveModel} className="space-y-3">
                             <input required placeholder="Model name *" value={modelForm.name} onChange={e => setModelForm({ ...modelForm, name: e.target.value })}
-                                className="w-full border rounded-lg px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                className="w-full border rounded-lg px-3 py-2 text-sm" />
                             <input placeholder="Image URL" value={modelForm.image} onChange={e => setModelForm({ ...modelForm, image: e.target.value })}
-                                className="w-full border rounded-lg px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                className="w-full border rounded-lg px-3 py-2 text-sm" />
                             <input type="number" placeholder="Display order" value={modelForm.displayOrder}
                                 onChange={e => setModelForm({ ...modelForm, displayOrder: parseInt(e.target.value) || 0 })}
-                                className="w-full border rounded-lg px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                className="w-full border rounded-lg px-3 py-2 text-sm" />
                             <div className="flex justify-end gap-3 pt-2">
-                                <button type="button" onClick={() => setShowModelForm(false)} className="px-4 py-2 text-sm border rounded-lg dark:border-gray-600">Cancel</button>
+                                <button type="button" onClick={() => setShowModelForm(false)} className="px-4 py-2 text-sm border rounded-lg hover:bg-gray-50">Cancel</button>
                                 <button type="submit" className="px-4 py-2 text-sm bg-primary text-white rounded-lg">Save</button>
                             </div>
                         </form>

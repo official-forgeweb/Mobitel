@@ -48,7 +48,7 @@ export default function WorkerDashboard() {
     return (
         <div className="animate-in fade-in">
             <header className="mb-6">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">My Jobs</h1>
+                <h1 className="text-2xl font-bold text-gray-900 ">My Jobs</h1>
                 <p className="text-sm text-gray-500">{jobs.length} active assignment{jobs.length !== 1 ? 's' : ''}</p>
             </header>
 
@@ -59,7 +59,7 @@ export default function WorkerDashboard() {
                     { label: 'In Progress', count: jobs.filter(j => ['Diagnosing', 'In Progress', 'Testing', 'Waiting for Parts'].includes(j.status)).length, color: 'text-orange-600' },
                     { label: 'Ready', count: jobs.filter(j => j.status === 'Ready for Pickup').length, color: 'text-green-600' },
                 ].map((stat, i) => (
-                    <div key={i} className="bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border dark:border-gray-700 text-center">
+                    <div key={i} className="bg-white rounded-xl p-3 shadow-sm border text-center">
                         <p className={`text-2xl font-bold ${stat.color}`}>{stat.count}</p>
                         <p className="text-xs text-gray-500">{stat.label}</p>
                     </div>
@@ -89,10 +89,10 @@ export default function WorkerDashboard() {
 
             {!loading && !jobs.length && (
                 <div className="text-center py-16">
-                    <div className="w-16 h-16 bg-green-50 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg className="w-8 h-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     </div>
-                    <p className="text-lg font-medium text-gray-900 dark:text-white">All clear!</p>
+                    <p className="text-lg font-medium text-gray-900 ">All clear!</p>
                     <p className="text-sm text-gray-500">No active jobs assigned to you</p>
                 </div>
             )}
@@ -116,23 +116,23 @@ function JobCard({ job, statusColor, priorityBadge, onStatusChange, statuses }) 
     };
 
     return (
-        <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 border-l-4 ${statusColor(job.status)} overflow-hidden transition-all`}>
+        <div className={`bg-white rounded-xl shadow-sm border border-l-4 ${statusColor(job.status)} overflow-hidden transition-all`}>
             <div className="p-4 cursor-pointer" onClick={() => setExpanded(!expanded)}>
                 <div className="flex justify-between items-start mb-2">
                     <div>
-                        <p className="font-semibold text-gray-900 dark:text-white">{job.brand} {job.model}</p>
+                        <p className="font-semibold text-gray-900 ">{job.brand} {job.model}</p>
                         <p className="text-sm text-gray-500">{job.serviceType}</p>
                     </div>
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${priorityBadge(job.priority)}`}>{job.priority}</span>
                 </div>
                 <div className="flex items-center justify-between text-xs text-gray-400">
                     <span className="font-mono">{job.trackingToken}</span>
-                    <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 rounded text-gray-600 dark:text-gray-300 font-medium">{job.status}</span>
+                    <span className="px-2 py-0.5 bg-gray-100 rounded text-gray-600 font-medium">{job.status}</span>
                 </div>
             </div>
 
             {expanded && (
-                <div className="px-4 pb-4 border-t dark:border-gray-700 pt-3 space-y-3 animate-in slide-in-from-top-2">
+                <div className="px-4 pb-4 border-t pt-3 space-y-3 animate-in slide-in-from-top-2">
                     <div className="grid grid-cols-2 gap-2 text-sm">
                         <div><span className="text-xs text-gray-400 block">Customer</span>{job.customerName}</div>
                         <div><span className="text-xs text-gray-400 block">Phone</span>
@@ -151,7 +151,7 @@ function JobCard({ job, statusColor, priorityBadge, onStatusChange, statuses }) 
                         )}
                         <select value={job.status} onChange={e => onStatusChange(job._id, e.target.value)}
                             onClick={e => e.stopPropagation()}
-                            className="border rounded-xl px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            className="border rounded-xl px-3 py-2 text-sm ">
                             {statuses.map(s => <option key={s}>{s}</option>)}
                         </select>
                     </div>

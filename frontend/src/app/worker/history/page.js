@@ -30,16 +30,16 @@ export default function WorkerHistoryPage() {
     return (
         <div className="animate-in fade-in">
             <header className="mb-6">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Job History</h1>
+                <h1 className="text-2xl font-bold text-gray-900 ">Job History</h1>
                 <p className="text-sm text-gray-500">{total} completed/cancelled jobs</p>
             </header>
 
             <div className="space-y-3">
                 {jobs.map(job => (
-                    <div key={job._id} className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-4 border-l-4 ${job.status === 'Completed' ? 'border-l-green-500' : 'border-l-red-500'}`}>
+                    <div key={job._id} className={`bg-white rounded-xl shadow-sm border p-4 border-l-4 ${job.status === 'Completed' ? 'border-l-green-500' : 'border-l-red-500'}`}>
                         <div className="flex justify-between items-start mb-2">
                             <div>
-                                <p className="font-semibold text-gray-900 dark:text-white">{job.brand} {job.model}</p>
+                                <p className="font-semibold text-gray-900 ">{job.brand} {job.model}</p>
                                 <p className="text-sm text-gray-500">{job.serviceType}</p>
                             </div>
                             <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${job.status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{job.status}</span>
@@ -64,8 +64,8 @@ export default function WorkerHistoryPage() {
                 <div className="flex justify-between items-center mt-6 text-sm">
                     <span className="text-gray-500">Page {page} of {totalPages}</span>
                     <div className="flex gap-2">
-                        <button disabled={page <= 1} onClick={() => fetchHistory(page - 1)} className="px-4 py-2 border rounded-lg text-sm disabled:opacity-50 dark:border-gray-600 dark:text-gray-300">Prev</button>
-                        <button disabled={page >= totalPages} onClick={() => fetchHistory(page + 1)} className="px-4 py-2 border rounded-lg text-sm disabled:opacity-50 dark:border-gray-600 dark:text-gray-300">Next</button>
+                        <button disabled={page <= 1} onClick={() => fetchHistory(page - 1)} className="px-4 py-2 border rounded-lg text-sm disabled:opacity-50 ">Prev</button>
+                        <button disabled={page >= totalPages} onClick={() => fetchHistory(page + 1)} className="px-4 py-2 border rounded-lg text-sm disabled:opacity-50 ">Next</button>
                     </div>
                 </div>
             )}

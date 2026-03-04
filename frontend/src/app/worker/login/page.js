@@ -39,7 +39,7 @@ export default function WorkerLoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-4">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
             <div className="w-full max-w-sm">
                 <div className="text-center mb-8">
                     <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -48,29 +48,29 @@ export default function WorkerLoginPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                     </div>
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Mobitel Worker</h1>
+                    <h1 className="text-2xl font-bold text-gray-900 ">Mobitel Worker</h1>
                     <p className="text-sm text-gray-500 mt-1">Sign in to manage your repair jobs</p>
                 </div>
 
-                <form onSubmit={handleLogin} className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 space-y-4 border border-gray-100 dark:border-gray-700">
+                <form onSubmit={handleLogin} className="bg-white rounded-2xl shadow-lg p-6 space-y-4 border border-gray-100 ">
                     {error && (
-                        <div className="p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg text-sm">
+                        <div className="p-3 bg-red-50 text-red-600 rounded-lg text-sm">
                             {error}
                         </div>
                     )}
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone Number</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
                         <input type="tel" required value={phone} onChange={e => setPhone(e.target.value)}
                             placeholder="Enter your phone number"
-                            className="w-full border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-sm bg-gray-50 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all" />
+                            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all" />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
                         <input type="password" required value={password} onChange={e => setPassword(e.target.value)}
                             placeholder="Enter your password"
-                            className="w-full border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-sm bg-gray-50 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all" />
+                            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all" />
                     </div>
 
                     <button type="submit" disabled={loading}

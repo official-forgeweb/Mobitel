@@ -79,7 +79,7 @@ export default function WorkersPage() {
         <div className="animate-in fade-in">
             <header className="mb-6 flex justify-between items-center">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Workers</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">Workers</h1>
                     <p className="text-sm text-gray-500">{workers.length} technicians</p>
                 </div>
                 <button onClick={() => { resetForm(); setShowForm(true); }}
@@ -92,25 +92,25 @@ export default function WorkersPage() {
             {/* Worker Form Modal */}
             {showForm && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={resetForm}>
-                    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-lg mx-4 shadow-xl" onClick={e => e.stopPropagation()}>
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">{editingId ? 'Edit' : 'Add'} Worker</h3>
+                    <div className="bg-white rounded-xl p-6 w-full max-w-lg mx-4 shadow-xl" onClick={e => e.stopPropagation()}>
+                        <h3 className="text-lg font-bold text-gray-900 mb-4">{editingId ? 'Edit' : 'Add'} Worker</h3>
                         <form onSubmit={handleSubmit} className="space-y-3">
                             <div className="grid grid-cols-2 gap-3">
                                 <input required placeholder="Name *" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                                    className="col-span-2 border rounded-lg px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                    className="col-span-2 border rounded-lg px-3 py-2 text-sm" />
                                 <input required placeholder="Phone *" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}
-                                    className="border rounded-lg px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                    className="border rounded-lg px-3 py-2 text-sm" />
                                 <input placeholder="Email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
-                                    className="border rounded-lg px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                    className="border rounded-lg px-3 py-2 text-sm" />
                                 <input type="password" placeholder={editingId ? 'New password (leave blank to keep)' : 'Password *'} required={!editingId}
                                     value={form.password} onChange={e => setForm({ ...form, password: e.target.value })}
-                                    className="col-span-2 border rounded-lg px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                    className="col-span-2 border rounded-lg px-3 py-2 text-sm" />
                                 <input placeholder="Specializations (comma-separated)" value={form.specialization}
                                     onChange={e => setForm({ ...form, specialization: e.target.value })}
-                                    className="col-span-2 border rounded-lg px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                    className="col-span-2 border rounded-lg px-3 py-2 text-sm" />
                             </div>
                             <div className="flex gap-3 justify-end pt-2">
-                                <button type="button" onClick={resetForm} className="px-4 py-2 text-sm border rounded-lg hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700">Cancel</button>
+                                <button type="button" onClick={resetForm} className="px-4 py-2 text-sm border rounded-lg hover:bg-gray-50">Cancel</button>
                                 <button type="submit" className="px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary/90">{editingId ? 'Update' : 'Add'} Worker</button>
                             </div>
                         </form>

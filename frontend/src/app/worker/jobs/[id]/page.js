@@ -68,10 +68,10 @@ export default function JobDetailPage() {
             </button>
 
             {/* Header */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 mb-4">
+            <div className="bg-white rounded-xl shadow-sm border p-5 mb-4">
                 <div className="flex justify-between items-start mb-3">
                     <div>
-                        <h1 className="text-xl font-bold text-gray-900 dark:text-white">{booking.brand} {booking.model}</h1>
+                        <h1 className="text-xl font-bold text-gray-900 ">{booking.brand} {booking.model}</h1>
                         <p className="text-sm text-gray-500">{booking.serviceType}</p>
                     </div>
                     <span className="font-mono text-sm font-bold text-primary bg-primary/10 px-3 py-1 rounded-lg">{booking.trackingToken}</span>
@@ -85,13 +85,13 @@ export default function JobDetailPage() {
                         return (
                             <div key={s} className="flex items-center">
                                 <div className={`flex flex-col items-center min-w-[60px]`}>
-                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${isDone ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-400'} ${isCurrent ? 'ring-2 ring-primary/30 ring-offset-2' : ''}`}>
+                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${isDone ? 'bg-primary text-white' : 'bg-gray-200 text-gray-400'} ${isCurrent ? 'ring-2 ring-primary/30 ring-offset-2' : ''}`}>
                                         {isDone ? '✓' : i + 1}
                                     </div>
                                     <span className={`text-[10px] mt-1 text-center leading-tight ${isCurrent ? 'font-bold text-primary' : 'text-gray-400'}`}>{s}</span>
                                 </div>
                                 {i < STATUSES.length - 1 && (
-                                    <div className={`w-6 h-0.5 ${isDone ? 'bg-primary' : 'bg-gray-200 dark:bg-gray-600'} mt-[-12px]`}></div>
+                                    <div className={`w-6 h-0.5 ${isDone ? 'bg-primary' : 'bg-gray-200 '} mt-[-12px]`}></div>
                                 )}
                             </div>
                         );
@@ -100,8 +100,8 @@ export default function JobDetailPage() {
             </div>
 
             {/* Customer Info */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 mb-4">
-                <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Customer Details</h2>
+            <div className="bg-white rounded-xl shadow-sm border p-5 mb-4">
+                <h2 className="text-sm font-semibold text-gray-700 mb-3">Customer Details</h2>
                 <div className="grid grid-cols-2 gap-3 text-sm">
                     <div><span className="text-xs text-gray-400 block">Name</span>{booking.customerName}</div>
                     <div><span className="text-xs text-gray-400 block">Phone</span>
@@ -118,12 +118,12 @@ export default function JobDetailPage() {
 
             {/* Status Update */}
             {booking.status !== 'Completed' && booking.status !== 'Cancelled' && (
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 mb-4">
-                    <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Update Status</h2>
+                <div className="bg-white rounded-xl shadow-sm border p-5 mb-4">
+                    <h2 className="text-sm font-semibold text-gray-700 mb-3">Update Status</h2>
                     <div className="flex flex-wrap gap-2">
                         {STATUSES.map(s => (
                             <button key={s} onClick={() => updateStatus(s)} disabled={submitting || s === booking.status}
-                                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${s === booking.status ? 'bg-primary text-white' : 'border dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'} disabled:opacity-50`}>
+                                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${s === booking.status ? 'bg-primary text-white' : 'border hover:bg-gray-50 :bg-gray-700 text-gray-700 '} disabled:opacity-50`}>
                                 {s}
                             </button>
                         ))}
@@ -132,11 +132,11 @@ export default function JobDetailPage() {
             )}
 
             {/* Add Note */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5 mb-4">
-                <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Add Note</h2>
+            <div className="bg-white rounded-xl shadow-sm border p-5 mb-4">
+                <h2 className="text-sm font-semibold text-gray-700 mb-3">Add Note</h2>
                 <textarea rows={3} value={noteText} onChange={e => setNoteText(e.target.value)}
                     placeholder="Write a note about this repair..."
-                    className="w-full border dark:border-gray-600 rounded-lg px-3 py-2 text-sm mb-2 dark:bg-gray-700 dark:text-white" />
+                    className="w-full border rounded-lg px-3 py-2 text-sm mb-2 " />
                 <div className="flex justify-between items-center">
                     <label className="flex items-center gap-2 text-sm text-gray-500">
                         <input type="checkbox" checked={noteVisible} onChange={e => setNoteVisible(e.target.checked)} className="rounded" />
@@ -150,17 +150,17 @@ export default function JobDetailPage() {
             </div>
 
             {/* Timeline */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 p-5">
-                <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Timeline</h2>
+            <div className="bg-white rounded-xl shadow-sm border p-5">
+                <h2 className="text-sm font-semibold text-gray-700 mb-3">Timeline</h2>
                 <div className="space-y-3">
                     {updates.map((u, i) => (
                         <div key={i} className="flex gap-3 text-sm">
                             <div className="flex flex-col items-center">
                                 <div className={`w-2.5 h-2.5 rounded-full mt-1.5 ${u.status === 'Completed' ? 'bg-green-500' : u.status === 'Cancelled' ? 'bg-red-500' : 'bg-blue-500'}`}></div>
-                                {i < updates.length - 1 && <div className="w-px h-full bg-gray-200 dark:bg-gray-600 flex-1 mt-1"></div>}
+                                {i < updates.length - 1 && <div className="w-px h-full bg-gray-200 flex-1 mt-1"></div>}
                             </div>
                             <div className="pb-3">
-                                <p className="font-medium text-gray-900 dark:text-white">{u.status || 'Note'}</p>
+                                <p className="font-medium text-gray-900 ">{u.status || 'Note'}</p>
                                 <p className="text-gray-500 text-xs">{u.note}</p>
                                 <p className="text-gray-400 text-xs mt-0.5">
                                     {u.updatedBy?.name || 'System'} • {new Date(u.createdAt).toLocaleString()}

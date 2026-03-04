@@ -55,29 +55,29 @@ export default function WorkerProfilePage() {
     return (
         <div className="animate-in fade-in max-w-lg mx-auto">
             <header className="mb-6">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">My Profile</h1>
+                <h1 className="text-2xl font-bold text-gray-900 ">My Profile</h1>
             </header>
 
             {message && (
-                <div className={`p-3 rounded-lg text-sm mb-4 ${message.includes('success') ? 'bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400' : 'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400'}`}>
+                <div className={`p-3 rounded-lg text-sm mb-4 ${message.includes('success') ? 'bg-green-50 text-green-700 ' : 'bg-red-50 text-red-600 '}`}>
                     {message}
                 </div>
             )}
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border dark:border-gray-700 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
                 {/* Profile Header */}
-                <div className="p-6 bg-gradient-to-r from-primary/5 to-primary/10 border-b dark:border-gray-700">
+                <div className="p-6 bg-gradient-to-r from-primary/5 to-primary/10 border-b ">
                     <div className="flex items-center gap-4">
                         <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center text-primary text-2xl font-bold">
                             {profile?.name?.charAt(0)}
                         </div>
                         <div>
-                            <h2 className="text-lg font-bold text-gray-900 dark:text-white">{profile?.name}</h2>
+                            <h2 className="text-lg font-bold text-gray-900 ">{profile?.name}</h2>
                             <p className="text-sm text-gray-500">{profile?.phone}</p>
                             {profile?.specialization?.length > 0 && (
                                 <div className="flex flex-wrap gap-1 mt-1">
                                     {profile.specialization.map((s, i) => (
-                                        <span key={i} className="px-2 py-0.5 bg-white/80 dark:bg-gray-700 rounded text-xs text-gray-600 dark:text-gray-300">{s}</span>
+                                        <span key={i} className="px-2 py-0.5 bg-white/80 rounded text-xs text-gray-600 ">{s}</span>
                                     ))}
                                 </div>
                             )}
@@ -91,42 +91,42 @@ export default function WorkerProfilePage() {
                         <div>
                             <label className="block text-xs font-medium text-gray-500 mb-1">Name</label>
                             <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                                className="w-full border rounded-lg px-3 py-2.5 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                className="w-full border rounded-lg px-3 py-2.5 text-sm " />
                         </div>
                         <div>
                             <label className="block text-xs font-medium text-gray-500 mb-1">Email</label>
                             <input value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
-                                className="w-full border rounded-lg px-3 py-2.5 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                className="w-full border rounded-lg px-3 py-2.5 text-sm " />
                         </div>
                         <div>
                             <label className="block text-xs font-medium text-gray-500 mb-1">New Password (leave blank to keep current)</label>
                             <input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })}
                                 placeholder="••••••••"
-                                className="w-full border rounded-lg px-3 py-2.5 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+                                className="w-full border rounded-lg px-3 py-2.5 text-sm " />
                         </div>
                         <div className="flex gap-3 pt-2">
-                            <button type="button" onClick={() => setEditing(false)} className="flex-1 py-2.5 border rounded-lg text-sm dark:border-gray-600 dark:text-gray-300">Cancel</button>
+                            <button type="button" onClick={() => setEditing(false)} className="flex-1 py-2.5 border rounded-lg text-sm ">Cancel</button>
                             <button type="submit" disabled={saving} className="flex-1 py-2.5 bg-primary text-white rounded-lg text-sm font-medium disabled:opacity-50">{saving ? 'Saving...' : 'Save'}</button>
                         </div>
                     </form>
                 ) : (
                     <div className="p-6 space-y-4">
                         <div className="grid grid-cols-1 gap-3 text-sm">
-                            <div className="flex justify-between py-2 border-b dark:border-gray-700">
+                            <div className="flex justify-between py-2 border-b ">
                                 <span className="text-gray-500">Phone</span>
-                                <span className="text-gray-900 dark:text-white font-medium">{profile?.phone}</span>
+                                <span className="text-gray-900 font-medium">{profile?.phone}</span>
                             </div>
-                            <div className="flex justify-between py-2 border-b dark:border-gray-700">
+                            <div className="flex justify-between py-2 border-b ">
                                 <span className="text-gray-500">Email</span>
-                                <span className="text-gray-900 dark:text-white">{profile?.email || 'Not set'}</span>
+                                <span className="text-gray-900 ">{profile?.email || 'Not set'}</span>
                             </div>
-                            <div className="flex justify-between py-2 border-b dark:border-gray-700">
+                            <div className="flex justify-between py-2 border-b ">
                                 <span className="text-gray-500">Status</span>
                                 <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${profile?.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{profile?.status}</span>
                             </div>
                             <div className="flex justify-between py-2">
                                 <span className="text-gray-500">Joined</span>
-                                <span className="text-gray-900 dark:text-white">{new Date(profile?.createdAt).toLocaleDateString()}</span>
+                                <span className="text-gray-900 ">{new Date(profile?.createdAt).toLocaleDateString()}</span>
                             </div>
                         </div>
                         <button onClick={() => setEditing(true)} className="w-full py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors mt-4">
