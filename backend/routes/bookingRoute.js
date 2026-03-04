@@ -21,7 +21,7 @@ router.get('/track/:token', trackBooking);
 // Admin routes
 router.get('/stats/overview', verifyToken, requireAdmin, getBookingStats);
 router.get('/', verifyToken, requireAdmin, getAllBookings);
-router.get('/:id', verifyToken, requireAdmin, getBookingById);
+router.get('/:id', verifyToken, requireAdminOrWorker, getBookingById);
 router.put('/:id', verifyToken, requireAdmin, updateBooking);
 router.put('/:id/status', verifyToken, requireAdminOrWorker, updateBookingStatus);
 router.put('/:id/assign', verifyToken, requireAdmin, assignWorker);
