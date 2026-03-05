@@ -7,4 +7,4 @@ const PartnerSchema = new mongoose.Schema({
     status: { type: String, default: 'active' } // active, inactive
 }, { timestamps: true });
 
-module.exports = mongoose.model('Partner', PartnerSchema);
+module.exports = mongoose.models.Partner || mongoose.model('', PartnerSchema);

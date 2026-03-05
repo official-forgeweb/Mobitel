@@ -11,9 +11,15 @@ const poppins = Poppins({
 export const metadata = { title: "Mobitel - Your Trusted Mobile Repair Partner", description: "Fast, reliable, and affordable mobile repairs with 90-day warranty." };
 
 export default async function RootLayout({ children }) {
-  // Fetch CMS data for the layout, using 127.0.0.1 as fallback for API URL
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/cms`, { cache: 'no-store' });
-  const cmsData = await res.json(); // Assuming you want to use this data somewhere
+  let cmsData = {};
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/cms`, { next: { revalidate: 60 } });
+    if (res.ok) {
+      cmsData = await res.json();
+    }
+  } catch (error) {
+    console.error("Failed to fetch layout CMS data:", error.message);
+  }
 
   return (
     <html lang="en" suppressHydrationWarning>

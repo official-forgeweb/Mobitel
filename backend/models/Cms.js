@@ -11,4 +11,4 @@ CmsSchema.pre('save', function (next) {
     next();
 });
 
-module.exports = mongoose.model('Cms', CmsSchema);
+module.exports = mongoose.models.Cms || mongoose.model('', CmsSchema);

@@ -9,4 +9,4 @@ const NotificationLogSchema = new mongoose.Schema({
     error: { type: String, default: '' }
 }, { timestamps: true });
 
-module.exports = mongoose.model('NotificationLog', NotificationLogSchema);
+module.exports = mongoose.models.NotificationLog || mongoose.model('', NotificationLogSchema);

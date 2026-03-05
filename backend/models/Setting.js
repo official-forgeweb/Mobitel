@@ -10,4 +10,4 @@ SettingSchema.pre('save', function () {
     this.markModified('value');
 });
 
-module.exports = mongoose.model('Setting', SettingSchema);
+module.exports = mongoose.models.Setting || mongoose.model('', SettingSchema);
