@@ -6,4 +6,4 @@ const ShopSchema = new mongoose.Schema({
     contact: { type: String }
 }, { timestamps: true });
 
-module.exports = mongoose.models.Shop || mongoose.model('', ShopSchema);
+module.exports = mongoose.models.Shop || mongoose.model('Shop', ShopSchema);

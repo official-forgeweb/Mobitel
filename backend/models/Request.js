@@ -17,4 +17,4 @@ const RequestSchema = new mongoose.Schema({
     status: { type: String, default: 'Pending' }
 }, { timestamps: true });
 
-module.exports = mongoose.models.Request || mongoose.model('', RequestSchema);
+module.exports = mongoose.models.Request || mongoose.model('Request', RequestSchema);

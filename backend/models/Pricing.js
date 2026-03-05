@@ -13,4 +13,4 @@ const PricingSchema = new mongoose.Schema({
 // Compound index: unique pricing per brand+model+service combination
 PricingSchema.index({ brandId: 1, modelId: 1, serviceId: 1 }, { unique: true });
 
-module.exports = mongoose.models.Pricing || mongoose.model('', PricingSchema);
+module.exports = mongoose.models.Pricing || mongoose.model('Pricing', PricingSchema);

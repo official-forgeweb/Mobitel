@@ -42,4 +42,4 @@ const BookingSchema = new mongoose.Schema({
 BookingSchema.statics.STATUSES = BOOKING_STATUSES;
 BookingSchema.statics.PRIORITIES = PRIORITIES;
 
-module.exports = mongoose.models.Booking || mongoose.model('', BookingSchema);
+module.exports = mongoose.models.Booking || mongoose.model('Booking', BookingSchema);

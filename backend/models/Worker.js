@@ -15,4 +15,4 @@ const WorkerSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-module.exports = mongoose.models.Worker || mongoose.model('', WorkerSchema);
+module.exports = mongoose.models.Worker || mongoose.model('Worker', WorkerSchema);

@@ -12,4 +12,4 @@ const DeviceModelSchema = new mongoose.Schema({
 // Compound index: unique model name per brand
 DeviceModelSchema.index({ name: 1, brandId: 1 }, { unique: true });
 
-module.exports = mongoose.models.DeviceModel || mongoose.model('', DeviceModelSchema);
+module.exports = mongoose.models.DeviceModel || mongoose.model('DeviceModel', DeviceModelSchema);

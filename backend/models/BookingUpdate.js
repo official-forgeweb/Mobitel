@@ -13,4 +13,4 @@ const BookingUpdateSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-module.exports = mongoose.models.BookingUpdate || mongoose.model('', BookingUpdateSchema);
+module.exports = mongoose.models.BookingUpdate || mongoose.model('BookingUpdate', BookingUpdateSchema);

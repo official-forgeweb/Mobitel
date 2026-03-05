@@ -8,4 +8,4 @@ const ServiceSchema = new mongoose.Schema({
     displayOrder: { type: Number, default: 0 }
 }, { timestamps: true });
 
-module.exports = mongoose.models.Service || mongoose.model('', ServiceSchema);
+module.exports = mongoose.models.Service || mongoose.model('Service', ServiceSchema);
