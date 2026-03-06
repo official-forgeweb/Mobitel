@@ -1,8 +1,23 @@
 ﻿"use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo, useCallback } from "react";
 
-// Brands fetched dynamically
+// Memoized Brand Item for performance
+const BrandItem = memo(({ brand, onClick }) => {
+  return (
+    <button
+      onClick={() => onClick(brand)}
+      className="group flex flex-col items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-white rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-[border-color,box-shadow,transform] duration-200 outline-none w-full cursor-pointer will-change-transform"
+    >
+      <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-xl bg-surface group-hover:bg-primary/5 transition-colors overflow-hidden">
+        <BrandLogo brand={brand} />
+      </div>
+      <span className="text-[11px] sm:text-sm font-medium text-dark group-hover:text-primary transition-colors text-center w-full truncate">
+        {brand.name}
+      </span>
+    </button>
+  );
+});
 
 // Fallback: render brand initial when image fails
 function BrandLogo({ brand }) {
@@ -28,6 +43,42 @@ function BrandLogo({ brand }) {
   );
 }
 
+// Memoized Model Item for performance improvement
+const ModelItem = memo(({ model, idx, onClick }) => {
+  return (
+    <button
+      onClick={() => onClick(model)}
+      className="flex flex-col items-center justify-start p-3 sm:p-4 rounded-xl border border-gray-100 bg-white hover:border-primary/40 hover:bg-primary/5 transition-[border-color,background-color] duration-200 group gap-2 sm:gap-3"
+    >
+      <div className="w-full aspect-[3/4] max-h-20 sm:max-h-32 bg-surface rounded-lg flex items-center justify-center mb-1 group-hover:bg-white transition-colors border border-transparent group-hover:border-primary/10 overflow-hidden relative">
+        <ModelImage model={model} />
+      </div>
+      <span className="text-[11px] sm:text-sm font-medium text-dark text-center line-clamp-2 w-full group-hover:text-primary transition-colors">
+        {model.name}
+      </span>
+    </button>
+  );
+});
+
+// Memoized Other Model Item
+const OtherModelItem = memo(({ onClick }) => {
+  return (
+    <button
+      onClick={() => onClick({ name: 'Other / Unlisted Model' })}
+      className="flex flex-col items-center justify-start p-3 sm:p-4 rounded-xl border border-gray-100 bg-white hover:border-primary/40 hover:bg-primary/5 transition-[border-color,background-color] duration-200 group gap-2 sm:gap-3"
+    >
+      <div className="w-full aspect-[3/4] max-h-20 sm:max-h-32 bg-surface rounded-lg flex items-center justify-center p-2 mb-1 group-hover:bg-white transition-colors border border-transparent group-hover:border-primary/10">
+        <div className="w-8 h-8 sm:w-14 sm:h-14 flex items-center justify-center rounded-full bg-gray-100 group-hover:bg-primary/10 transition-colors">
+          <svg className="w-4 h-4 sm:w-6 sm:h-6 text-gray-500 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+        </div>
+      </div>
+      <span className="text-[11px] sm:text-sm font-medium text-dark text-center line-clamp-2 w-full group-hover:text-primary transition-colors">Other Model</span>
+    </button>
+  );
+});
+
 // Fallback: render model placeholder when image fails
 function ModelImage({ model }) {
   const [imgError, setImgError] = useState(false);
@@ -50,7 +101,7 @@ function ModelImage({ model }) {
       src={model.image}
       alt={model.name}
       loading="lazy"
-      className="w-full h-full object-contain mix-blend-multiply drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
+      className="w-full h-full object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
       onError={() => setImgError(true)}
     />
   );
@@ -110,21 +161,29 @@ export default function BrandCategories({ data }) {
     }
   }, [selectedBrand]);
 
-  const resetAll = () => {
+  const handleSelectBrand = useCallback((brand) => {
+    setSelectedBrand(brand);
+  }, []);
+
+  const handleSelectModel = useCallback((model) => {
+    setSelectedModel(model);
+  }, []);
+
+  const resetAll = useCallback(() => {
     setSelectedBrand(null);
     setSelectedModel(null);
     setSelectedIssue(null);
     setServiceType(null);
     setBookingSubmitted(false);
     setBookingForm({ name: '', phone: '', email: '', date: '', time: '', address: '', landmark: '', pincode: '', selectedShop: '' });
-  };
+  }, []);
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     if (bookingSubmitted) { setBookingSubmitted(false); return; }
     if (serviceType) { setServiceType(null); setBookingForm({ name: '', phone: '', email: '', date: '', time: '', address: '', landmark: '', pincode: '', selectedShop: '' }); return; }
     if (selectedIssue) { setSelectedIssue(null); return; }
     if (selectedModel) { setSelectedModel(null); return; }
-  };
+  }, [bookingSubmitted, serviceType, selectedIssue, selectedModel]);
 
   // Determine current step for header
   const getCurrentStep = () => {
@@ -195,12 +254,7 @@ export default function BrandCategories({ data }) {
       {/* Brand Grid */}
       <div className="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 sm:gap-4">
         {(brandsList && Array.isArray(brandsList) ? brandsList : []).map((brand) => (
-          <button key={brand._id || brand.name} onClick={() => setSelectedBrand(brand)} className="group flex flex-col items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-white rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 outline-none w-full cursor-pointer">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-xl bg-surface group-hover:bg-primary/5 transition-colors overflow-hidden">
-              <BrandLogo brand={brand} />
-            </div>
-            <span className="text-[11px] sm:text-sm font-medium text-dark group-hover:text-primary transition-colors text-center w-full truncate">{brand.name}</span>
-          </button>
+          <BrandItem key={brand._id || brand.name} brand={brand} onClick={handleSelectBrand} />
         ))}
       </div>
 
@@ -259,23 +313,9 @@ export default function BrandCategories({ data }) {
                 ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4">
                   {(modelsList && Array.isArray(modelsList) ? modelsList : []).map((model, idx) => (
-                    <button key={model._id || idx} onClick={() => setSelectedModel(model)} className="flex flex-col items-center justify-start p-3 sm:p-4 rounded-xl border border-gray-100 bg-white hover:border-primary/40 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 group gap-2 sm:gap-3">
-                      <div className="w-full aspect-[3/4] max-h-20 sm:max-h-32 bg-surface rounded-lg flex items-center justify-center mb-1 group-hover:bg-white transition-colors border border-transparent group-hover:border-primary/10 overflow-hidden relative">
-                        <ModelImage model={model} />
-                      </div>
-                      <span className="text-[11px] sm:text-sm font-medium text-dark text-center line-clamp-2 w-full group-hover:text-primary transition-colors">{model.name}</span>
-                    </button>
+                    <ModelItem key={model._id || idx} model={model} idx={idx} onClick={handleSelectModel} />
                   ))}
-                  <button onClick={() => setSelectedModel({ name: 'Other / Unlisted Model' })} className="flex flex-col items-center justify-start p-3 sm:p-4 rounded-xl border border-gray-100 bg-white hover:border-primary/40 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 group gap-2 sm:gap-3">
-                    <div className="w-full aspect-[3/4] max-h-20 sm:max-h-32 bg-surface rounded-lg flex items-center justify-center p-2 mb-1 group-hover:bg-white transition-colors border border-transparent group-hover:border-primary/10">
-                      <div className="w-8 h-8 sm:w-14 sm:h-14 flex items-center justify-center rounded-full bg-gray-100 group-hover:bg-primary/10 transition-colors">
-                        <svg className="w-4 h-4 sm:w-6 sm:h-6 text-gray-500 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                        </svg>
-                      </div>
-                    </div>
-                    <span className="text-[11px] sm:text-sm font-medium text-dark text-center line-clamp-2 w-full group-hover:text-primary transition-colors">Other Model</span>
-                  </button>
+                  <OtherModelItem onClick={handleSelectModel} />
                 </div>
                 )
               )}
