@@ -26,6 +26,35 @@ const reportsRoute = require('./routes/reportsRoute');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// MongoDB Connection Logic for Serverless Environment
+let isConnected = false;
+const connectDB = async () => {
+    if (isConnected && mongoose.connection.readyState === 1) return;
+    if (process.env.MONGO_URI) {
+        try {
+            await mongoose.connect(process.env.MONGO_URI, {
+                serverSelectionTimeoutMS: 5000,
+            });
+            isConnected = true;
+            console.log('✅ MongoDB connected successfully');
+        } catch (err) {
+            console.error('❌ MongoDB connection error:', err);
+        }
+    } else {
+        console.warn('⚠️ WARNING: MONGO_URI is not defined.');
+    }
+};
+
+// Middleware to ensure DB connection per request (for serverless)
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+    } catch (e) {
+        console.error("DB connection middleware failed:", e);
+    }
+    next();
+});
+
 const allowedOrigins = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',').map(url => url.trim()) : ['http://localhost:3000', 'http://127.0.0.1:3000'];
 app.use(cors({
     origin: function (origin, callback) {
@@ -74,15 +103,10 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Internal Server Error', details: err.message });
 });
 
-// MongoDB Connection
-if (process.env.MONGO_URI) {
-    mongoose.connect(process.env.MONGO_URI)
-        .then(() => console.log('✅ MongoDB connected successfully'))
-        .catch(err => console.error('❌ MongoDB connection error:', err));
-} else {
-    console.warn('⚠️ WARNING: MONGO_URI is not defined in .env.');
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
 }
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+module.exports = app;
