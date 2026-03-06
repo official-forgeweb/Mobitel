@@ -82,6 +82,12 @@ export default function BrandsPage() {
         fetchBrands();
     };
 
+    const SafeImage = ({ src, alt, fallback, className }) => {
+        const [error, setError] = useState(false);
+        if (error || !src) return fallback;
+        return <img src={src} alt={alt} className={className} onError={() => setError(true)} />;
+    };
+
     return (
         <div className="animate-in fade-in">
             <header className="mb-6">
@@ -105,9 +111,13 @@ export default function BrandsPage() {
                             <div key={b._id} onClick={() => setSelectedBrand(b)}
                                 className={`p-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors ${selectedBrand?._id === b._id ? 'bg-blue-50/50 border-l-4 border-primary' : 'border-l-4 border-transparent'}`}>
                                 <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 bg-white border border-gray-100 rounded-lg flex items-center justify-center p-1 shadow-sm">
-                                        {b.logo ? <img src={b.logo} alt={b.name} className="w-full h-full object-contain" /> :
-                                            <span className="text-lg font-bold text-primary">{b.name.charAt(0)}</span>}
+                                    <div className="w-10 h-10 bg-white border border-gray-100 rounded-lg flex items-center justify-center p-1 shadow-sm overflow-hidden">
+                                        <SafeImage 
+                                            src={b.logo} 
+                                            alt={b.name} 
+                                            className="w-full h-full object-contain"
+                                            fallback={<span className="text-lg font-bold text-primary">{b.name.charAt(0)}</span>}
+                                        />
                                     </div>
                                     <div>
                                         <p className="font-bold text-sm text-gray-900">{b.name}</p>
@@ -154,9 +164,13 @@ export default function BrandsPage() {
                         {models.map(m => (
                             <div key={m._id} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 bg-white border border-gray-100 rounded-lg flex items-center justify-center p-1 shadow-sm">
-                                        {m.image ? <img src={m.image} alt={m.name} className="w-full h-full object-contain" /> :
-                                            <span className="text-sm font-bold text-gray-400">📱</span>}
+                                    <div className="w-10 h-10 bg-white border border-gray-100 rounded-lg flex items-center justify-center p-1 shadow-sm overflow-hidden">
+                                        <SafeImage 
+                                            src={m.image} 
+                                            alt={m.name} 
+                                            className="w-full h-full object-contain"
+                                            fallback={<span className="text-sm font-bold text-gray-400">📱</span>}
+                                        />
                                     </div>
                                     <div>
                                         <p className="font-bold text-sm text-gray-900">{m.name}</p>

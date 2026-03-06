@@ -55,6 +55,12 @@ const banners = [
   },
 ];
 
+const BannerImage = ({ src, alt }) => {
+  const [error, setError] = useState(false);
+  if (error || !src) return null;
+  return <img src={src} alt={alt} className="w-full h-full object-cover transition-opacity duration-1000" onError={() => setError(true)} />;
+};
+
 export default function BannerCarousel({ data }) {
   const activeBanners = data && data.length > 0 ?
     data.map((b, i) => ({ ...banners[i % banners.length], ...b })) :
@@ -98,12 +104,12 @@ export default function BannerCarousel({ data }) {
           {activeBanners.map((banner, idx) => (
             <div
               key={banner.id || idx}
-              className="relative min-w-full p-6 sm:p-12 flex items-center justify-between min-h-[220px] sm:min-h-[300px] lg:min-h-[350px]"
+              className="relative min-w-full p-6 sm:p-12 flex items-center justify-between min-h-[220px] sm:min-h-[300px] lg:min-h-[350px] bg-dark"
             >
               <div className="absolute inset-0 z-0">
-                <img src={banner.image} alt={banner.title} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-black/60 mix-blend-multiply"></div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                <BannerImage src={banner.image} alt={banner.title} />
+                <div className="absolute inset-0 bg-black/40 mix-blend-multiply"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent"></div>
               </div>
               <div className="relative z-10 flex-1">
                 <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight drop-shadow-md pr-4">

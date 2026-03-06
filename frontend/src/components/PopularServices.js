@@ -1,6 +1,12 @@
 ﻿"use client";
 import { useState } from "react";
 
+const ServiceImage = ({ src, alt }) => {
+  const [error, setError] = useState(false);
+  if (error || !src) return <div className="w-full h-full bg-dark/50"></div>;
+  return <img src={src} alt={alt} className="w-full h-full object-cover grayscale-[20%]" onError={() => setError(true)} />;
+};
+
 export default function PopularServices({ data }) {
   const defaultServices = [
     {
@@ -129,7 +135,7 @@ export default function PopularServices({ data }) {
                 <div
                   className={`absolute inset-0 transition-all duration-[10s] ease-out transform-gpu ${isActive ? 'scale-110 opacity-100' : 'scale-100 opacity-60'}`}
                 >
-                  <img src={service.image} alt={service.title} className="w-full h-full object-cover grayscale-[20%]" />
+                  <ServiceImage src={service.image} alt={service.title} />
                   <div className={`absolute inset-0 transition-colors duration-700 ease-in-out ${isActive ? 'bg-gradient-to-t from-black/95 via-black/40 to-black/10' : 'bg-black/85'}`}></div>
                 </div>
 

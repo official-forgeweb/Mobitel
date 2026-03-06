@@ -8,11 +8,11 @@ import { useState, useEffect } from "react";
 function BrandLogo({ brand }) {
   const [imgError, setImgError] = useState(false);
 
-  if (imgError) {
+  if (imgError || !brand.logo) {
     return (
-      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-        <span className="text-primary font-bold text-lg">
-          {brand.name.charAt(0)}
+      <div className="w-full h-full rounded-xl bg-primary/10 flex items-center justify-center border border-primary/5">
+        <span className="text-primary font-bold text-xl uppercase">
+          {brand.name?.charAt(0) || 'B'}
         </span>
       </div>
     );
@@ -22,7 +22,35 @@ function BrandLogo({ brand }) {
     <img
       src={brand.logo}
       alt={brand.name}
-      className="w-12 h-12 object-contain"
+      className="w-full h-full object-contain p-1"
+      onError={() => setImgError(true)}
+    />
+  );
+}
+
+// Fallback: render model placeholder when image fails
+function ModelImage({ model }) {
+  const [imgError, setImgError] = useState(false);
+
+  if (imgError || !model.image) {
+    return (
+      <div className="w-full h-full bg-surface flex flex-col items-center justify-center p-4">
+        <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-2">
+          <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <span className="text-[10px] text-gray-400 font-medium text-center px-2 truncate w-full">{model.name}</span>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={model.image}
+      alt={model.name}
+      loading="lazy"
+      className="w-full h-full object-contain mix-blend-multiply drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
       onError={() => setImgError(true)}
     />
   );
@@ -168,7 +196,7 @@ export default function BrandCategories({ data }) {
       <div className="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 sm:gap-4">
         {(brandsList && Array.isArray(brandsList) ? brandsList : []).map((brand) => (
           <button key={brand._id || brand.name} onClick={() => setSelectedBrand(brand)} className="group flex flex-col items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-white rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 outline-none w-full cursor-pointer">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-xl bg-surface group-hover:bg-primary/5 transition-colors">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-xl bg-surface group-hover:bg-primary/5 transition-colors overflow-hidden">
               <BrandLogo brand={brand} />
             </div>
             <span className="text-[11px] sm:text-sm font-medium text-dark group-hover:text-primary transition-colors text-center w-full truncate">{brand.name}</span>
@@ -232,8 +260,8 @@ export default function BrandCategories({ data }) {
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4">
                   {(modelsList && Array.isArray(modelsList) ? modelsList : []).map((model, idx) => (
                     <button key={model._id || idx} onClick={() => setSelectedModel(model)} className="flex flex-col items-center justify-start p-3 sm:p-4 rounded-xl border border-gray-100 bg-white hover:border-primary/40 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 group gap-2 sm:gap-3">
-                      <div className="w-full aspect-[3/4] max-h-20 sm:max-h-32 bg-surface rounded-lg flex items-center justify-center mb-1 group-hover:bg-white transition-colors border border-transparent group-hover:border-primary/10 overflow-hidden">
-                        <img src={model.image || 'https://via.placeholder.com/150'} alt={model.name} loading="lazy" className="w-full h-full object-contain mix-blend-multiply drop-shadow-sm group-hover:scale-105 transition-transform duration-300" />
+                      <div className="w-full aspect-[3/4] max-h-20 sm:max-h-32 bg-surface rounded-lg flex items-center justify-center mb-1 group-hover:bg-white transition-colors border border-transparent group-hover:border-primary/10 overflow-hidden relative">
+                        <ModelImage model={model} />
                       </div>
                       <span className="text-[11px] sm:text-sm font-medium text-dark text-center line-clamp-2 w-full group-hover:text-primary transition-colors">{model.name}</span>
                     </button>
