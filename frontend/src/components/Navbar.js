@@ -16,6 +16,15 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+
+  useEffect(() => {
+    if (menuOpen) setSearchOpen(false);
+  }, [menuOpen]);
+
+  useEffect(() => {
+    if (searchOpen) setMenuOpen(false);
+  }, [searchOpen]);
+
   const [searchVal, setSearchVal] = useState("");
   const searchRef = useRef(null);
   const pathname = usePathname();
@@ -110,33 +119,51 @@ export default function Navbar() {
           <div className="flex items-center gap-4 h-16">
 
             {/* Logo */}
-            <a href="/" className="flex items-center gap-2 shrink-0 cursor-pointer">
-              <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-sm">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24">
+            <a href="/" className={`flex items-center gap-2 shrink-0 cursor-pointer ${searchOpen ? 'hidden xs:flex' : ''}`}>
+              <div className="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-primary flex items-center justify-center shadow-sm">
+                <svg className="w-4.5 h-4.5 md:w-5 md:h-5 text-white" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
                 </svg>
               </div>
               <div className="leading-none">
-                <span className="text-lg font-semibold text-dark tracking-tight">Mobi<span className="text-primary">tel</span></span>
-                <div className="text-[9px] font-medium text-muted tracking-widest uppercase">Repair Experts</div>
+                <span className="text-base md:text-lg font-semibold text-dark tracking-tight">Mobi<span className="text-primary">tel</span></span>
+                <div className="text-[8px] md:text-[9px] font-medium text-muted tracking-widest uppercase">Repair Experts</div>
               </div>
             </a>
 
-            {/* Search bar - desktop */}
-            <div className="hidden md:flex flex-1 max-w-[180px] relative">
-              <div className="flex items-center w-full bg-surface border border-border rounded-xl px-4 py-2 gap-2 focus-within:border-primary focus-within:bg-white transition-all duration-200 group">
-                <svg className="w-4 h-4 text-muted group-focus-within:text-primary shrink-0 transition-colors" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                </svg>
+            {/* Mobile Search Bar mode */}
+            {searchOpen ? (
+              <div className="flex flex-1 items-center bg-surface border border-primary rounded-xl px-3 py-1.5 gap-2 transition-all md:hidden">
                 <input
+                  ref={searchRef}
                   type="text"
                   placeholder="Search..."
                   value={searchVal}
                   onChange={(e) => setSearchVal(e.target.value)}
-                  className="flex-1 bg-transparent text-sm w-full text-dark placeholder-muted outline-none"
+                  className="flex-1 bg-transparent text-sm text-dark placeholder-muted outline-none"
                 />
+                <button onClick={() => setSearchOpen(false)} className="p-1 hover:bg-surface-dark rounded-lg transition-colors">
+                  <svg className="w-4 h-4 text-muted" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
-            </div>
+            ) : (
+              <div className="hidden md:flex flex-1 max-w-[180px] relative">
+                <div className="flex items-center w-full bg-surface border border-border rounded-xl px-4 py-2 gap-2 focus-within:border-primary focus-within:bg-white transition-all duration-200 group">
+                  <svg className="w-4 h-4 text-muted group-focus-within:text-primary shrink-0 transition-colors" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                  </svg>
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchVal}
+                    onChange={(e) => setSearchVal(e.target.value)}
+                    className="flex-1 bg-transparent text-sm w-full text-dark placeholder-muted outline-none"
+                  />
+                </div>
+              </div>
+            )}
 
 
             {/* Location block - Zomato style */}
@@ -198,50 +225,37 @@ export default function Navbar() {
             </a>
 
             {/* Mobile search toggle */}
-            <button
-              onClick={() => setSearchOpen(!searchOpen)}
-              className="md:hidden p-2 rounded-xl hover:bg-surface transition-colors cursor-pointer"
-              aria-label="Search"
-            >
-              <svg className="w-5 h-5 text-body" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-              </svg>
-            </button>
+            {!searchOpen && (
+              <button
+                onClick={() => setSearchOpen(true)}
+                className="md:hidden p-2 rounded-xl hover:bg-surface transition-colors cursor-pointer"
+                aria-label="Search"
+              >
+                <svg className="w-5 h-5 text-body" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                </svg>
+              </button>
+            )}
 
 
 
             {/* Hamburger for mobile */}
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden w-9 h-9 rounded-xl bg-surface flex items-center justify-center hover:bg-primary-light transition-colors cursor-pointer"
-              aria-label="Toggle menu"
-            >
-              <svg className="w-5 h-5 text-dark" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                {menuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                )}
-              </svg>
-            </button>
-          </div>
-
-          {/* Mobile search bar - slides down */}
-          {searchOpen && (
-            <div className="md:hidden pb-3">
-              <div className="flex items-center bg-surface border border-border rounded-xl px-4 py-2.5 gap-2 focus-within:border-primary transition-all cursor-text">
-                <svg className="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+            {!searchOpen && (
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="md:hidden w-9 h-9 rounded-xl bg-surface flex items-center justify-center hover:bg-primary-light transition-colors cursor-pointer"
+                aria-label="Toggle menu"
+              >
+                <svg className="w-5 h-5 text-dark" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  {menuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                  )}
                 </svg>
-                <input
-                  ref={searchRef}
-                  type="text"
-                  placeholder="Search repairs, brands..."
-                  className="flex-1 bg-transparent text-sm text-dark placeholder-muted outline-none"
-                />
-              </div>
-            </div>
-          )}
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Desktop - second nav strip (only on medium screens, not large) */}
@@ -263,11 +277,11 @@ export default function Navbar() {
       {/* Full-screen mobile menu overlay */}
       {menuOpen && (
         <div
-          className="fixed inset-0 z-40 md:hidden"
+          className="fixed inset-0 z-[60] md:hidden"
           onClick={() => setMenuOpen(false)}
         >
           {/* Backdrop */}
-          <div className="absolute inset-0 bg-dark/40 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-dark/40 backdrop-blur-md" />
 
           {/* Drawer */}
           <div
@@ -275,14 +289,17 @@ export default function Navbar() {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Drawer header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-white sticky top-0 z-10">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24">
+                  <svg className="w-4.5 h-4.5 text-white" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
                   </svg>
                 </div>
-                <span className="font-semibold text-dark">Mobi<span className="text-primary">tel</span></span>
+                <div className="leading-none">
+                  <span className="font-semibold text-dark">Mobi<span className="text-primary">tel</span></span>
+                  <div className="text-[8px] font-medium text-muted uppercase tracking-tighter">Repair Experts</div>
+                </div>
               </div>
               <button onClick={() => setMenuOpen(false)} className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center cursor-pointer">
                 <svg className="w-4 h-4 text-body" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
