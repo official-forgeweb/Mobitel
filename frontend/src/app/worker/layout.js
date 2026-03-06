@@ -131,24 +131,29 @@ export default function WorkerLayout({ children }) {
             </main>
 
             {/* Bottom Navigation (Mobile) */}
-            <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-r from-[#2a0000] to-[#4a0000] border-t border-white/10 px-2 py-2 z-50 flex justify-around safe-area-bottom shadow-[0_-10px_40px_rgba(0,0,0,0.3)]">
+            <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#1a0000]/95 backdrop-blur-lg border-t border-white/10 px-2 py-1.5 z-50 flex justify-around safe-area-bottom shadow-[0_-10px_40px_rgba(0,0,0,0.4)]">
                 {navItems.map(item => {
                     const isActive = pathname === item.href;
                     return (
                         <Link key={item.href} href={item.href}
-                            className={`flex flex-col items-center py-2 px-4 text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${isActive ? 'text-[#F8D272] scale-110' : 'text-white/50 hover:text-white'}`}>
-                            <svg className={`w-6 h-6 mb-1 ${isActive ? 'drop-shadow-[0_0_8px_rgba(248,210,114,0.5)]' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={isActive ? 2 : 1.5}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
-                            </svg>
-                            {item.label}
+                            className={`flex flex-col items-center py-2 px-6 rounded-2xl transition-all duration-300 ${isActive ? 'text-primary' : 'text-white/40 hover:text-white/60'}`}>
+                            <div className={`relative ${isActive ? 'scale-110' : ''}`}>
+                                <svg className={`w-6 h-6 mb-1 transition-all duration-300 ${isActive ? 'drop-shadow-[0_0_8px_rgba(248,210,114,0.6)]' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={isActive ? 2 : 1.5}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
+                                </svg>
+                                {isActive && <span className="absolute -top-1 -right-1 w-2 h-2 bg-[#F8D272] rounded-full shadow-[0_0_10px_#F8D272]"></span>}
+                            </div>
+                            <span className={`text-[9px] font-bold uppercase tracking-widest transition-colors duration-300 ${isActive ? 'text-[#F8D272]' : 'text-inherit'}`}>
+                                {item.label}
+                            </span>
                         </Link>
                     );
                 })}
-                <button onClick={handleLogout} className="flex flex-col items-center py-2 px-4 text-[10px] font-bold uppercase tracking-wider text-red-300/70 hover:text-red-300 transition-all duration-300">
+                <button onClick={handleLogout} className="flex flex-col items-center py-2 px-6 text-white/40 hover:text-red-400 transition-all duration-300">
                     <svg className="w-6 h-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>
-                    Logout
+                    <span className="text-[9px] font-bold uppercase tracking-widest">Logout</span>
                 </button>
             </nav>
         </div>

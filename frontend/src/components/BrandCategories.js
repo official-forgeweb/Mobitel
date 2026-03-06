@@ -165,13 +165,13 @@ export default function BrandCategories({ data }) {
       </div>
 
       {/* Brand Grid */}
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+      <div className="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 sm:gap-4">
         {(brandsList && Array.isArray(brandsList) ? brandsList : []).map((brand) => (
-          <button key={brand._id || brand.name} onClick={() => setSelectedBrand(brand)} className="group flex flex-col items-center gap-3 p-4 bg-white rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 outline-none w-full cursor-pointer">
-            <div className="w-16 h-16 flex items-center justify-center rounded-xl bg-surface group-hover:bg-primary/5 transition-colors">
+          <button key={brand._id || brand.name} onClick={() => setSelectedBrand(brand)} className="group flex flex-col items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-white rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 outline-none w-full cursor-pointer">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-xl bg-surface group-hover:bg-primary/5 transition-colors">
               <BrandLogo brand={brand} />
             </div>
-            <span className="text-xs sm:text-sm font-medium text-dark group-hover:text-primary transition-colors text-center w-full truncate">{brand.name}</span>
+            <span className="text-[11px] sm:text-sm font-medium text-dark group-hover:text-primary transition-colors text-center w-full truncate">{brand.name}</span>
           </button>
         ))}
       </div>
@@ -188,10 +188,10 @@ export default function BrandCategories({ data }) {
 
       {/* ===== MODAL ===== */}
       {selectedBrand && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm cursor-pointer" onClick={resetAll}></div>
 
-          <div className="relative bg-white border border-border w-full max-w-4xl max-h-[85vh] rounded-3xl shadow-2xl flex flex-col z-10">
+          <div className="relative bg-white border border-border w-full max-w-4xl h-full sm:h-auto max-h-[100vh] sm:max-h-[85vh] rounded-none sm:rounded-3xl shadow-2xl flex flex-col z-10">
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-border bg-surface/50 rounded-t-3xl shrink-0">
               <div className="flex items-center gap-4">
@@ -229,24 +229,24 @@ export default function BrandCategories({ data }) {
                     <p className="mt-4 text-sm font-medium text-muted animate-pulse">Loading {selectedBrand?.name} models...</p>
                   </div>
                 ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4">
                   {(modelsList && Array.isArray(modelsList) ? modelsList : []).map((model, idx) => (
-                    <button key={model._id || idx} onClick={() => setSelectedModel(model)} className="flex flex-col items-center justify-start p-4 rounded-xl border border-gray-100 bg-white hover:border-primary/40 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 group gap-3">
-                      <div className="w-full aspect-[3/4] max-h-24 sm:max-h-32 bg-surface rounded-lg flex items-center justify-center mb-1 group-hover:bg-white transition-colors border border-transparent group-hover:border-primary/10 overflow-hidden">
+                    <button key={model._id || idx} onClick={() => setSelectedModel(model)} className="flex flex-col items-center justify-start p-3 sm:p-4 rounded-xl border border-gray-100 bg-white hover:border-primary/40 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 group gap-2 sm:gap-3">
+                      <div className="w-full aspect-[3/4] max-h-20 sm:max-h-32 bg-surface rounded-lg flex items-center justify-center mb-1 group-hover:bg-white transition-colors border border-transparent group-hover:border-primary/10 overflow-hidden">
                         <img src={model.image || 'https://via.placeholder.com/150'} alt={model.name} loading="lazy" className="w-full h-full object-contain mix-blend-multiply drop-shadow-sm group-hover:scale-105 transition-transform duration-300" />
                       </div>
-                      <span className="text-xs sm:text-sm font-medium text-dark text-center line-clamp-2 w-full group-hover:text-primary transition-colors">{model.name}</span>
+                      <span className="text-[11px] sm:text-sm font-medium text-dark text-center line-clamp-2 w-full group-hover:text-primary transition-colors">{model.name}</span>
                     </button>
                   ))}
-                  <button onClick={() => setSelectedModel({ name: 'Other / Unlisted Model' })} className="flex flex-col items-center justify-start p-4 rounded-xl border border-gray-100 bg-white hover:border-primary/40 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 group gap-3">
-                    <div className="w-full aspect-[3/4] max-h-24 sm:max-h-32 bg-surface rounded-lg flex items-center justify-center p-2 mb-1 group-hover:bg-white transition-colors border border-transparent group-hover:border-primary/10">
-                      <div className="w-10 h-10 sm:w-14 sm:h-14 flex items-center justify-center rounded-full bg-gray-100 group-hover:bg-primary/10 transition-colors">
-                        <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <button onClick={() => setSelectedModel({ name: 'Other / Unlisted Model' })} className="flex flex-col items-center justify-start p-3 sm:p-4 rounded-xl border border-gray-100 bg-white hover:border-primary/40 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 group gap-2 sm:gap-3">
+                    <div className="w-full aspect-[3/4] max-h-20 sm:max-h-32 bg-surface rounded-lg flex items-center justify-center p-2 mb-1 group-hover:bg-white transition-colors border border-transparent group-hover:border-primary/10">
+                      <div className="w-8 h-8 sm:w-14 sm:h-14 flex items-center justify-center rounded-full bg-gray-100 group-hover:bg-primary/10 transition-colors">
+                        <svg className="w-4 h-4 sm:w-6 sm:h-6 text-gray-500 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
                       </div>
                     </div>
-                    <span className="text-xs sm:text-sm font-medium text-dark text-center line-clamp-2 w-full group-hover:text-primary transition-colors">Other Model</span>
+                    <span className="text-[11px] sm:text-sm font-medium text-dark text-center line-clamp-2 w-full group-hover:text-primary transition-colors">Other Model</span>
                   </button>
                 </div>
                 )

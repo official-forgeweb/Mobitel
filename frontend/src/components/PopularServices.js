@@ -109,7 +109,7 @@ export default function PopularServices({ data }) {
         </div>
 
         {/* Expanding Cards Container */}
-        <div className="flex flex-col lg:flex-row w-full h-[700px] lg:h-[550px] gap-4">
+        <div className="flex flex-col lg:flex-row w-full h-auto lg:h-[550px] gap-3 sm:gap-4 lg:gap-4 mt-8 md:mt-0">
           {services.map((service, index) => {
             const isActive = active === index;
 
@@ -119,10 +119,10 @@ export default function PopularServices({ data }) {
                 onClick={() => setActive(index)}
                 onMouseEnter={() => setActive(index)}
                 className={`
-                  relative overflow-hidden rounded-[2rem] cursor-pointer flex-shrink-0
+                  relative overflow-hidden rounded-2xl md:rounded-[2rem] cursor-pointer flex-shrink-0
                   transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)]
                   transform-gpu
-                  ${isActive ? 'lg:flex-[3.5] flex-[3] shadow-2xl' : 'lg:flex-[0.5] flex-[0.5] hover:bg-white/5 opacity-70 hover:opacity-100'}
+                  ${isActive ? 'lg:flex-[3.5] flex-grow min-h-[360px] lg:min-h-0 shadow-2xl' : 'lg:flex-[0.5] flex-shrink-0 min-h-[70px] lg:min-h-0 hover:bg-white/5 opacity-70 hover:opacity-100'}
                 `}
               >
                 {/* Background Image (only really visible when active) */}

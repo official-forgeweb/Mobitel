@@ -56,9 +56,9 @@ export default function HowItWorks({ data }) {
 
           {/* Center Column - Phone Frame */}
           <div className="flex justify-center items-center py-4 order-1 lg:order-2">
-            <div className="relative w-[280px] h-[580px] sm:w-[300px] sm:h-[620px] bg-[#111] rounded-[48px] shadow-2xl border-[10px] border-[#111] overflow-hidden flex-shrink-0">
+            <div className="relative w-[260px] h-[520px] xs:w-[280px] xs:h-[580px] sm:w-[300px] sm:h-[620px] bg-[#111] rounded-[40px] xs:rounded-[48px] shadow-2xl border-[8px] xs:border-[10px] border-[#111] overflow-hidden flex-shrink-0">
               {/* Screen Content Wrapper */}
-              <div className="w-full h-full relative rounded-[36px] overflow-hidden bg-white">
+              <div className="w-full h-full relative rounded-[32px] xs:rounded-[36px] overflow-hidden bg-white">
                 {steps.map((step, idx) => (
                   <div
                     key={step.id || idx}

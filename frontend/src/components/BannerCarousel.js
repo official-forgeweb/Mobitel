@@ -98,7 +98,7 @@ export default function BannerCarousel({ data }) {
           {activeBanners.map((banner, idx) => (
             <div
               key={banner.id || idx}
-              className="relative min-w-full p-8 sm:p-12 flex items-center justify-between min-h-[300px]"
+              className="relative min-w-full p-6 sm:p-12 flex items-center justify-between min-h-[220px] sm:min-h-[300px] lg:min-h-[350px]"
             >
               <div className="absolute inset-0 z-0">
                 <img src={banner.image} alt={banner.title} className="w-full h-full object-cover" />
@@ -106,17 +106,17 @@ export default function BannerCarousel({ data }) {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
               </div>
               <div className="relative z-10 flex-1">
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight drop-shadow-md">
+                <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight drop-shadow-md pr-4">
                   {banner.title}
                 </h2>
-                <p className="mt-2 text-sm sm:text-base text-white/90 max-w-md drop-shadow-md">
+                <p className="mt-2 text-xs sm:text-base text-white/90 max-w-[240px] sm:max-w-md drop-shadow-md line-clamp-2 sm:line-clamp-none">
                   {banner.subtitle}
                 </p>
-                <button className="mt-5 bg-primary text-white font-semibold text-sm px-6 py-2.5 rounded-full hover:bg-primary-dark shadow-lg transition-colors">
+                <button className="mt-4 sm:mt-5 bg-primary text-white font-semibold text-xs sm:text-sm px-5 py-2 sm:px-6 sm:py-2.5 rounded-full hover:bg-primary-dark shadow-lg transition-colors">
                   {banner.cta}
                 </button>
               </div>
-              {banner.icon && <div className="relative z-10 hidden sm:block opacity-80">{banner.icon}</div>}
+              {banner.icon && <div className="relative z-10 hidden md:block opacity-80">{banner.icon}</div>}
             </div>
           ))}
         </div>

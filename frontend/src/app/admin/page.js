@@ -79,26 +79,29 @@ export default function AdminDashboard() {
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead>
-                                <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
-                                    <th className="p-3 font-medium">Token</th>
-                                    <th className="p-3 font-medium">Customer</th>
-                                    <th className="p-3 font-medium">Device</th>
-                                    <th className="p-3 font-medium">Status</th>
-                                    <th className="p-3 font-medium">Time</th>
+                                <tr className="bg-gray-50 text-gray-500 text-[10px] uppercase tracking-wider font-bold">
+                                    <th className="p-3 hidden sm:table-cell">Token</th>
+                                    <th className="p-3">Customer</th>
+                                    <th className="p-3 hidden md:table-cell">Device</th>
+                                    <th className="p-3">Status</th>
+                                    <th className="p-3 hidden sm:table-cell text-right">Date</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
                                 {(bookingStats?.recentBookings || stats?.recentActivity || []).slice(0, 8).map((item, i) => {
                                     const isBooking = item.trackingToken;
                                     return (
-                                        <tr key={i} className="hover:bg-gray-50 transition-colors text-sm">
-                                            <td className="p-3 font-mono text-xs font-bold text-primary">{isBooking ? item.trackingToken : '-'}</td>
-                                            <td className="p-3 text-gray-900">{isBooking ? item.customerName : item.user}</td>
-                                            <td className="p-3 text-gray-600">{isBooking ? `${item.brand} ${item.model}` : item.action?.substring(0, 30)}</td>
+                                        <tr key={i} className="hover:bg-gray-50 transition-colors text-xs border-l-2 border-transparent hover:border-primary">
+                                            <td className="p-3 font-mono text-primary font-bold hidden sm:table-cell">{isBooking ? item.trackingToken : '-'}</td>
+                                            <td className="p-3">
+                                                <div className="font-semibold text-gray-900 truncate max-w-[100px] sm:max-w-none">{isBooking ? item.customerName : item.user}</div>
+                                                <div className="sm:hidden text-[10px] text-gray-400 font-mono mt-0.5">{isBooking ? item.trackingToken : ''}</div>
+                                            </td>
+                                            <td className="p-3 text-gray-600 hidden md:table-cell">{isBooking ? `${item.brand} ${item.model}` : item.action?.substring(0, 30)}</td>
                                             <td className="p-3">
                                                 <StatusBadge status={isBooking ? item.status : item.status} />
                                             </td>
-                                            <td className="p-3 text-gray-400 text-xs">{isBooking ? new Date(item.createdAt).toLocaleDateString() : item.time}</td>
+                                            <td className="p-3 text-gray-400 text-right hidden sm:table-cell">{isBooking ? new Date(item.createdAt).toLocaleDateString() : item.time}</td>
                                         </tr>
                                     );
                                 })}

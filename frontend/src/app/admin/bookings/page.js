@@ -115,20 +115,45 @@ export default function BookingsPage() {
             </header>
 
             {/* Filters */}
-            <div className="flex flex-wrap gap-3 mb-5">
-                <input type="text" placeholder="Search by name, phone, token..." value={filters.search}
-                    onChange={e => setFilters({ ...filters, search: e.target.value })}
-                    className="border rounded-lg px-3 py-2 text-sm w-64 bg-white border-gray-300 text-gray-900" />
-                <select value={filters.status} onChange={e => setFilters({ ...filters, status: e.target.value })}
-                    className="border rounded-lg px-3 py-2 text-sm bg-white border-gray-300 text-gray-900">
-                    <option value="">All Statuses</option>
-                    {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-                <select value={filters.priority} onChange={e => setFilters({ ...filters, priority: e.target.value })}
-                    className="border rounded-lg px-3 py-2 text-sm bg-white border-gray-300 text-gray-900">
-                    <option value="">All Priorities</option>
-                    {PRIORITIES.map(p => <option key={p} value={p}>{p}</option>)}
-                </select>
+            <div className="flex flex-col md:flex-row flex-wrap gap-3 mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <div className="relative flex-1 min-w-[240px]">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    </span>
+                    <input 
+                        type="text" 
+                        placeholder="Search by name, phone, token..." 
+                        value={filters.search}
+                        onChange={e => setFilters({ ...filters, search: e.target.value })}
+                        className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                    />
+                </div>
+                <div className="flex flex-wrap gap-3">
+                    <select 
+                        value={filters.status} 
+                        onChange={e => setFilters({ ...filters, status: e.target.value })}
+                        className="flex-1 sm:flex-none min-w-[140px] border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all cursor-pointer"
+                    >
+                        <option value="">All Statuses</option>
+                        {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                    <select 
+                        value={filters.priority} 
+                        onChange={e => setFilters({ ...filters, priority: e.target.value })}
+                        className="flex-1 sm:flex-none min-w-[140px] border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all cursor-pointer"
+                    >
+                        <option value="">All Priorities</option>
+                        {PRIORITIES.map(p => <option key={p} value={p}>{p}</option>)}
+                    </select>
+                    {(filters.status || filters.priority || filters.search) && (
+                        <button 
+                            onClick={() => setFilters({ status: '', priority: '', search: '' })}
+                            className="px-4 py-2 text-sm text-gray-500 hover:text-primary font-medium transition-colors"
+                        >
+                            Clear All
+                        </button>
+                    )}
+                </div>
             </div>
 
             <div className="flex gap-6">
@@ -140,11 +165,11 @@ export default function BookingsPage() {
                                 <tr className="bg-gray-50 text-xs uppercase text-gray-500 tracking-wider">
                                     <th className="p-3">Token</th>
                                     <th className="p-3">Customer</th>
-                                    <th className="p-3">Device</th>
+                                    <th className="p-3 hidden sm:table-cell">Device</th>
                                     <th className="p-3">Status</th>
-                                    <th className="p-3">Priority</th>
-                                    <th className="p-3">Worker</th>
-                                    <th className="p-3">Actions</th>
+                                    <th className="p-3 hidden lg:table-cell">Priority</th>
+                                    <th className="p-3 hidden xl:table-cell">Worker</th>
+                                    <th className="p-3 hidden md:table-cell text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
@@ -153,15 +178,15 @@ export default function BookingsPage() {
                                         onClick={() => viewBooking(b._id)}>
                                         <td className="p-3 font-mono text-xs font-bold text-primary">{b.trackingToken}</td>
                                         <td className="p-3">
-                                            <div className="text-gray-900">{b.customerName}</div>
-                                            <div className="text-xs text-gray-400">{b.phone}</div>
+                                            <div className="text-gray-900 font-medium truncate max-w-[120px] sm:max-w-none">{b.customerName}</div>
+                                            <div className="text-[11px] text-gray-400">{b.phone}</div>
                                         </td>
-                                        <td className="p-3 text-gray-600">{b.brand} {b.model}</td>
-                                        <td className="p-3"><span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusColor(b.status)}`}>{b.status}</span></td>
-                                        <td className={`p-3 text-xs font-medium ${priorityColor(b.priority)}`}>{b.priority}</td>
-                                        <td className="p-3 text-xs text-gray-500">{b.assignedWorker?.name || <span className="italic text-gray-400">Unassigned</span>}</td>
-                                        <td className="p-3" onClick={e => e.stopPropagation()}>
-                                            <select className="text-xs border rounded px-1 py-0.5 bg-white border-gray-300 text-gray-900"
+                                        <td className="p-3 text-gray-600 hidden sm:table-cell">{b.brand} {b.model}</td>
+                                        <td className="p-3"><span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide ${statusColor(b.status)}`}>{b.status}</span></td>
+                                        <td className={`p-3 text-xs font-medium hidden lg:table-cell ${priorityColor(b.priority)}`}>{b.priority}</td>
+                                        <td className="p-3 text-xs text-gray-500 hidden xl:table-cell">{b.assignedWorker?.name || <span className="italic text-gray-400">Unassigned</span>}</td>
+                                        <td className="p-3 text-right hidden md:table-cell" onClick={e => e.stopPropagation()}>
+                                            <select className="text-xs border rounded px-1 py-1 bg-white border-gray-300 text-gray-900 focus:ring-1 focus:ring-primary outline-none"
                                                 value={b.status} onChange={e => updateStatus(b._id, e.target.value)}>
                                                 {STATUSES.map(s => <option key={s}>{s}</option>)}
                                             </select>

@@ -77,21 +77,40 @@ export default function AdminLayout({ children }) {
 
     return (
         <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 font-sans">
+            {/* Mobile Sidebar Overlay */}
+            {mobileMenuOpen && (
+                <div 
+                    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden transition-opacity duration-300"
+                    onClick={() => setMobileMenuOpen(false)}
+                ></div>
+            )}
+
             {/* Mobile Header */}
-            <div className="md:hidden flex items-center justify-between bg-white px-4 py-3 shadow-sm border-b sticky top-0 z-50">
-                <span className="text-lg font-bold text-gray-800">Mobitel Admin</span>
-                <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-gray-500 hover:text-gray-700 p-1">
+            <div className="md:hidden flex items-center justify-between bg-white px-5 py-4 shadow-md border-b sticky top-0 z-50">
+                <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-xl">M</div>
+                    <span className="text-xl font-black text-gray-900 tracking-tight">Admin<span className="text-primary">Panel</span></span>
+                </div>
+                <button 
+                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
+                    className={`p-2 rounded-xl transition-all duration-300 ${mobileMenuOpen ? 'bg-primary/10 text-primary rotate-90' : 'bg-gray-100 text-gray-600'}`}
+                >
                     <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         {mobileMenuOpen
-                            ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                            : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                            ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                            : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16" />
                         }
                     </svg>
                 </button>
             </div>
 
             {/* Sidebar */}
-            <aside className={`${mobileMenuOpen ? 'block' : 'hidden'} md:flex w-full md:w-72 bg-gradient-to-b from-[#4a0000] to-[#2a0000] text-white shadow-2xl flex-col md:sticky md:top-0 md:h-screen overflow-y-auto z-40 relative`}>
+            <aside className={`
+                fixed inset-y-0 left-0 z-50 w-72 bg-gradient-to-b from-[#4a0000] to-[#2a0000] text-white shadow-2xl flex flex-col 
+                transform transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]
+                md:translate-x-0 md:static md:h-screen
+                ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+            `}>
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 pointer-events-none"></div>
                 <div className="md:block p-8 text-2xl font-black tracking-tight border-b border-white/10 z-10 relative flex items-center justify-between">
                     <div>Mobi<span className="text-[#F8D272]">tel</span></div>

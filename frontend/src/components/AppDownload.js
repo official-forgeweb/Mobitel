@@ -78,18 +78,18 @@ export default function AppDownload({ data }) {
                     </div>
 
                     {/* Desktop Representation (Centered) */}
-                    <div className="relative w-full max-w-4xl flex-1 shrink bg-dark rounded-t-xl md:rounded-t-2xl shadow-2xl overflow-hidden border-t border-x border-dark/30 aspect-[16/10] sm:aspect-[16/10]">
+                    <div className="relative w-full max-w-lg md:max-w-4xl flex-1 shrink bg-dark rounded-t-xl md:rounded-t-2xl shadow-2xl overflow-hidden border-t border-x border-dark/30 aspect-[16/10]">
                         {/* Fake Mac Window Header */}
-                        <div className="h-6 md:h-8 border-b border-white/10 flex items-center px-3 gap-1.5 bg-[#1a1a1a] shrink-0">
-                            <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-[#ff5f56]"></div>
-                            <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-[#ffbd2e]"></div>
-                            <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-[#27c93f]"></div>
-                            <div className="flex-1 flex justify-center border-border">
-                                <div className="h-2 md:h-2.5 w-16 md:w-24 bg-white/5 rounded"></div>
+                        <div className="h-5 md:h-8 border-b border-white/10 flex items-center px-3 gap-1 md:gap-1.5 bg-[#1a1a1a] shrink-0">
+                            <div className="w-1.5 h-1.5 md:w-2.5 md:h-2.5 rounded-full bg-[#ff5f56]"></div>
+                            <div className="w-1.5 h-1.5 md:w-2.5 md:h-2.5 rounded-full bg-[#ffbd2e]"></div>
+                            <div className="w-1.5 h-1.5 md:w-2.5 md:h-2.5 rounded-full bg-[#27c93f]"></div>
+                            <div className="flex-1 flex justify-center">
+                                <div className="h-1.5 md:h-2.5 w-12 md:w-24 bg-white/5 rounded"></div>
                             </div>
                         </div>
-                        {/* Dashboard UI - Forced to cover remaining height, NO HOVER EFFECT */}
-                        <div className="w-full h-[calc(100%-1.5rem)] md:h-[calc(100%-2rem)] bg-white relative overflow-hidden">
+                        {/* Dashboard UI */}
+                        <div className="w-full h-[calc(100%-1.25rem)] md:h-[calc(100%-2rem)] bg-white relative overflow-hidden">
                             <img
                                 src="/mockups/dashboard.png"
                                 alt="Mobitel Dashboard UI"
@@ -101,7 +101,7 @@ export default function AppDownload({ data }) {
                 </div>
 
                 {/* Bottom Content Container - Centered */}
-                <div className="max-w-2xl mx-auto text-center space-y-6 flex flex-col items-center">
+                <div className="max-w-2xl mx-auto text-center space-y-4 md:space-y-6 flex flex-col items-center">
 
                     {/* Tiny Tagline */}
                     <div className="inline-flex items-center gap-3 text-[10px] md:text-xs font-bold text-primary uppercase tracking-[0.2em]">
@@ -111,39 +111,39 @@ export default function AppDownload({ data }) {
                     </div>
 
                     {/* Headline - Elegant & Stylish */}
-                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-dark tracking-tight leading-snug">
+                    <h2 className="text-2xl md:text-4xl lg:text-5xl font-medium text-dark tracking-tight leading-tight md:leading-snug px-2">
                         {title}
                     </h2>
 
                     {/* Text Description */}
-                    <p className="text-body text-[14px] md:text-[15px] leading-relaxed font-medium max-w-xl mx-auto">
+                    <p className="text-body text-[13px] md:text-[15px] leading-relaxed font-medium max-w-xl mx-auto px-4">
                         {desc}
                     </p>
 
                     {/* Download Buttons / Badges */}
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6 w-full px-4">
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 pt-4 md:pt-6 w-full px-4">
                         <a
                             href="#"
-                            className="w-full sm:w-auto flex items-center justify-center gap-3 bg-dark text-white px-8 py-4 rounded-xl hover:bg-black transition-colors duration-300 shadow-xl shadow-dark/10 flex-shrink-0"
+                            className="w-full sm:w-auto flex items-center justify-center gap-3 bg-dark text-white px-6 py-3.5 md:px-8 md:py-4 rounded-xl hover:bg-black transition-colors duration-300 shadow-xl shadow-dark/10 shrink-0"
                         >
-                            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                             </svg>
-                            <span className="font-bold text-[15px]">{buttonText}</span>
+                            <span className="font-bold text-sm md:text-[15px]">{buttonText}</span>
                         </a>
 
                         {/* Availability Badges */}
-                        <div className="flex flex-col items-center sm:items-start text-[10px] font-bold text-muted tracking-widest uppercase sm:pl-6 sm:border-l border-border gap-2">
+                        <div className="flex flex-col items-center sm:items-start text-[9px] md:text-[10px] font-bold text-muted tracking-widest uppercase sm:pl-6 sm:border-l border-border gap-1.5">
                             <span className="opacity-60">Now Accessible On</span>
                             <div className="flex flex-wrap justify-center sm:justify-start items-center gap-3">
-                                <span className="flex items-center gap-1 text-dark">
-                                    <svg className="w-3.5 h-3.5 text-dark/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                <span className="flex items-center gap-1 text-dark whitespace-nowrap">
+                                    <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-dark/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                     </svg>
                                     Windows & MacOS
                                 </span>
-                                <span className="flex items-center gap-1 text-dark">
-                                    <svg className="w-3.5 h-3.5 text-dark/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                <span className="flex items-center gap-1 text-dark whitespace-nowrap">
+                                    <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-dark/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                     </svg>
                                     Android & iOS
