@@ -127,8 +127,43 @@ export default function BrandCategories({ data }) {
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/brands?active=true`).then(r => r.json()).then(setBrandsList).catch(console.error);
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/services?active=true`).then(r => r.json()).then(setRepairIssuesList).catch(console.error);
   }, []);
+
+  // Fetch specific services for the selected model
+  useEffect(() => {
+    if (selectedModel) {
+      if (selectedModel._id) {
+        setIsLoadingModels(true); // Re-use loading state for issues
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/pricing/model/${selectedBrand._id}/${selectedModel._id}`)
+          .then(r => r.json())
+          .then(data => {
+            if (data && data.length > 0) {
+              const modelServices = data.map(p => ({
+                ...p.serviceId,
+                price: p.priceMax ? `₹${p.price} - ₹${p.priceMax}` : (p.price > 0 ? `₹${p.price}` : 'Upon Inspection'),
+                time: p.estimatedTime || '45-60 Mins'
+              }));
+              setRepairIssuesList(modelServices);
+            } else {
+              // Fallback to default services if no specific pricing exists
+              fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/services?active=true`)
+                .then(r => r.json())
+                .then(setRepairIssuesList);
+            }
+            setIsLoadingModels(false);
+          })
+          .catch(err => {
+            console.error(err);
+            setIsLoadingModels(false);
+          });
+      } else {
+        // "Other Model" selected - show all services
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/services?active=true`)
+          .then(r => r.json())
+          .then(setRepairIssuesList);
+      }
+    }
+  }, [selectedModel, selectedBrand]);
 
   const shopLocations = [
     { id: 'shop1', name: 'Mobitel - Connaught Place', address: 'Shop No. 12, Block A, Connaught Place, New Delhi - 110001', hours: '10:00 AM - 8:00 PM', phone: '+91 98765 43210' },

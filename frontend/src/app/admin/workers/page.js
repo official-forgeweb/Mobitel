@@ -3,8 +3,8 @@ import { useState, useEffect } from 'react';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001';
 
-export default function WorkersPage() {
-    const [workers, setWorkers] = useState([]);
+export default function PartnersPage() {
+    const [partners, setPartners] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [editingId, setEditingId] = useState(null);
@@ -12,15 +12,15 @@ export default function WorkersPage() {
 
     const headers = () => ({ Authorization: `Bearer ${localStorage.getItem('adminToken')}`, 'Content-Type': 'application/json' });
 
-    const fetchWorkers = async () => {
+    const fetchPartners = async () => {
         try {
             const res = await fetch(`${API}/api/workers`, { headers: headers() });
-            setWorkers(await res.json());
+            setPartners(await res.json());
         } catch (err) { console.error(err); }
         setLoading(false);
     };
 
-    useEffect(() => { fetchWorkers(); }, []);
+    useEffect(() => { fetchPartners(); }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -38,11 +38,11 @@ export default function WorkersPage() {
             const data = await res.json();
             if (data.success || data.data) {
                 resetForm();
-                fetchWorkers();
+                fetchPartners();
             } else {
-                alert(data.error || 'Failed to save worker');
+                alert(data.error || 'Failed to save partner');
             }
-        } catch (err) { console.error(err); alert('Error saving worker'); }
+        } catch (err) { console.error(err); alert('Error saving partner'); }
     };
 
     const resetForm = () => {
@@ -51,7 +51,7 @@ export default function WorkersPage() {
         setShowForm(false);
     };
 
-    const editWorker = (w) => {
+    const editPartner = (w) => {
         setForm({
             name: w.name, phone: w.phone, email: w.email || '',
             password: '', specialization: (w.specialization || []).join(', '), photo: w.photo || ''
@@ -60,10 +60,10 @@ export default function WorkersPage() {
         setShowForm(true);
     };
 
-    const deleteWorker = async (id) => {
-        if (!confirm('Are you sure you want to delete this worker?')) return;
+    const deletePartner = async (id) => {
+        if (!confirm('Are you sure you want to delete this partner?')) return;
         await fetch(`${API}/api/workers/${id}`, { method: 'DELETE', headers: headers() });
-        fetchWorkers();
+        fetchPartners();
     };
 
     const toggleStatus = async (w) => {
@@ -72,20 +72,20 @@ export default function WorkersPage() {
             method: 'PUT', headers: headers(),
             body: JSON.stringify({ status: newStatus })
         });
-        fetchWorkers();
+        fetchPartners();
     };
 
     return (
         <div className="animate-in fade-in">
             <header className="mb-6 flex justify-between items-center">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Workers</h1>
-                    <p className="text-sm text-gray-500">{workers.length} technicians</p>
+                    <h1 className="text-2xl font-bold text-gray-900">Partners</h1>
+                    <p className="text-sm text-gray-500">{partners.length} service specialists</p>
                 </div>
                 <button onClick={() => { resetForm(); setShowForm(true); }}
                     className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors flex items-center gap-2">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                    Add Worker
+                    Add Partner
                 </button>
             </header>
 
@@ -93,7 +93,7 @@ export default function WorkersPage() {
             {showForm && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={resetForm}>
                     <div className="bg-white rounded-xl p-6 w-full max-w-lg mx-4 shadow-xl" onClick={e => e.stopPropagation()}>
-                        <h3 className="text-lg font-bold text-gray-900 mb-4">{editingId ? 'Edit' : 'Add'} Worker</h3>
+                        <h3 className="text-lg font-bold text-gray-900 mb-4">{editingId ? 'Edit' : 'Add'} Partner</h3>
                         <form onSubmit={handleSubmit} className="space-y-3">
                             <div className="grid grid-cols-2 gap-3">
                                 <input required placeholder="Name *" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
@@ -111,16 +111,16 @@ export default function WorkersPage() {
                             </div>
                             <div className="flex gap-3 justify-end pt-2">
                                 <button type="button" onClick={resetForm} className="px-4 py-2 text-sm border rounded-lg hover:bg-gray-50">Cancel</button>
-                                <button type="submit" className="px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary/90">{editingId ? 'Update' : 'Add'} Worker</button>
+                                <button type="submit" className="px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary/90">{editingId ? 'Update' : 'Add'} Partner</button>
                             </div>
                         </form>
                     </div>
                 </div>
             )}
 
-            {/* Workers Grid */}
+            {/* Partners Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {workers.map(w => (
+                {partners.map(w => (
                     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow">
                         <div className="flex items-start justify-between mb-3">
                             <div className="flex items-center gap-3">
@@ -146,15 +146,15 @@ export default function WorkersPage() {
                             </div>
                         )}
                         <div className="flex gap-2 pt-2 border-t border-gray-100">
-                            <button onClick={() => editWorker(w)} className="flex-1 px-3 py-1.5 text-xs border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 font-medium">Edit</button>
-                            <button onClick={() => deleteWorker(w._id)} className="px-3 py-1.5 text-xs border border-red-200 text-red-600 rounded-lg hover:bg-red-50 font-medium">Delete</button>
+                            <button onClick={() => editPartner(w)} className="flex-1 px-3 py-1.5 text-xs border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 font-medium">Edit</button>
+                            <button onClick={() => deletePartner(w._id)} className="px-3 py-1.5 text-xs border border-red-200 text-red-600 rounded-lg hover:bg-red-50 font-medium">Delete</button>
                         </div>
                     </div>
                 ))}
-                {!loading && !workers.length && (
+                {!loading && !partners.length && (
                     <div className="col-span-full text-center py-12 text-gray-500">
-                        <p className="text-lg">No workers yet</p>
-                        <p className="text-sm">Add your first technician to get started</p>
+                        <p className="text-lg">No partners yet</p>
+                        <p className="text-sm">Add your first service specialist to get started</p>
                     </div>
                 )}
             </div>

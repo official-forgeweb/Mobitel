@@ -9,7 +9,7 @@ const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001';
 const navItems = [
     { href: '/admin', label: 'Dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
     { href: '/admin/bookings', label: 'Bookings', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2' },
-    { href: '/admin/workers', label: 'Workers', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' },
+    { href: '/admin/workers', label: 'Partners', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' },
     { href: '/admin/brands', label: 'Brands & Models', icon: 'M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z' },
     { href: '/admin/services', label: 'Services', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z' },
     { href: '/admin/pricing', label: 'Pricing', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
@@ -106,47 +106,69 @@ export default function AdminLayout({ children }) {
 
             {/* Sidebar */}
             <aside className={`
-                fixed inset-y-0 left-0 z-50 w-72 bg-gradient-to-b from-[#4a0000] to-[#2a0000] text-white shadow-2xl flex flex-col 
+                fixed inset-y-0 left-0 z-50 w-72 bg-gradient-to-b from-[#3a0000] to-[#1a0000] text-white shadow-2xl flex flex-col 
                 transform transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]
-                md:translate-x-0 md:static md:h-screen
+                md:translate-x-0 md:sticky md:top-0 md:h-screen
                 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
             `}>
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 pointer-events-none"></div>
-                <div className="md:block p-8 text-2xl font-black tracking-tight border-b border-white/10 z-10 relative flex items-center justify-between">
-                    <div>Mobi<span className="text-[#F8D272]">tel</span></div>
-                    <span className="text-[10px] uppercase tracking-widest bg-white/10 px-2 py-1 rounded-full font-bold">Admin</span>
-                </div>
-                <nav className="p-5 space-y-2 flex-1 z-10 relative">
-                    {navItems.map(item => {
-                        const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
-                        return (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                onClick={() => setMobileMenuOpen(false)}
-                                className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl text-sm font-semibold transition-all duration-300 ${isActive
-                                    ? 'bg-white/10 text-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur-md border border-white/20 translate-x-1'
-                                    : 'text-white/60 hover:bg-white/5 hover:text-white hover:translate-x-1 border border-transparent'
-                                }`}
-                            >
-                                <svg className={`w-5 h-5 shrink-0 transition-colors ${isActive ? 'text-[#F8D272]' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={isActive ? "2" : "1.5"}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
-                                </svg>
-                                {item.label}
-                            </Link>
-                        );
-                    })}
-
-                    <div className="pt-6 mt-6 border-t border-white/10">
-                        <Link href="/" className="flex items-center gap-3 px-5 py-3 text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 rounded-2xl transition-all border border-transparent">
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-                            Client Website
-                        </Link>
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-5 pointer-events-none"></div>
+                
+                {/* Sidebar Header */}
+                <div className="p-8 text-2xl font-black tracking-tight border-b border-white/5 z-10 relative flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-[#F8D272] rounded-lg flex items-center justify-center text-[#3a0000] font-black text-lg">M</div>
+                        <div>Mobi<span className="text-[#F8D272]">tel</span></div>
                     </div>
-                </nav>
-                <div className="p-5 border-t border-white/10 mt-auto z-10 relative bg-black/20 backdrop-blur-sm">
-                    <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-red-200 hover:bg-red-500/20 hover:text-white hover:border-red-500/30 border border-transparent transition-all font-bold text-sm">
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                </div>
+
+                {/* Navigation Items */}
+                <div className="flex-1 overflow-y-auto z-10 relative custom-scrollbar">
+                    <nav className="p-5 space-y-1.5">
+                        <p className="text-[10px] uppercase tracking-[0.2em] text-white/40 font-bold mb-4 ml-4">Main Menu</p>
+                        {navItems.map(item => {
+                            const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className={`flex items-center gap-4 px-5 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 ${isActive
+                                        ? 'bg-[#F8D272] text-[#3a0000] shadow-[0_10px_20px_rgba(248,210,114,0.2)]'
+                                        : 'text-white/60 hover:bg-white/5 hover:text-white'
+                                    }`}
+                                >
+                                    <svg className={`w-5 h-5 shrink-0 transition-colors ${isActive ? 'text-[#3a0000]' : 'text-white/40 group-hover:text-white'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={isActive ? "2.5" : "1.5"}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
+                                    </svg>
+                                    {item.label}
+                                </Link>
+                            );
+                        })}
+
+                        <div className="pt-4 mt-4 border-t border-white/5">
+                            <Link href="/" className="flex items-center gap-4 px-5 py-3 text-sm font-medium text-white/40 hover:text-white hover:bg-white/5 rounded-2xl transition-all">
+                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                                Client Website
+                            </Link>
+                        </div>
+                    </nav>
+                </div>
+
+                {/* Sidebar Footer / Profile */}
+                <div className="p-6 border-t border-white/5 z-10 relative bg-black/40 backdrop-blur-md">
+                    <div className="flex items-center gap-4 mb-5">
+                        <div className="w-11 h-11 rounded-full bg-white/10 p-0.5 border border-white/10">
+                            <div className="w-full h-full rounded-full bg-gradient-to-tr from-[#F8D272] to-[#fce4a4] flex items-center justify-center text-[#3a0000] font-black text-lg shadow-inner">
+                                A
+                            </div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <p className="text-sm font-bold text-white truncate">Administrator</p>
+                            <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold">System Superuser</p>
+                        </div>
+                    </div>
+                    <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all duration-300 font-bold text-xs uppercase tracking-widest group">
+                        <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                         Secure Logout
                     </button>
                 </div>

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
-export default function WorkerLoginPage() {
+export default function PartnerLoginPage() {
     const router = useRouter();
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
@@ -48,7 +48,7 @@ export default function WorkerLoginPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                     </div>
-                    <h1 className="text-2xl font-bold text-gray-900 ">Mobitel Worker</h1>
+                    <h1 className="text-2xl font-bold text-gray-900 ">Mobitel Partner</h1>
                     <p className="text-sm text-gray-500 mt-1">Sign in to manage your repair jobs</p>
                 </div>
 

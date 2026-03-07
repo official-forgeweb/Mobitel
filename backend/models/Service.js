@@ -5,7 +5,8 @@ const ServiceSchema = new mongoose.Schema({
     description: { type: String, default: '' },
     icon: { type: String, default: '' }, // icon/image URL
     isActive: { type: Boolean, default: true },
-    displayOrder: { type: Number, default: 0 }
+    displayOrder: { type: Number, default: 0 },
+    isDefault: { type: Boolean, default: false }
 }, { timestamps: true });
 
 module.exports = mongoose.models.Service || mongoose.model('Service', ServiceSchema);

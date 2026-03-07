@@ -6,7 +6,7 @@ const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001';
 export default function ReportsPage() {
     const [activeTab, setActiveTab] = useState('bookings');
     const [bookingsReport, setBookingsReport] = useState(null);
-    const [workerReport, setWorkerReport] = useState(null);
+    const [partnerReport, setPartnerReport] = useState(null);
     const [popularReport, setPopularReport] = useState(null);
     const [revenueReport, setRevenueReport] = useState(null);
     const [dateRange, setDateRange] = useState({ dateFrom: '', dateTo: '' });
@@ -24,9 +24,9 @@ export default function ReportsPage() {
             if (activeTab === 'bookings') {
                 const res = await fetch(`${API}/api/reports/bookings?${params}`, { headers: headers() });
                 setBookingsReport(await res.json());
-            } else if (activeTab === 'workers') {
+            } else if (activeTab === 'partners') {
                 const res = await fetch(`${API}/api/reports/workers`, { headers: headers() });
-                setWorkerReport(await res.json());
+                setPartnerReport(await res.json());
             } else if (activeTab === 'popular') {
                 const res = await fetch(`${API}/api/reports/popular`, { headers: headers() });
                 setPopularReport(await res.json());
@@ -50,7 +50,7 @@ export default function ReportsPage() {
     const tabs = [
         { id: 'bookings', label: 'Bookings' },
         { id: 'revenue', label: 'Revenue' },
-        { id: 'workers', label: 'Workers' },
+        { id: 'partners', label: 'Partners' },
         { id: 'popular', label: 'Popular' },
     ];
 
@@ -166,15 +166,15 @@ export default function ReportsPage() {
                         </div>
                     )}
 
-                    {/* Workers View */}
-                    {activeTab === 'workers' && workerReport && (
+                    {/* Partners View */}
+                    {activeTab === 'partners' && partnerReport && (
                         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                             <table className="w-full text-left text-sm">
                                 <thead><tr className="bg-gray-50/50 border-b border-gray-100 text-[10px] font-bold uppercase text-gray-400 tracking-widest">
-                                    <th className="p-5">Field Expert</th><th className="p-5">Assignment Volume</th><th className="p-5">Success Rate</th><th className="p-5">Load</th><th className="p-5">Availability</th>
+                                    <th className="p-5">Partner Specialist</th><th className="p-5">Assignment Volume</th><th className="p-5">Success Rate</th><th className="p-5">Load</th><th className="p-5">Availability</th>
                                 </tr></thead>
                                 <tbody className="divide-y divide-gray-100">
-                                    {workerReport.map(w => (
+                                    {partnerReport.map(w => (
                                         <tr key={w._id} className="hover:bg-gray-50/50 transition-colors">
                                             <td className="p-5">
                                                 <div className="flex items-center gap-3">

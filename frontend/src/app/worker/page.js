@@ -5,7 +5,7 @@ import Link from 'next/link';
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 const STATUSES = ['Received', 'Diagnosing', 'Waiting for Parts', 'In Progress', 'Testing', 'Ready for Pickup', 'Completed'];
 
-export default function WorkerDashboard() {
+export default function PartnerDashboard() {
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -48,7 +48,7 @@ export default function WorkerDashboard() {
     return (
         <div className="animate-in fade-in">
             <header className="mb-6">
-                <h1 className="text-2xl font-bold text-gray-900 ">My Jobs</h1>
+                <h1 className="text-2xl font-bold text-gray-900 ">My Partner Portal</h1>
                 <p className="text-sm text-gray-500">{jobs.length} active assignment{jobs.length !== 1 ? 's' : ''}</p>
             </header>
 

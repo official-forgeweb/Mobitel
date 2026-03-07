@@ -9,11 +9,11 @@ import Footer from "@/components/Footer";
 export default function ClientLayoutWrapper({ children }) {
   const pathname = usePathname();
 
-  // Check if we are inside the admin or worker panel
+  // Check if we are inside the admin or partner panel
   const isAdminRoute = pathname?.startsWith('/admin');
-  const isWorkerRoute = pathname?.startsWith('/worker');
+  const isPartnerRoute = pathname?.startsWith('/worker');
 
-  if (isAdminRoute || isWorkerRoute) {
+  if (isAdminRoute || isPartnerRoute) {
     return <div className="flex-1 flex flex-col">{children}</div>;
   }
 

@@ -12,11 +12,11 @@ const navItems = [
     { href: '/worker/profile', label: 'Profile', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
 ];
 
-export default function WorkerLayout({ children }) {
+export default function PartnerLayout({ children }) {
     const pathname = usePathname();
     const router = useRouter();
     const [authorized, setAuthorized] = useState(false);
-    const [workerName, setWorkerName] = useState('');
+    const [partnerName, setPartnerName] = useState('');
 
     useEffect(() => {
         if (pathname === '/worker/login') {
@@ -44,7 +44,7 @@ export default function WorkerLayout({ children }) {
                 router.push('/worker/login');
                 return;
             }
-            setWorkerName(payload.name || 'Worker');
+            setPartnerName(payload.name || 'Partner');
             setAuthorized(true);
         } catch {
             localStorage.removeItem('workerToken');
@@ -71,9 +71,9 @@ export default function WorkerLayout({ children }) {
         <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 font-sans">
             {/* Mobile Header */}
             <div className="md:hidden flex items-center justify-between bg-gradient-to-r from-[#4a0000] to-[#2a0000] text-white px-5 py-4 shadow-md sticky top-0 z-50">
-                <div className="text-xl font-black tracking-tight">Mobi<span className="text-[#F8D272]">tel</span> <span className="text-[10px] uppercase tracking-widest bg-white/20 px-2 py-1 rounded-full ml-1">Worker</span></div>
+                <div className="text-xl font-black tracking-tight">Mobi<span className="text-[#F8D272]">tel</span> <span className="text-[10px] uppercase tracking-widest bg-white/20 px-2 py-1 rounded-full ml-1">Partner</span></div>
                 <div className="flex items-center gap-3">
-                    <span className="text-sm text-white/80">👋 {workerName}</span>
+                    <span className="text-sm text-white/80">👋 {partnerName}</span>
                 </div>
             </div>
 
@@ -82,12 +82,12 @@ export default function WorkerLayout({ children }) {
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 pointer-events-none"></div>
                 <div className="p-8 text-2xl font-black tracking-tight border-b border-white/10 z-10 relative flex items-center justify-between">
                     <div>Mobi<span className="text-[#F8D272]">tel</span></div>
-                    <span className="text-[10px] uppercase tracking-widest bg-white/10 px-2 py-1 rounded-full font-bold">Worker</span>
+                    <span className="text-[10px] uppercase tracking-widest bg-white/10 px-2 py-1 rounded-full font-bold">Partner</span>
                 </div>
                 
                 <div className="px-6 py-4 border-b border-white/10 z-10 relative bg-black/10">
                     <p className="text-xs text-white/60 uppercase tracking-widest font-bold mb-1">Welcome Back,</p>
-                    <p className="font-semibold text-lg text-[#F8D272] truncate">👋 {workerName}</p>
+                    <p className="font-semibold text-lg text-[#F8D272] truncate">👋 {partnerName}</p>
                 </div>
 
                 <nav className="p-5 space-y-2 flex-1 z-10 relative mt-2">

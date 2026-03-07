@@ -8,7 +8,7 @@ export default function ServicesPage() {
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [editingId, setEditingId] = useState(null);
-    const [form, setForm] = useState({ name: '', description: '', icon: '', displayOrder: 0 });
+    const [form, setForm] = useState({ name: '', description: '', icon: '', displayOrder: 0, isDefault: false });
 
     const headers = () => ({ Authorization: `Bearer ${localStorage.getItem('adminToken')}`, 'Content-Type': 'application/json' });
 
@@ -31,14 +31,19 @@ export default function ServicesPage() {
         if (data.success || data.data) { resetForm(); fetchServices(); } else alert(data.error || 'Failed');
     };
 
-    const resetForm = () => { setForm({ name: '', description: '', icon: '', displayOrder: 0 }); setEditingId(null); setShowForm(false); };
+    const resetForm = () => { setForm({ name: '', description: '', icon: '', displayOrder: 0, isDefault: false }); setEditingId(null); setShowForm(false); };
 
-    const editService = (s) => { setForm({ name: s.name, description: s.description || '', icon: s.icon || '', displayOrder: s.displayOrder || 0 }); setEditingId(s._id); setShowForm(true); };
+    const editService = (s) => { setForm({ name: s.name, description: s.description || '', icon: s.icon || '', displayOrder: s.displayOrder || 0, isDefault: s.isDefault || false }); setEditingId(s._id); setShowForm(true); };
 
     const deleteService = async (id) => { if (!confirm('Delete?')) return; await fetch(`${API}/api/services/${id}`, { method: 'DELETE', headers: headers() }); fetchServices(); };
 
     const toggleActive = async (s) => {
         await fetch(`${API}/api/services/${s._id}`, { method: 'PUT', headers: headers(), body: JSON.stringify({ isActive: !s.isActive }) });
+        fetchServices();
+    };
+
+    const toggleDefault = async (s) => {
+        await fetch(`${API}/api/services/${s._id}`, { method: 'PUT', headers: headers(), body: JSON.stringify({ isDefault: !s.isDefault }) });
         fetchServices();
     };
 
@@ -73,10 +78,16 @@ export default function ServicesPage() {
                                     </div>
                                 </td>
                                 <td className="p-4">
-                                    <button onClick={() => toggleActive(s)} 
-                                        className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all border ${s.isActive ? 'bg-green-50 text-green-600 border-green-100' : 'bg-red-50 text-red-600 border-red-100'}`}>
-                                        {s.isActive ? '• Active' : '• Hidden'}
-                                    </button>
+                                    <div className="flex flex-col gap-1.5">
+                                        <button onClick={() => toggleActive(s)} 
+                                            className={`w-fit px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all border ${s.isActive ? 'bg-green-50 text-green-600 border-green-100' : 'bg-red-50 text-red-600 border-red-100'}`}>
+                                            {s.isActive ? '• Active' : '• Hidden'}
+                                        </button>
+                                        <button onClick={() => toggleDefault(s)} 
+                                            className={`w-fit px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all border ${s.isDefault ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-gray-50 text-gray-400 border-gray-100'}`}>
+                                            {s.isDefault ? '★ Default' : '☆ Standard'}
+                                        </button>
+                                    </div>
                                 </td>
                                 <td className="p-4 font-mono text-gray-400 font-bold">#{s.displayOrder || 0}</td>
                                 <td className="p-4 text-right">
@@ -131,6 +142,10 @@ export default function ServicesPage() {
                                 <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Display Order</label>
                                 <input type="number" value={form.displayOrder} onChange={e => setForm({ ...form, displayOrder: parseInt(e.target.value) || 0 })} 
                                     className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-sm bg-gray-50 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all" />
+                            </div>
+                            <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-2xl border border-gray-100">
+                                <input type="checkbox" id="def_svc" checked={form.isDefault} onChange={e => setForm({...form, isDefault: e.target.checked})} className="w-4 h-4 rounded text-primary" />
+                                <label htmlFor="def_svc" className="text-sm font-bold text-gray-700 cursor-pointer">Default service for all models</label>
                             </div>
                             <div className="flex gap-4 pt-4">
                                 <button type="button" onClick={resetForm} 

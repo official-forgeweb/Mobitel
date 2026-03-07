@@ -12,7 +12,7 @@ export default function BookingsPage() {
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(true);
     const [filters, setFilters] = useState({ status: '', priority: '', search: '' });
-    const [workers, setWorkers] = useState([]);
+    const [partners, setPartners] = useState([]);
     const [selected, setSelected] = useState(null); // booking detail view
     const [updates, setUpdates] = useState([]);
     const [showNoteModal, setShowNoteModal] = useState(false);
@@ -37,14 +37,14 @@ export default function BookingsPage() {
         setLoading(false);
     };
 
-    const fetchWorkers = async () => {
+    const fetchPartners = async () => {
         try {
             const res = await fetch(`${API}/api/workers`, { headers: headers() });
-            setWorkers(await res.json());
+            setPartners(await res.json());
         } catch (err) { console.error(err); }
     };
 
-    useEffect(() => { fetchBookings(1); fetchWorkers(); }, []);
+    useEffect(() => { fetchBookings(1); fetchPartners(); }, []);
     useEffect(() => { const t = setTimeout(() => fetchBookings(1), 300); return () => clearTimeout(t); }, [filters]);
 
     const viewBooking = async (id) => {
@@ -63,7 +63,7 @@ export default function BookingsPage() {
         fetchBookings(); if (selected?._id === id) viewBooking(id);
     };
 
-    const assignWorker = async (id, workerId) => {
+    const assignPartner = async (id, workerId) => {
         await fetch(`${API}/api/bookings/${id}/assign`, {
             method: 'PUT', headers: headers(), body: JSON.stringify({ workerId })
         });
@@ -168,7 +168,7 @@ export default function BookingsPage() {
                                     <th className="p-3 hidden sm:table-cell">Device</th>
                                     <th className="p-3">Status</th>
                                     <th className="p-3 hidden lg:table-cell">Priority</th>
-                                    <th className="p-3 hidden xl:table-cell">Worker</th>
+                                    <th className="p-3 hidden xl:table-cell">Partner</th>
                                     <th className="p-3 hidden md:table-cell text-right">Actions</th>
                                 </tr>
                             </thead>
@@ -243,11 +243,11 @@ export default function BookingsPage() {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-500 mb-1">Assign Worker</label>
+                                    <label className="block text-xs font-medium text-gray-500 mb-1">Assign Partner</label>
                                     <select value={selected.assignedWorker?._id || ''} className="w-full border rounded-lg px-3 py-2 text-sm bg-white border-gray-300 text-gray-900"
-                                        onChange={e => assignWorker(selected._id, e.target.value)}>
+                                        onChange={e => assignPartner(selected._id, e.target.value)}>
                                         <option value="">Unassigned</option>
-                                        {workers.map(w => <option key={w._id} value={w._id}>{w.name}</option>)}
+                                        {partners.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
                                     </select>
                                 </div>
                                 <div>

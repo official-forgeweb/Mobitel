@@ -113,10 +113,10 @@ export default function AdminDashboard() {
                     </div>
                 </div>
 
-                {/* Worker Status */}
+                {/* Partner Status */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                     <div className="p-5 border-b border-gray-100 flex justify-between items-center">
-                        <h2 className="text-lg font-semibold text-gray-900">Workers</h2>
+                        <h2 className="text-lg font-semibold text-gray-900">Partners</h2>
                         <a href="/admin/workers" className="text-sm text-primary hover:underline font-medium">Manage →</a>
                     </div>
                     <div className="p-4 space-y-3">
@@ -135,7 +135,7 @@ export default function AdminDashboard() {
                             </div>
                         ))}
                         {!loading && !bookingStats?.workers?.length && (
-                            <p className="text-sm text-gray-500 text-center py-4">No workers added yet</p>
+                            <p className="text-sm text-gray-500 text-center py-4">No partners added yet</p>
                         )}
                     </div>
                 </div>

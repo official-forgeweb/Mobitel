@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
-export default function WorkerHistoryPage() {
+export default function PartnerHistoryPage() {
     const [jobs, setJobs] = useState([]);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
