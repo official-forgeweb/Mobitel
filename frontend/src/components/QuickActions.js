@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import Script from "next/script";
 import { useRouter } from "next/navigation";
@@ -261,23 +261,55 @@ export default function QuickActions() {
                     </select>
                   </div>
 
-                  {formData.brandId && formData.modelId && formData.serviceId && (
-                    <div className="mt-4 p-4 rounded-xl bg-primary/10 border border-primary/20">
-                       {isLoadingPrice ? (
-                         <div className="animate-pulse text-sm text-primary font-bold">Calculating Price...</div>
-                       ) : priceDetails.price > 0 ? (
-                         <div>
-                            <p className="text-xs text-primary font-semibold uppercase tracking-wider mb-1">Estimated Cost</p>
-                            <p className="text-2xl font-black text-dark tracking-tight">
-                               ₹{priceDetails.price} {priceDetails.priceMax ? ` - ₹${priceDetails.priceMax}` : ''}
-                            </p>
-                         </div>
-                       ) : (
-                         <div>
-                            <p className="text-xs text-body font-semibold uppercase tracking-wider mb-1">Estimated Cost</p>
-                            <p className="text-sm font-bold text-dark tracking-tight">Price on inspection</p>
-                         </div>
-                       )}
+                  {formData.serviceId && (
+                    <div className="space-y-4">
+                      {/* Service Preview Card */}
+                      <div className="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                        <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-white border border-gray-200">
+                          {services.find(s => s._id === formData.serviceId)?.icon ? (
+                            <Image 
+                              src={services.find(s => s._id === formData.serviceId).icon} 
+                              alt="Service" 
+                              fill 
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="flex items-center justify-center h-full text-xl opacity-20">🛠️</div>
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-xs font-black text-muted uppercase tracking-widest">Selected Service</p>
+                          <p className="text-sm font-bold text-dark">{services.find(s => s._id === formData.serviceId)?.name || 'Processing...'}</p>
+                        </div>
+                      </div>
+
+                      {formData.brandId && formData.modelId && (
+                        <div className="p-5 rounded-2xl bg-primary/5 border border-primary/10 shadow-sm">
+                          {isLoadingPrice ? (
+                            <div className="flex items-center gap-3">
+                              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce"></div>
+                              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:-0.15s]"></div>
+                              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]"></div>
+                              <span className="text-sm text-primary font-bold ml-1 italic">Analyzing Repair Cost...</span>
+                            </div>
+                          ) : (
+                            <div>
+                               <p className="text-[10px] text-primary font-black uppercase tracking-[0.2em] mb-1.5">Estimated Cost</p>
+                               <div className="flex items-baseline gap-2">
+                                  <span className="text-3xl font-black text-dark tracking-tighter">
+                                    ₹{priceDetails.price || services.find(s => s._id === formData.serviceId)?.defaultPrice || '0'}
+                                  </span>
+                                  {priceDetails.priceMax && (
+                                    <span className="text-lg font-bold text-muted"> - ₹{priceDetails.priceMax}</span>
+                                  )}
+                               </div>
+                               <p className="text-[10px] text-muted font-medium mt-1 italic">
+                                 {priceDetails.price ? '* Personalized estimate for your model' : '* Baseline price for this service'}
+                               </p>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   )}
 

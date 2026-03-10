@@ -356,12 +356,22 @@ export default function BrandCategories({ data }) {
                   {(repairIssuesList && Array.isArray(repairIssuesList) ? repairIssuesList : []).map((issue) => (
                     <button key={issue._id || issue.name} onClick={() => setSelectedIssue(issue)} className="flex flex-col text-left p-5 rounded-2xl border border-gray-100 bg-white hover:border-primary/40 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 group">
                       <div className="flex items-start justify-between w-full mb-3">
-                        <div className="w-10 h-10 rounded-full bg-surface flex items-center justify-center group-hover:bg-white group-hover:text-primary text-gray-500 transition-colors shadow-sm">
-                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={issue.icon || 'M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z'} />
-                          </svg>
+                        <div className="w-12 h-12 rounded-xl bg-surface flex items-center justify-center group-hover:bg-white overflow-hidden transition-colors shadow-sm relative border border-gray-100 p-1">
+                          {issue.icon && (issue.icon.startsWith('/') || issue.icon.startsWith('http')) ? (
+                            <img 
+                              src={issue.icon} 
+                              alt={issue.name} 
+                              className="w-full h-full object-contain"
+                              onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+                            />
+                          ) : null}
+                          <div className={`flex items-center justify-center w-full h-full text-gray-400 group-hover:text-primary ${issue.icon && (issue.icon.startsWith('/') || issue.icon.startsWith('http')) ? 'hidden' : 'flex'}`}>
+                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={issue.icon && !issue.icon.startsWith('/') ? issue.icon : "M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"} />
+                             </svg>
+                          </div>
                         </div>
-                        <span className="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full whitespace-nowrap">{issue.time || '45-60 Mins'}</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-green-600 bg-green-50 px-2.5 py-1 rounded-lg whitespace-nowrap">{issue.time || '45-60 Mins'}</span>
                       </div>
                       <h4 className="font-semibold text-dark text-base mb-1 group-hover:text-primary transition-colors">{issue.name}</h4>
                       <div className="mt-auto pt-3 flex items-center justify-between w-full border-t border-gray-50 group-hover:border-primary/10">
@@ -372,12 +382,12 @@ export default function BrandCategories({ data }) {
                   ))}
                   <button onClick={() => setSelectedIssue({ id: 'other', name: 'Other Issue', price: 'Upon Inspection', time: 'Varies' })} className="flex flex-col text-left p-5 rounded-2xl border border-gray-100 bg-white hover:border-primary/40 hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 group">
                     <div className="flex items-start justify-between w-full mb-3">
-                      <div className="w-10 h-10 rounded-full bg-surface flex items-center justify-center group-hover:bg-white group-hover:text-primary text-gray-500 transition-colors shadow-sm">
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <div className="w-12 h-12 rounded-xl bg-surface flex items-center justify-center group-hover:bg-white text-gray-400 group-hover:text-primary transition-colors shadow-sm border border-gray-100 p-1">
+                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                       </div>
-                      <span className="text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded-full whitespace-nowrap">Varies</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-gray-600 bg-gray-100 px-2.5 py-1 rounded-lg whitespace-nowrap">Varies</span>
                     </div>
                     <h4 className="font-semibold text-dark text-base mb-1 group-hover:text-primary transition-colors">Other Issue</h4>
                     <div className="mt-auto pt-3 flex items-center justify-between w-full border-t border-gray-50 group-hover:border-primary/10">

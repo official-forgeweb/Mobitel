@@ -1,7 +1,17 @@
 "use client"
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001';
+
+const PREDEFINED_ICONS = [
+    { name: 'Screen', url: '/services/screen.png' },
+    { name: 'Battery', url: '/services/battery.png' },
+    { name: 'Motherboard', url: '/services/motherboard.png' },
+    { name: 'Charging Port', url: '/services/port.png' },
+    { name: 'Camera', url: '/services/camera.png' },
+    { name: 'Water Damage', url: '/services/water.png' },
+];
 
 export default function ServicesPage() {
     const [services, setServices] = useState([]);
@@ -15,7 +25,8 @@ export default function ServicesPage() {
     const fetchServices = async () => {
         try {
             const res = await fetch(`${API}/api/services`, { headers: headers() });
-            setServices(await res.json());
+            const data = await res.json();
+            setServices(Array.isArray(data) ? data : []);
         } catch (err) { console.error(err); }
         setLoading(false);
     };
@@ -28,7 +39,7 @@ export default function ServicesPage() {
         const method = editingId ? 'PUT' : 'POST';
         const res = await fetch(url, { method, headers: headers(), body: JSON.stringify(form) });
         const data = await res.json();
-        if (data.success || data.data) { resetForm(); fetchServices(); } else alert(data.error || 'Failed');
+        if (data.success || data.data || !data.error) { resetForm(); fetchServices(); } else alert(data.error || 'Failed');
     };
 
     const resetForm = () => { setForm({ name: '', description: '', icon: '', displayOrder: 0, isDefault: false, defaultPrice: 0 }); setEditingId(null); setShowForm(false); };
@@ -47,120 +58,210 @@ export default function ServicesPage() {
         fetchServices();
     };
 
+    const seedData = async () => {
+        if (!confirm('This will add Mobitel official services. Continue?')) return;
+        const officialServices = [
+            { name: "Screen Replacement", description: "Premium grade display replacement restoring perfect touch and vivid colors.", icon: "/services/screen.png", defaultPrice: 999, displayOrder: 1, isDefault: true },
+            { name: "Battery Replacement", description: "Original batteries with true capacity and a 6-month solid warranty.", icon: "/services/battery.png", defaultPrice: 499, displayOrder: 2 },
+            { name: "Charging Port Issue", description: "Fast, solid charging port replacement restoring full speed.", icon: "/services/port.png", defaultPrice: 699, displayOrder: 3 },
+            { name: "Camera Repair", description: "Crystal clear focus restored with original camera modules.", icon: "/services/camera.png", defaultPrice: 799, displayOrder: 4 },
+            { name: "Speaker Not Working", description: "High-quality speaker replacement for crystal clear audio.", icon: "/services/motherboard.png", defaultPrice: 899, displayOrder: 5 }
+        ];
+
+        for (const s of officialServices) {
+            await fetch(`${API}/api/services`, { method: 'POST', headers: headers(), body: JSON.stringify(s) });
+        }
+        fetchServices();
+    };
+
     return (
-        <div className="animate-in fade-in">
-            <header className="mb-6 flex justify-between items-center">
-                <div><h1 className="text-2xl font-bold text-gray-900">Services</h1><p className="text-sm text-gray-500 font-medium">Manage repair services offered to customers</p></div>
-                <button onClick={() => { resetForm(); setShowForm(true); }} 
-                    className="px-5 py-2.5 bg-primary text-white rounded-xl font-bold text-sm hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all flex items-center gap-2">
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
-                    New Service
-                </button>
+        <div className="animate-in fade-in max-w-7xl mx-auto">
+            <header className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                <div>
+                    <h1 className="text-3xl font-black text-dark tracking-tight">Services Catalog</h1>
+                    <p className="text-sm text-muted font-medium mt-1">Configure repair offerings and baseline pricing for the frontend</p>
+                </div>
+                <div className="flex gap-3">
+                    <button onClick={seedData} className="px-4 py-3 bg-gray-50 text-muted rounded-2xl font-bold text-xs hover:bg-gray-100 transition-all border border-gray-100">
+                        Seed Defaults
+                    </button>
+                    <button onClick={() => { resetForm(); setShowForm(true); }} 
+                        className="group px-6 py-3 bg-primary text-white rounded-2xl font-bold text-sm hover:bg-dark shadow-xl shadow-primary/20 transition-all flex items-center gap-3">
+                        <div className="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" /></svg>
+                        </div>
+                        New Service
+                    </button>
+                </div>
             </header>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <table className="w-full text-left text-sm">
-                    <thead><tr className="bg-gray-50/50 border-b border-gray-100 text-[10px] font-bold uppercase text-gray-400 tracking-widest">
-                        <th className="p-4">Service Details</th><th className="p-4">Default Price</th><th className="p-4">Status</th><th className="p-4">Rank</th><th className="p-4 text-right">Actions</th>
-                    </tr></thead>
-                    <tbody className="divide-y divide-gray-100">
-                        {services.map(s => (
-                            <tr key={s._id} className="hover:bg-gray-50/80 transition-colors">
-                                <td className="p-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center border border-gray-100 p-1">
-                                            {s.icon ? <img src={s.icon} className="w-full h-full object-contain" alt="" /> : <span className="text-primary font-bold">🛠️</span>}
-                                        </div>
-                                        <div>
-                                            <p className="font-bold text-gray-900 leading-none mb-1">{s.name}</p>
-                                            <p className="text-gray-500 text-[11px] max-w-xs truncate">{s.description || 'No description provided'}</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="p-4">
-                                    <span className="font-bold text-gray-900">₹{s.defaultPrice || 0}</span>
-                                </td>
-                                <td className="p-4">
-                                    <div className="flex flex-col gap-1.5">
-                                        <button onClick={() => toggleActive(s)} 
-                                            className={`w-fit px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all border ${s.isActive ? 'bg-green-50 text-green-600 border-green-100' : 'bg-red-50 text-red-600 border-red-100'}`}>
-                                            {s.isActive ? '• Active' : '• Hidden'}
-                                        </button>
-                                        <button onClick={() => toggleDefault(s)} 
-                                            className={`w-fit px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all border ${s.isDefault ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-gray-50 text-gray-400 border-gray-100'}`}>
-                                            {s.isDefault ? '★ Default' : '☆ Standard'}
-                                        </button>
-                                    </div>
-                                </td>
-                                <td className="p-4 font-mono text-gray-400 font-bold">#{s.displayOrder || 0}</td>
-                                <td className="p-4 text-right">
-                                    <div className="flex justify-end gap-2">
-                                        <button onClick={() => editService(s)} className="p-2 text-primary hover:bg-primary/5 rounded-lg transition-colors" title="Edit">
-                                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                                        </button>
-                                        <button onClick={() => deleteService(s._id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
-                                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                        </button>
-                                    </div>
-                                </td>
+            <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm border-collapse">
+                        <thead>
+                            <tr className="bg-gray-50/80 border-b border-gray-100 text-[10px] font-black uppercase text-gray-400 tracking-[0.2em]">
+                                <th className="px-6 py-5">Service Overview</th>
+                                <th className="px-6 py-5">Baseline Price</th>
+                                <th className="px-6 py-5">Status & Priority</th>
+                                <th className="px-6 py-5">Order</th>
+                                <th className="px-6 py-5 text-right">Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            {services.map(s => (
+                                <tr key={s._id} className="group hover:bg-gray-50/50 transition-all">
+                                    <td className="px-6 py-5">
+                                        <div className="flex items-center gap-4">
+                                            <div className="relative w-14 h-14 shrink-0 rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 flex items-center justify-center shadow-inner group-hover:scale-105 transition-transform">
+                                                {s.icon ? (
+                                                    <img 
+                                                        src={s.icon} 
+                                                        className="w-full h-full object-cover" 
+                                                        alt="" 
+                                                        onError={(e) => { e.target.src = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'; }}
+                                                    />
+                                                ) : (
+                                                    <div className="flex flex-col items-center gap-0.5 opacity-30">
+                                                        <span className="text-xl">🛠️</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div>
+                                                <p className="font-bold text-dark text-base mb-1">{s.name}</p>
+                                                <p className="text-muted text-[11px] leading-relaxed max-w-xs line-clamp-2">{s.description || 'No specialized description'}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-5">
+                                        <div className="flex flex-col">
+                                            <span className="text-xs text-muted font-bold uppercase tracking-wider mb-0.5">Starting From</span>
+                                            <span className="font-black text-dark text-lg">₹{s.defaultPrice || 0}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-5">
+                                        <div className="flex flex-col gap-2">
+                                            <button onClick={() => toggleActive(s)} 
+                                                className={`w-fit px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border ${s.isActive ? 'bg-green-100 text-green-700 border-green-200' : 'bg-red-50 text-red-500 border-red-100 opacity-50'}`}>
+                                                {s.isActive ? 'Active' : 'Hidden'}
+                                            </button>
+                                            <button onClick={() => toggleDefault(s)} 
+                                                className={`w-fit px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border ${s.isDefault ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-200' : 'bg-white text-gray-400 border-gray-200 hover:border-blue-400 hover:text-blue-500'}`}>
+                                                {s.isDefault ? 'Featured ★' : 'Standard'}
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-5">
+                                        <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center font-mono text-xs font-bold text-gray-400 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                                            #{s.displayOrder || 0}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-5 text-right">
+                                        <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button onClick={() => editService(s)} className="p-2.5 bg-white text-dark hover:text-white hover:bg-dark border border-gray-200 rounded-xl transition-all shadow-sm" title="Edit Properties">
+                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                                            </button>
+                                            <button onClick={() => deleteService(s._id)} className="p-2.5 bg-white text-red-500 hover:text-white hover:bg-red-500 border border-gray-200 rounded-xl transition-all shadow-sm" title="Remove Service">
+                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
                 {!loading && !services.length && (
-                    <div className="p-20 text-center text-gray-400">
-                        <svg className="w-16 h-16 mx-auto mb-4 opacity-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                        <p className="font-medium text-sm">No services configured yet</p>
+                    <div className="py-24 text-center">
+                        <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-200">
+                             <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+                        </div>
+                        <h3 className="text-xl font-bold text-dark mb-2">The catalog is empty</h3>
+                        <p className="text-muted text-sm max-w-xs mx-auto">Start adding repair services to show them on your website's booking system.</p>
                     </div>
                 )}
             </div>
 
-
             {showForm && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={resetForm}>
-                    <div className="bg-white rounded-3xl p-8 w-full max-w-lg shadow-2xl animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-                        <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-2xl font-bold text-gray-900">{editingId ? 'Edit' : 'Create'} Service</h3>
-                            <button onClick={resetForm} className="text-gray-400 hover:text-gray-600 p-1">
-                                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                <div className="fixed inset-0 bg-dark/60 backdrop-blur-md flex items-center justify-center z-50 p-4" onClick={resetForm}>
+                    <div className="bg-white rounded-[2.5rem] p-8 md:p-10 w-full max-w-2xl shadow-3xl animate-in zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto custom-scrollbar" onClick={e => e.stopPropagation()}>
+                        <div className="flex justify-between items-start mb-8">
+                            <div>
+                                <h3 className="text-3xl font-black text-dark tracking-tight">{editingId ? 'Update' : 'Register'} Service</h3>
+                                <p className="text-muted text-sm font-medium mt-1">Configure how this repair appears to your customers.</p>
+                            </div>
+                            <button onClick={resetForm} className="w-10 h-10 rounded-2xl bg-gray-50 text-gray-400 hover:text-primary hover:bg-primary-light flex items-center justify-center transition-all">
+                                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                         </div>
-                        <form onSubmit={handleSubmit} className="space-y-5">
-                            <div className="space-y-1.5">
-                                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Service Name</label>
-                                <input required placeholder="e.g., Screen Replacement" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} 
-                                    className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-sm bg-gray-50 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all" />
+                        
+                        <form onSubmit={handleSubmit} className="space-y-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Service Label</label>
+                                    <input required placeholder="e.g., Ultra-Glass Replacement" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} 
+                                        className="w-full border border-gray-100 rounded-2xl px-5 py-4 text-sm bg-gray-50 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all font-bold" />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Baseline Price (₹)</label>
+                                    <input type="number" value={form.defaultPrice} onChange={e => setForm({ ...form, defaultPrice: parseInt(e.target.value) || 0 })} 
+                                        className="w-full border border-gray-100 rounded-2xl px-5 py-4 text-sm bg-gray-50 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all font-black text-primary" />
+                                </div>
                             </div>
-                            <div className="space-y-1.5">
-                                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Icon URL (optional)</label>
-                                <input placeholder="https://..." value={form.icon} onChange={e => setForm({ ...form, icon: e.target.value })} 
-                                    className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-sm bg-gray-50 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all" />
+
+                            <div className="space-y-4">
+                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Select Branded Icon</label>
+                                <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                                    {PREDEFINED_ICONS.map((icon) => (
+                                        <button
+                                            key={icon.url}
+                                            type="button"
+                                            onClick={() => setForm({ ...form, icon: icon.url })}
+                                            className={`relative aspect-square rounded-2xl border-2 transition-all overflow-hidden flex flex-col items-center justify-center p-1 ${form.icon === icon.url ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-gray-100 hover:border-primary/40'}`}
+                                        >
+                                            <div className="relative w-full h-full">
+                                                <Image src={icon.url} alt={icon.name} fill className="object-cover" sizes="60px" />
+                                            </div>
+                                            {form.icon === icon.url && (
+                                                <div className="absolute top-1 right-1 w-4 h-4 bg-primary rounded-full flex items-center justify-center text-white">
+                                                    <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" /></svg>
+                                                </div>
+                                            )}
+                                        </button>
+                                    ))}
+                                </div>
+                                <div className="pt-2">
+                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Custom Icon URL</label>
+                                    <input placeholder="Or paste a custom image URL..." value={form.icon} onChange={e => setForm({ ...form, icon: e.target.value })} 
+                                        className="w-full mt-2 border border-gray-100 rounded-2xl px-5 py-3 text-[11px] bg-gray-50 focus:bg-white focus:ring-4 focus:ring-primary/10 outline-none transition-all text-muted font-mono" />
+                                </div>
                             </div>
-                            <div className="space-y-1.5">
-                                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Description</label>
-                                <textarea placeholder="Describe what this service covers..." rows={3} value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} 
-                                    className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-sm bg-gray-50 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all resize-none" />
+
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Service Description</label>
+                                <textarea placeholder="Provide detailed coverage info (e.g., Using OEM-grade panels with 6 months warranty...)" rows={3} value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} 
+                                    className="w-full border border-gray-100 rounded-[1.5rem] px-5 py-4 text-sm bg-gray-50 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all resize-none font-medium text-body" />
                             </div>
-                            <div className="space-y-1.5">
-                                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Display Order</label>
-                                <input type="number" value={form.displayOrder} onChange={e => setForm({ ...form, displayOrder: parseInt(e.target.value) || 0 })} 
-                                    className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-sm bg-gray-50 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all" />
+
+                            <div className="flex flex-col sm:flex-row gap-6">
+                                <div className="flex-1 space-y-2">
+                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">List Priority (Order)</label>
+                                    <input type="number" value={form.displayOrder} onChange={e => setForm({ ...form, displayOrder: parseInt(e.target.value) || 0 })} 
+                                        className="w-full border border-gray-100 rounded-2xl px-5 py-4 text-sm bg-gray-50 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all font-bold" />
+                                </div>
+                                <div className="flex-1 flex items-end">
+                                    <label className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100 cursor-pointer w-full hover:bg-gray-100 transition-colors">
+                                        <input type="checkbox" checked={form.isDefault} onChange={e => setForm({...form, isDefault: e.target.checked})} className="w-5 h-5 rounded-lg text-primary focus:ring-primary" />
+                                        <span className="text-xs font-black text-dark uppercase tracking-wider">Mark as Featured</span>
+                                    </label>
+                                </div>
                             </div>
-                            <div className="space-y-1.5">
-                                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Default Price (₹)</label>
-                                <input type="number" value={form.defaultPrice} onChange={e => setForm({ ...form, defaultPrice: parseInt(e.target.value) || 0 })} 
-                                    className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-sm bg-gray-50 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all" />
-                            </div>
-                            <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-2xl border border-gray-100">
-                                <input type="checkbox" id="def_svc" checked={form.isDefault} onChange={e => setForm({...form, isDefault: e.target.checked})} className="w-4 h-4 rounded text-primary" />
-                                <label htmlFor="def_svc" className="text-sm font-bold text-gray-700 cursor-pointer">Default service for all models</label>
-                            </div>
+
                             <div className="flex gap-4 pt-4">
                                 <button type="button" onClick={resetForm} 
-                                    className="flex-1 px-6 py-3.5 text-sm font-bold text-gray-500 bg-gray-100 rounded-2xl hover:bg-gray-200 transition-all">Cancel</button>
+                                    className="flex-1 px-8 py-4 text-sm font-bold text-gray-500 bg-gray-100 rounded-2xl hover:bg-gray-200 transition-all uppercase tracking-widest">Discard</button>
                                 <button type="submit" 
-                                    className="flex-[2] px-6 py-3.5 bg-primary text-white rounded-2xl font-bold text-sm shadow-xl shadow-primary/30 hover:bg-primary/90 transition-all">
-                                    {editingId ? 'Update Service' : 'Confirm & Create'}
+                                    className="flex-[2] px-8 py-4 bg-primary text-white rounded-2xl font-black text-sm shadow-2xl shadow-primary/30 hover:bg-dark transition-all uppercase tracking-[0.2em]">
+                                    {editingId ? 'Save Changes' : 'Launch Service'}
                                 </button>
                             </div>
                         </form>
