@@ -21,7 +21,7 @@
           <h4 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-4">Our Services</h4>
           <ul className="space-y-2.5">
             {services.map((s) => (
-              <li key={s}><a href="#" className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-primary shrink-0" />{s}</a></li>
+              <li key={s}><a href="/#brand-grid" className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-primary shrink-0" />{s}</a></li>
             ))}
           </ul>
         </div>
@@ -29,7 +29,7 @@
           <h4 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-4">Supported Brands</h4>
           <ul className="space-y-2.5">
             {brands.map((b) => (
-              <li key={b}><a href="#" className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-primary shrink-0" />{b}</a></li>
+              <li key={b}><a href="/#brand-grid" className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-primary shrink-0" />{b}</a></li>
             ))}
           </ul>
         </div>

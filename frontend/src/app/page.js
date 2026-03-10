@@ -1,11 +1,13 @@
 ﻿import BannerCarousel from "@/components/BannerCarousel";
 import BrandCategories from "@/components/BrandCategories";
-import HowItWorks from "@/components/HowItWorks";
-import PopularServices from "@/components/PopularServices";
-import WhyChooseUs from "@/components/WhyChooseUs";
-import Testimonials from "@/components/Testimonials";
-import AppDownload from "@/components/AppDownload";
-import FAQ from "@/components/FAQ";
+import dynamic from "next/dynamic";
+
+const HowItWorks = dynamic(() => import("@/components/HowItWorks"), { ssr: true });
+const PopularServices = dynamic(() => import("@/components/PopularServices"), { ssr: true });
+const WhyChooseUs = dynamic(() => import("@/components/WhyChooseUs"), { ssr: true });
+const Testimonials = dynamic(() => import("@/components/Testimonials"), { ssr: true });
+const AppDownload = dynamic(() => import("@/components/AppDownload"), { ssr: true });
+const FAQ = dynamic(() => import("@/components/FAQ"), { ssr: true });
 
 export const revalidate = 60;
 

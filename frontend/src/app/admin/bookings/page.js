@@ -233,6 +233,26 @@ export default function BookingsPage() {
                                 <div><span className="text-gray-500 block text-xs">Preferred Time</span>{selected.preferredTime || 'N/A'}</div>
                             </div>
 
+                            {/* Payment Info */}
+                            {selected.payment_mode && (
+                                <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 text-sm">
+                                    <h4 className="font-semibold text-gray-700 mb-3 border-b pb-2">Payment Details</h4>
+                                    <div className="grid grid-cols-2 gap-y-2">
+                                        <div><span className="text-gray-500 block text-xs">Total Amount</span><span className="font-bold">₹{selected.total_amount || 0}</span></div>
+                                        <div><span className="text-gray-500 block text-xs">Mode</span><span className="uppercase text-xs font-bold">{selected.payment_mode.replace('_', ' ')}</span></div>
+                                        <div><span className="text-gray-500 block text-xs">Paid Online</span><span className="text-green-600 font-bold">₹{selected.amount_paid_online || 0}</span></div>
+                                        <div><span className="text-gray-500 block text-xs">Status</span>
+                                            <span className={`px-2 py-0.5 rounded-full text-[10px] uppercase font-bold ${
+                                                selected.payment_status === 'paid' ? 'bg-green-100 text-green-700' :
+                                                selected.payment_status === 'failed' ? 'bg-red-100 text-red-700' :
+                                                'bg-yellow-100 text-yellow-700'
+                                            }`}>{selected.payment_status}</span>
+                                        </div>
+                                    </div>
+                                    {selected.amount_due > 0 && <div className="mt-2 pt-2 border-t border-gray-200 font-bold text-red-500 text-right">Amount Due: ₹{selected.amount_due}</div>}
+                                </div>
+                            )}
+
                             {/* Status and Worker */}
                             <div className="grid grid-cols-2 gap-3">
                                 <div>

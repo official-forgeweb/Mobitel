@@ -1,9 +1,10 @@
-﻿export default function WhyChooseUs({ data }) {
+﻿import Image from "next/image";
+
+export default function WhyChooseUs({ data }) {
   const defaultFeatures = [
-    { title: "Certified Technicians", desc: "Background verified & skilled experts.", icon: "M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
-    { title: "90-Day Warranty", desc: "Hassle-free coverage on all repairs.", icon: "M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
-    { title: "Genuine Parts", desc: "100% original or OEM-grade components.", icon: "M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
-    { title: "Doorstep Service", desc: "We come to you. No travel required.", icon: "M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
+    { title: "Expert Technicians", desc: "Highly trained and certified professionals.", image: "/why_choose_mobitel_expert_1773105452159.png" },
+    { title: "Genuine Parts", desc: "We use only high-quality, original components.", image: "/popular_service_screen_1773105267559.png" },
+    { title: "6-Month Warranty", desc: "Peace of mind with a guarantee on all repairs.", image: "/popular_service_battery_1773105368420.png" },
   ];
 
   const features = data?.features || defaultFeatures;
@@ -22,32 +23,61 @@
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
 
         {/* Top Header Section */}
-        <div className="text-center max-w-3xl mx-auto mb-20">
-          <span className="inline-flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest text-primary bg-primary-light px-4 py-1.5 rounded-full mb-6">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-            {subtitle}
-          </span>
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-medium text-dark leading-tight tracking-tight mb-6">
-            {title1} <span className="font-bold text-primary italic">{title2}</span>
-          </h2>
-          <p className="text-body text-lg leading-relaxed">
-            {desc}
-          </p>
+        <div className="flex flex-col lg:flex-row items-center gap-12 mb-20">
+          <div className="flex-1 text-center lg:text-left">
+            <span className="inline-flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest text-primary bg-primary-light px-4 py-1.5 rounded-full mb-6">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+              {subtitle}
+            </span>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-medium text-dark leading-tight tracking-tight mb-6">
+              {title1} <span className="font-bold text-primary italic">{title2}</span>
+            </h2>
+            <p className="text-body text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0">
+              {desc}
+            </p>
+          </div>
+          <div className="flex-1 relative">
+            <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white transform rotate-2 hover:rotate-0 transition-transform duration-500 group aspect-[4/3]">
+                <Image 
+                  src="/why-choose.png" 
+                  alt="Expert Technician" 
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-700" 
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-dark/60 to-transparent"></div>
+                <div className="absolute bottom-6 left-6 right-6">
+                    <p className="text-white text-sm font-bold tracking-widest uppercase">Expert Service Guaranteed</p>
+                </div>
+            </div>
+            {/* Decorative background shape */}
+            <div className="absolute -inset-4 bg-primary/10 rounded-[3rem] -z-10 blur-2xl"></div>
+          </div>
         </div>
 
         {/* Minimalist Horizontal Features Array */}
         <div className="flex flex-col md:flex-row items-stretch justify-center gap-8 lg:gap-12 relative">
 
           {/* Connecting line (Desktop) */}
-          <div className="hidden md:block absolute top-[28px] left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-border to-transparent z-0"></div>
+          <div className="hidden md:block absolute top-[40px] left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-border to-transparent z-0"></div>
 
           {features.map((f, i) => (
             <div key={i} className="flex-1 relative z-10 flex flex-col items-center text-center group">
 
-              <div className="w-14 h-14 rounded-full bg-white border border-border flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 group-hover:border-primary group-hover:text-primary transition-all duration-300 text-dark">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d={f.icon} />
-                </svg>
+              <div className="w-20 h-20 rounded-full bg-white border border-border flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 group-hover:border-primary transition-all duration-300 overflow-hidden relative">
+                {f.image ? (
+                  <Image 
+                    src={f.image} 
+                    alt={f.title} 
+                    fill 
+                    className="object-cover"
+                    sizes="80px"
+                  />
+                ) : (
+                  <svg className="w-8 h-8 text-dark group-hover:text-primary transition-colors" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d={f.icon || "M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"} />
+                  </svg>
+                )}
               </div>
 
               <h3 className="text-xl font-bold text-dark mb-3 group-hover:text-primary transition-colors duration-300">{f.title}</h3>
@@ -71,9 +101,9 @@
             </div>
           </div>
 
-          <button className="whitespace-nowrap bg-primary text-white font-bold text-base px-8 py-4 rounded-xl hover:bg-dark transition-all duration-300 shadow-md hover:shadow-xl w-full md:w-auto">
+          <a href="/#brand-grid" className="whitespace-nowrap bg-primary text-white font-bold text-base px-8 py-4 rounded-xl hover:bg-dark transition-all duration-300 shadow-md hover:shadow-xl w-full md:w-auto text-center">
             Book a Repair Now
-          </button>
+          </a>
         </div>
       </div>
     </section>

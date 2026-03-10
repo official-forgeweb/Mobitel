@@ -47,21 +47,20 @@ const sendWhatsApp = async (to, message) => {
     // For now, log to console as a placeholder
     if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_WHATSAPP_FROM) {
         try {
-            // Placeholder for Twilio integration:
-            // const twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-            // await twilio.messages.create({
-            //     body: message,
-            //     from: `whatsapp:${process.env.TWILIO_WHATSAPP_FROM}`,
-            //     to: `whatsapp:${to}`
-            // });
-            console.log(`[WhatsApp] Would send to ${to}: ${message}`);
+            const twilio = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+            await twilio.messages.create({
+                body: message,
+                from: `whatsapp:${process.env.TWILIO_WHATSAPP_FROM}`,
+                to: `whatsapp:${to}`
+            });
+            console.log(`[WhatsApp] Sent successfully to ${to}`);
             return true;
         } catch (err) {
             console.error(`[WhatsApp Failed] ${to}: ${err.message}`);
             return false;
         }
     }
-    console.log(`[WhatsApp Stub] To ${to}: ${message}`);
+    console.log(`[WhatsApp Stub] (Twilio keys missing) Would send to ${to}: ${message}`);
     return false;
 };
 
@@ -221,11 +220,67 @@ const notifyReadyForPickup = async (booking) => {
     }
 };
 
+const notifyPaymentSuccess = async (booking) => {
+    const { trackingToken, customerName, brand, model, amount_paid_online, payment_mode, email, phone } = booking;
+    const isAdvance = payment_mode === 'online_advance';
+    const amountStr = `₹${amount_paid_online}`;
+
+    if (email) {
+        const success = await sendEmail(email, `Mobitel - Payment Received for ${brand} ${model}`, `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #28a745;">Payment Successful ✅</h2>
+                <p>Hello <strong>${customerName}</strong>,</p>
+                <p>We've successfully received your ${isAdvance ? 'advance ' : ''}payment of <strong>${amountStr}</strong>.</p>
+                <div style="background: #f8f8f8; padding: 16px; border-radius: 8px; margin: 16px 0;">
+                    <p style="margin: 4px 0;"><strong>Tracking Token:</strong> ${trackingToken}</p>
+                    <p style="margin: 4px 0;"><strong>Device:</strong> ${brand} ${model}</p>
+                    <p style="margin: 4px 0;"><strong>Amount Paid:</strong> <span style="color: #28a745; font-weight: bold;">${amountStr}</span></p>
+                    ${isAdvance ? `<p style="margin: 4px 0;"><strong>Amount Due at Store:</strong> ₹${booking.amount_due}</p>` : ''}
+                </div>
+                <p>Thank you for choosing Mobitel!</p>
+                <p style="color: #666;">— The Mobitel Team</p>
+            </div>
+        `);
+        await logNotification(booking._id, 'email', email, 'payment_success', success);
+    }
+
+    if (phone) {
+        const msg = `✅ Payment Received\n\nHi ${customerName}, we received your ${isAdvance ? 'advance ' : ''}payment of ${amountStr} for your ${brand} ${model} repair.\n${isAdvance ? `\nAmount Due at Store: ₹${booking.amount_due}\n` : ''}\nToken: ${trackingToken}`;
+        const success = await sendWhatsApp(phone, msg);
+        await logNotification(booking._id, 'whatsapp', phone, 'payment_success', success);
+    }
+};
+
+const notifyRefundInitiated = async (booking) => {
+    const { trackingToken, customerName, refund_amount, email, phone } = booking;
+
+    if (email) {
+        const success = await sendEmail(email, `Mobitel - Refund Initiated`, `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #17a2b8;">Refund Initiated 🔄</h2>
+                <p>Hello <strong>${customerName}</strong>,</p>
+                <p>A refund of <strong>₹${refund_amount}</strong> has been initiated for your booking (${trackingToken}).</p>
+                <p>Please note that it typically takes 5-7 business days for the amount to reflect in your original payment method depending on your bank.</p>
+                <p style="color: #666;">— The Mobitel Team</p>
+            </div>
+        `);
+        await logNotification(booking._id, 'email', email, 'refund_initiated', success);
+    }
+
+    if (phone) {
+        const msg = `🔄 Refund Initiated\n\nHi ${customerName}, a refund of ₹${refund_amount} has been initiated for booking ${trackingToken}.\n\nIt may take 5-7 business days to reflect in your account.`;
+        const success = await sendWhatsApp(phone, msg);
+        await logNotification(booking._id, 'whatsapp', phone, 'refund_initiated', success);
+    }
+};
+
 module.exports = {
     sendEmail,
     sendWhatsApp,
     notifyNewBooking,
     notifyStatusChange,
     notifyJobCompleted,
-    notifyReadyForPickup
+    notifyReadyForPickup,
+    notifyPaymentSuccess,
+    notifyRefundInitiated
 };

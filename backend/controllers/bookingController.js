@@ -93,6 +93,13 @@ const trackBooking = async (req, res) => {
             assignedWorker: booking.assignedWorker ? {
                 name: booking.assignedWorker.name.split(' ')[0] // First name only for privacy
             } : null,
+            // ─── Payment Summary ───
+            payment_mode: booking.payment_mode,
+            payment_status: booking.payment_status,
+            total_amount: booking.total_amount,
+            amount_paid_online: booking.amount_paid_online,
+            amount_paid_at_store: booking.amount_paid_at_store,
+            amount_due: booking.amount_due,
             timeline
         });
     } catch (err) {

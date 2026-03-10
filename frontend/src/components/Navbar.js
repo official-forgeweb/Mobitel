@@ -215,7 +215,7 @@ export default function Navbar() {
 
             {/* CTA Button */}
             <a
-              href="#book"
+              href="/#brand-grid"
               className="hidden md:flex items-center gap-1.5 bg-primary text-white text-[13px] font-medium cursor-pointer px-6 py-2.5 rounded-xl hover:bg-dark transition-all duration-300 shadow-sm shrink-0 ml-2"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -332,7 +332,7 @@ export default function Navbar() {
                 <span className="truncate">{location}</span>
               </div>
               <a
-                href="#book"
+                href="/#brand-grid"
                 onClick={() => setMenuOpen(false)}
                 className="w-full flex items-center justify-center gap-2 bg-primary text-white text-sm font-medium py-3 rounded-xl hover:bg-primary-dark transition-colors cursor-pointer"
               >

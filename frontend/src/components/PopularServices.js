@@ -1,10 +1,21 @@
 ﻿"use client";
 import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
 
 const ServiceImage = ({ src, alt }) => {
   const [error, setError] = useState(false);
-  if (error || !src) return <div className="w-full h-full bg-dark/50"></div>;
-  return <img src={src} alt={alt} className="w-full h-full object-cover grayscale-[20%]" onError={() => setError(true)} />;
+  if (error || !src) return <div className="w-full h-full bg-dark/50" />;
+  return (
+    <Image 
+      src={src} 
+      alt={alt} 
+      fill
+      className="object-cover grayscale-[20%]" 
+      onError={() => setError(true)} 
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+    />
+  );
 };
 
 export default function PopularServices({ data }) {
@@ -15,7 +26,7 @@ export default function PopularServices({ data }) {
       price: "From ₹999",
       time: "45 min",
       gradient: "from-red-900 via-primary-dark to-dark",
-      image: "https://images.unsplash.com/photo-1574314150596-12c8230b809a?q=80&w=600&auto=format&fit=crop",
+      image: "/services/screen.png",
       icon: (
         <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3" />
@@ -28,7 +39,7 @@ export default function PopularServices({ data }) {
       price: "From ₹499",
       time: "30 min",
       gradient: "from-green-900 via-teal-900 to-dark",
-      image: "https://images.unsplash.com/photo-1601524902161-15c00e1cfc63?q=80&w=600&auto=format&fit=crop",
+      image: "/services/battery.png",
       icon: (
         <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M21 10.5h.375c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125H21M3.75 18h15A2.25 2.25 0 0021 15.75v-6a2.25 2.25 0 00-2.25-2.25h-15A2.25 2.25 0 001.5 9.75v6A2.25 2.25 0 003.75 18z" />
@@ -41,7 +52,7 @@ export default function PopularServices({ data }) {
       price: "From ₹1,499",
       time: "2-3 hrs",
       gradient: "from-blue-900 via-blue-800 to-dark",
-      image: "https://images.unsplash.com/photo-1588508070860-26210f274a7b?q=80&w=600&auto=format&fit=crop",
+      image: "/services/water.png",
       icon: (
         <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
@@ -54,7 +65,7 @@ export default function PopularServices({ data }) {
       price: "From ₹699",
       time: "40 min",
       gradient: "from-orange-900 via-amber-900 to-dark",
-      image: "https://images.unsplash.com/photo-1583225214464-9296029427aa?q=80&w=600&auto=format&fit=crop",
+      image: "/services/port.png",
       icon: (
         <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
@@ -67,7 +78,7 @@ export default function PopularServices({ data }) {
       price: "From ₹799",
       time: "1 hr",
       gradient: "from-purple-900 via-fuchsia-900 to-dark",
-      image: "https://images.unsplash.com/photo-1516961642265-531546e84af2?q=80&w=600&auto=format&fit=crop",
+      image: "/services/camera.png",
       icon: (
         <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
@@ -106,12 +117,12 @@ export default function PopularServices({ data }) {
               {mainTitle}
             </h2>
           </div>
-          <button className="hidden md:inline-flex items-center gap-3 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-8 py-4 rounded-full transition-all duration-300 border border-white/10 shrink-0 uppercase tracking-widest text-[11px] font-bold">
+          <Link href="/services" className="hidden md:inline-flex items-center gap-3 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-8 py-4 rounded-full transition-all duration-300 border border-white/10 shrink-0 uppercase tracking-widest text-[11px] font-bold">
             Explore All Services
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
             </svg>
-          </button>
+          </Link>
         </div>
 
         {/* Expanding Cards Container */}
@@ -160,9 +171,15 @@ export default function PopularServices({ data }) {
                     {service.title}
                   </h3>
 
-                  <p className="text-white/80 text-sm md:text-base leading-relaxed max-w-sm mb-8 drop-shadow-md lg:min-w-[300px]">
+                  <p className="text-white/80 text-sm md:text-base leading-relaxed max-w-sm mb-6 drop-shadow-md lg:min-w-[300px]">
                     {service.desc}
                   </p>
+
+                  <div className="mb-8">
+                    <a href="/#brand-grid" className="bg-primary hover:bg-primary-dark text-white px-6 py-2.5 rounded-full font-bold text-xs transition-all uppercase tracking-widest">
+                      Book This Repair
+                    </a>
+                  </div>
 
                   <div className="flex flex-wrap items-center gap-4">
                     <div className="bg-[#F8D272] text-dark px-6 py-3 rounded-full font-bold text-sm shadow-lg whitespace-nowrap">
@@ -191,9 +208,9 @@ export default function PopularServices({ data }) {
         </div>
 
         {/* Mobile View All Button */}
-        <button className="mt-8 w-full md:hidden flex justify-center items-center gap-3 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-8 py-4 rounded-full transition-all duration-300 border border-white/10 uppercase tracking-widest text-[11px] font-bold">
+        <Link href="/services" className="mt-8 w-full md:hidden flex justify-center items-center gap-3 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white px-8 py-4 rounded-full transition-all duration-300 border border-white/10 uppercase tracking-widest text-[11px] font-bold">
           Explore All Services
-        </button>
+        </Link>
 
       </div>
     </section>

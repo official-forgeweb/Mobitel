@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import Image from "next/image";
 
 const banners = [
   {
@@ -55,10 +56,20 @@ const banners = [
   },
 ];
 
-const BannerImage = ({ src, alt }) => {
+const BannerImage = ({ src, alt, priority = false }) => {
   const [error, setError] = useState(false);
-  if (error || !src) return null;
-  return <img src={src} alt={alt} className="w-full h-full object-cover transition-opacity duration-1000" onError={() => setError(true)} />;
+  if (error || !src) return <div className="w-full h-full bg-dark" />;
+  return (
+    <Image 
+      src={src} 
+      alt={alt} 
+      fill
+      priority={priority}
+      className="object-cover transition-opacity duration-1000" 
+      onError={() => setError(true)} 
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+    />
+  );
 };
 
 export default function BannerCarousel({ data }) {
@@ -107,7 +118,7 @@ export default function BannerCarousel({ data }) {
               className="relative min-w-full p-6 sm:p-12 flex items-center justify-between min-h-[220px] sm:min-h-[300px] lg:min-h-[350px] bg-dark"
             >
               <div className="absolute inset-0 z-0">
-                <BannerImage src={banner.image} alt={banner.title} />
+                <BannerImage src={banner.image} alt={banner.title} priority={idx === 0} />
                 <div className="absolute inset-0 bg-black/40 mix-blend-multiply"></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent"></div>
               </div>
@@ -118,9 +129,9 @@ export default function BannerCarousel({ data }) {
                 <p className="mt-2 text-xs sm:text-base text-white/90 max-w-[240px] sm:max-w-md drop-shadow-md line-clamp-2 sm:line-clamp-none">
                   {banner.subtitle}
                 </p>
-                <button className="mt-4 sm:mt-5 bg-primary text-white font-semibold text-xs sm:text-sm px-5 py-2 sm:px-6 sm:py-2.5 rounded-full hover:bg-primary-dark shadow-lg transition-colors">
+                <a href="/#brand-grid" className="inline-block mt-4 sm:mt-5 bg-primary text-white font-semibold text-xs sm:text-sm px-5 py-2 sm:px-6 sm:py-2.5 rounded-full hover:bg-primary-dark shadow-lg transition-colors text-center">
                   {banner.cta}
-                </button>
+                </a>
               </div>
               {banner.icon && <div className="relative z-10 hidden md:block opacity-80">{banner.icon}</div>}
             </div>

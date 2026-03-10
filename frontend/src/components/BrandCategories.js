@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState, useEffect, memo, useCallback } from "react";
+import { useRouter } from "next/navigation";
 
 // Memoized Brand Item for performance
 const BrandItem = memo(({ brand, onClick }) => {
@@ -108,6 +109,7 @@ function ModelImage({ model }) {
 }
 
 export default function BrandCategories({ data }) {
+  const router = useRouter();
   const title = data?.title || "Select Your Brand";
   const subtitle = data?.subtitle || "Choose your phone brand to explore repair services";
 
@@ -140,7 +142,8 @@ export default function BrandCategories({ data }) {
             if (data && data.length > 0) {
               const modelServices = data.map(p => ({
                 ...p.serviceId,
-                price: p.priceMax ? `₹${p.price} - ₹${p.priceMax}` : (p.price > 0 ? `₹${p.price}` : 'Upon Inspection'),
+                rawPrice: p.price || p.serviceId?.defaultPrice || 0,
+                price: p.priceMax ? `₹${p.price} - ₹${p.priceMax}` : (p.price > 0 ? `₹${p.price}` : (p.serviceId?.defaultPrice > 0 ? `₹${p.serviceId.defaultPrice}` : 'Upon Inspection')),
                 time: p.estimatedTime || '45-60 Mins'
               }));
               setRepairIssuesList(modelServices);
@@ -148,7 +151,14 @@ export default function BrandCategories({ data }) {
               // Fallback to default services if no specific pricing exists
               fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/services?active=true`)
                 .then(r => r.json())
-                .then(setRepairIssuesList);
+                .then(svcs => {
+                   setRepairIssuesList(svcs.map(s => ({
+                      ...s,
+                      rawPrice: s.defaultPrice || 0,
+                      price: (s.defaultPrice > 0 ? `₹${s.defaultPrice}` : 'Upon Inspection'),
+                      time: '45-60 Mins'
+                   })));
+                });
             }
             setIsLoadingModels(false);
           })
@@ -160,7 +170,14 @@ export default function BrandCategories({ data }) {
         // "Other Model" selected - show all services
         fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/services?active=true`)
           .then(r => r.json())
-          .then(setRepairIssuesList);
+          .then(svcs => {
+             setRepairIssuesList(svcs.map(s => ({
+                ...s,
+                rawPrice: s.defaultPrice || 0,
+                price: (s.defaultPrice > 0 ? `₹${s.defaultPrice}` : 'Upon Inspection'),
+                time: '45-60 Mins'
+             })));
+          });
       }
     }
   }, [selectedModel, selectedBrand]);
@@ -222,48 +239,26 @@ export default function BrandCategories({ data }) {
 
   // Determine current step for header
   const getCurrentStep = () => {
-    if (bookingSubmitted) return { title: 'Booking Confirmed!', subtitle: 'Your repair has been booked successfully' };
-    if (serviceType) return { title: serviceType === 'home' ? 'Home Service Booking' : 'Visit Shop Booking', subtitle: 'Fill in your details to book' };
     if (selectedIssue) return { title: selectedIssue.name, subtitle: 'How would you like to get it repaired?' };
     if (selectedModel) return { title: selectedModel.name, subtitle: 'Select the issue you are facing' };
     return { title: `${selectedBrand?.name} Models`, subtitle: 'Select your device model to continue' };
   };
 
-  const handleBookingSubmit = async (e) => {
-    e.preventDefault();
-
-    const requestPayload = {
-      brand: selectedBrand?.name,
-      model: selectedModel?.name,
-      issue: selectedIssue?.name,
-      serviceType: serviceType,
-      customerName: bookingForm.name,
-      phone: bookingForm.phone,
-      email: bookingForm.email,
-      preferredDate: bookingForm.date,
-      preferredTime: bookingForm.time,
-      address: bookingForm.address,
-      landmark: bookingForm.landmark,
-      pincode: bookingForm.pincode,
-      shopId: bookingForm.selectedShop
-    };
-
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/bookings`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestPayload)
-      });
-      if (res.ok) {
-        setBookingSubmitted(true);
-      } else {
-        alert("Failed to submit request.");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Error submitting request.");
-    }
-  };
+  const handleProceedToCheckout = useCallback((type) => {
+    const params = new URLSearchParams({
+      brand: selectedBrand.name,
+      brandId: selectedBrand._id,
+      model: selectedModel.name,
+      modelId: selectedModel._id,
+      serviceType: selectedIssue.name,
+      serviceId: selectedIssue._id || 'other',
+      visitType: type === 'home' ? 'Home Service' : 'Shop Visit',
+      price: selectedIssue.rawPrice || 0
+    });
+    
+    resetAll();
+    router.push(`/booking/checkout?${params.toString()}`);
+  }, [selectedBrand, selectedModel, selectedIssue, router, resetAll]);
 
   const stepInfo = selectedBrand ? getCurrentStep() : {};
 
@@ -271,7 +266,7 @@ export default function BrandCategories({ data }) {
   const today = new Date().toISOString().split('T')[0];
 
   return (
-    <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative">
+    <section id="brand-grid" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative scroll-mt-24">
       {/* Section Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -397,7 +392,7 @@ export default function BrandCategories({ data }) {
               {selectedIssue && !serviceType && !bookingSubmitted && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
                   {/* Home Service */}
-                  <button onClick={() => setServiceType('home')} className="flex flex-col items-center text-center p-8 rounded-2xl border-2 border-gray-100 bg-white hover:border-primary hover:bg-primary/5 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 group">
+                  <button onClick={() => handleProceedToCheckout('home')} className="flex flex-col items-center text-center p-8 rounded-2xl border-2 border-gray-100 bg-white hover:border-primary hover:bg-primary/5 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 group">
                     <div className="w-20 h-20 rounded-2xl bg-blue-50 group-hover:bg-blue-100 flex items-center justify-center mb-5 transition-colors">
                       <svg className="w-10 h-10 text-blue-500 group-hover:text-blue-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -410,9 +405,9 @@ export default function BrandCategories({ data }) {
                       <span className="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-medium">Convenient</span>
                     </div>
                   </button>
-
+ 
                   {/* Visit Shop */}
-                  <button onClick={() => setServiceType('shop')} className="flex flex-col items-center text-center p-8 rounded-2xl border-2 border-gray-100 bg-white hover:border-primary hover:bg-primary/5 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 group">
+                  <button onClick={() => handleProceedToCheckout('shop')} className="flex flex-col items-center text-center p-8 rounded-2xl border-2 border-gray-100 bg-white hover:border-primary hover:bg-primary/5 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 group">
                     <div className="w-20 h-20 rounded-2xl bg-orange-50 group-hover:bg-orange-100 flex items-center justify-center mb-5 transition-colors">
                       <svg className="w-10 h-10 text-orange-500 group-hover:text-orange-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -428,147 +423,7 @@ export default function BrandCategories({ data }) {
                 </div>
               )}
 
-              {/* ── STEP 4: Booking Form ── */}
-              {serviceType && !bookingSubmitted && (
-                <form onSubmit={handleBookingSubmit} className="max-w-2xl mx-auto space-y-5">
-                  {/* Summary Card */}
-                  <div className="bg-surface/80 rounded-2xl p-4 flex flex-wrap items-center gap-4 text-sm border border-border">
-                    <div className="flex items-center gap-2">
-                      <span className="text-muted">Brand:</span>
-                      <span className="font-semibold text-dark">{selectedBrand.name}</span>
-                    </div>
-                    <div className="w-px h-4 bg-border hidden sm:block"></div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-muted">Model:</span>
-                      <span className="font-semibold text-dark">{selectedModel.name}</span>
-                    </div>
-                    <div className="w-px h-4 bg-border hidden sm:block"></div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-muted">Issue:</span>
-                      <span className="font-semibold text-dark">{selectedIssue.name}</span>
-                    </div>
-                  </div>
 
-                  {/* Name, Email & Phone */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-dark mb-1.5">Full Name <span className="text-red-500">*</span></label>
-                      <input type="text" required value={bookingForm.name} onChange={(e) => setBookingForm({ ...bookingForm, name: e.target.value })} placeholder="Enter your full name" className="w-full px-4 py-3 rounded-xl border border-border bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm transition-all" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-dark mb-1.5">Phone Number <span className="text-red-500">*</span></label>
-                      <input type="tel" required value={bookingForm.phone} onChange={(e) => setBookingForm({ ...bookingForm, phone: e.target.value })} placeholder="+91 XXXXX XXXXX" className="w-full px-4 py-3 rounded-xl border border-border bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm transition-all" />
-                    </div>
-                    <div className="sm:col-span-2">
-                      <label className="block text-sm font-medium text-dark mb-1.5">Email Address</label>
-                      <input type="email" value={bookingForm.email} onChange={(e) => setBookingForm({ ...bookingForm, email: e.target.value })} placeholder="your@email.com (For repair updates)" className="w-full px-4 py-3 rounded-xl border border-border bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm transition-all" />
-                    </div>
-                  </div>
-
-                  {/* Date & Time */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-dark mb-1.5">Preferred Date <span className="text-red-500">*</span></label>
-                      <input type="date" required min={today} value={bookingForm.date} onChange={(e) => setBookingForm({ ...bookingForm, date: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-border bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm transition-all" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-dark mb-1.5">Preferred Time <span className="text-red-500">*</span></label>
-                      <select required value={bookingForm.time} onChange={(e) => setBookingForm({ ...bookingForm, time: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-border bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm transition-all appearance-none">
-                        <option value="">Select a time slot</option>
-                        {timeSlots.map((slot) => <option key={slot} value={slot}>{slot}</option>)}
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* HOME SERVICE: Address Fields */}
-                  {serviceType === 'home' && (
-                    <>
-                      <div>
-                        <label className="block text-sm font-medium text-dark mb-1.5">Full Address <span className="text-red-500">*</span></label>
-                        <textarea required rows={2} value={bookingForm.address} onChange={(e) => setBookingForm({ ...bookingForm, address: e.target.value })} placeholder="House/Flat no., Street, Area, City" className="w-full px-4 py-3 rounded-xl border border-border bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm transition-all resize-none"></textarea>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-dark mb-1.5">Landmark</label>
-                          <input type="text" value={bookingForm.landmark} onChange={(e) => setBookingForm({ ...bookingForm, landmark: e.target.value })} placeholder="Near School, Temple etc." className="w-full px-4 py-3 rounded-xl border border-border bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm transition-all" />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-dark mb-1.5">Pincode <span className="text-red-500">*</span></label>
-                          <input type="text" required value={bookingForm.pincode} onChange={(e) => setBookingForm({ ...bookingForm, pincode: e.target.value })} placeholder="110001" className="w-full px-4 py-3 rounded-xl border border-border bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm transition-all" />
-                        </div>
-                      </div>
-                    </>
-                  )}
-
-                  {/* VISIT SHOP: Shop Selection */}
-                  {serviceType === 'shop' && (
-                    <div>
-                      <label className="block text-sm font-medium text-dark mb-3">Select a Shop <span className="text-red-500">*</span></label>
-                      <div className="space-y-3">
-                        {shopLocations.map((shop) => (
-                          <label key={shop.id} className={`flex items-start gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${bookingForm.selectedShop === shop.id ? 'border-primary bg-primary/5 shadow-md' : 'border-gray-100 bg-white hover:border-primary/30 hover:shadow-sm'}`}>
-                            <input type="radio" name="shop" required value={shop.id} checked={bookingForm.selectedShop === shop.id} onChange={() => setBookingForm({ ...bookingForm, selectedShop: shop.id })} className="mt-1 accent-primary" />
-                            <div className="flex-1">
-                              <h5 className="font-semibold text-dark text-sm">{shop.name}</h5>
-                              <p className="text-xs text-muted mt-1">{shop.address}</p>
-                              <div className="flex flex-wrap gap-3 mt-2">
-                                <span className="text-xs text-green-600 flex items-center gap-1">
-                                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                  {shop.hours}
-                                </span>
-                                <span className="text-xs text-blue-600 flex items-center gap-1">
-                                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
-                                  {shop.phone}
-                                </span>
-                              </div>
-                            </div>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Submit Button */}
-                  <button type="submit" className="w-full py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 active:scale-[0.98] transition-all duration-200 shadow-lg shadow-primary/20 text-base">
-                    {serviceType === 'home' ? '📍 Book Home Service' : '🏪 Book Shop Appointment'}
-                  </button>
-                </form>
-              )}
-
-              {/* ── STEP 5: Confirmation ── */}
-              {bookingSubmitted && (
-                <div className="text-center max-w-lg mx-auto py-4">
-                  <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <svg className="w-10 h-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <h3 className="text-2xl font-bold text-dark mb-2">Booking Confirmed!</h3>
-                  <p className="text-muted mb-6">Your repair request has been submitted successfully</p>
-
-                  {/* Booking Details */}
-                  <div className="bg-surface rounded-2xl p-5 text-left space-y-3 border border-border mb-6">
-                    <div className="flex justify-between text-sm"><span className="text-muted">Brand & Model</span><span className="font-semibold text-dark">{selectedBrand.name} — {selectedModel.name}</span></div>
-                    <div className="flex justify-between text-sm"><span className="text-muted">Issue</span><span className="font-semibold text-dark">{selectedIssue.name}</span></div>
-                    <div className="flex justify-between text-sm"><span className="text-muted">Service Type</span><span className="font-semibold text-dark">{serviceType === 'home' ? 'Home Service' : 'Visit Shop'}</span></div>
-                    <div className="flex justify-between text-sm"><span className="text-muted">Name</span><span className="font-semibold text-dark">{bookingForm.name}</span></div>
-                    <div className="flex justify-between text-sm"><span className="text-muted">Phone</span><span className="font-semibold text-dark">{bookingForm.phone}</span></div>
-                    <div className="flex justify-between text-sm"><span className="text-muted">Date & Time</span><span className="font-semibold text-dark">{bookingForm.date} at {bookingForm.time}</span></div>
-                    {serviceType === 'home' && (
-                      <div className="flex justify-between text-sm"><span className="text-muted">Address</span><span className="font-semibold text-dark text-right max-w-[60%]">{bookingForm.address}{bookingForm.landmark ? `, Near ${bookingForm.landmark}` : ''} - {bookingForm.pincode}</span></div>
-                    )}
-                    {serviceType === 'shop' && (
-                      <div className="flex justify-between text-sm"><span className="text-muted">Shop</span><span className="font-semibold text-dark text-right max-w-[60%]">{shopLocations.find(s => s.id === bookingForm.selectedShop)?.name}</span></div>
-                    )}
-                  </div>
-
-                  <p className="text-xs text-muted mb-4">We will contact you shortly to confirm your appointment.</p>
-
-                  <button onClick={resetAll} className="w-full py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-all">
-                    Done
-                  </button>
-                </div>
-              )}
 
             </div>
           </div>

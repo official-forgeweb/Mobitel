@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
 
 const statusConfig = {
     "Received": { label: "Received", color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-200", dot: "bg-blue-400" },
@@ -25,7 +26,8 @@ const TIMELINE_STEPS = [
     { key: "Completed", label: "Delivered", icon: "M5 13l4 4L19 7" },
 ];
 
-export default function TrackRepairPage() {
+function TrackRepairContent() {
+    const searchParams = useSearchParams();
     const [trackingId, setTrackingId] = useState("");
     const [repair, setRepair] = useState(null);
     const [updates, setUpdates] = useState([]);
@@ -38,33 +40,42 @@ export default function TrackRepairPage() {
             .then(res => res.json())
             .then(data => setCmsData(data))
             .catch(err => console.error("Failed to fetch CMS", err));
-    }, []);
 
-    const handleSearch = async (e) => {
-        e.preventDefault();
+        // Auto-track if ID provided in query
+        const id = searchParams.get('id');
+        if (id) {
+            setTrackingId(id.toUpperCase());
+            performTracking(id.toUpperCase());
+        }
+    }, [searchParams]);
+
+    const performTracking = async (tid) => {
+        setLoading(true);
         setError("");
         setRepair(null);
         setUpdates([]);
-
-        if (!trackingId.trim()) {
-            setError("Please enter a tracking ID");
-            return;
-        }
-
-        setLoading(true);
         try {
-            const res = await fetch(`${API}/api/bookings/track/${trackingId.trim().toUpperCase()}`);
+            const res = await fetch(`${API}/api/bookings/track/${tid.trim().toUpperCase()}`);
             const data = await res.json();
             if (data.error) {
                 setError(data.error);
             } else {
-                setRepair(data.booking);
-                setUpdates(data.updates || []);
+                setRepair(data);
+                setUpdates(data.timeline || []);
             }
         } catch (err) {
             setError("No repair found with this tracking ID. Please check and try again.");
         }
         setLoading(false);
+    };
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (!trackingId.trim()) {
+            setError("Please enter a tracking ID");
+            return;
+        }
+        performTracking(trackingId);
     };
 
     // Build timeline from booking status and updates
@@ -76,7 +87,7 @@ export default function TrackRepairPage() {
             const stepIdx = TIMELINE_STEPS.findIndex(s => s.key === step.key);
             const isDone = stepIdx <= statusIdx;
             const update = updates.find(u => u.status === step.key);
-            const time = update ? new Date(update.createdAt).toLocaleString() : (isDone ? '' : 'Pending');
+            const time = update ? new Date(update.time).toLocaleString() : (isDone ? '' : 'Pending');
             return { ...step, done: isDone, time, note: update?.note };
         });
     };
@@ -253,14 +264,46 @@ export default function TrackRepairPage() {
                                 {/* Assignment & Cost */}
                                 <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/40 overflow-hidden">
                                     <div className="p-6 space-y-5">
-                                        {repair.estimatedCost && (
-                                            <div className="flex justify-between items-end border-b border-gray-100 pb-5">
-                                                <div>
-                                                    <p className="text-sm font-semibold text-muted mb-1 uppercase tracking-wider">Estimated Cost</p>
-                                                    <p className="text-3xl font-black text-dark">₹{repair.estimatedCost}</p>
+                                        <div className="flex justify-between items-end border-b border-gray-100 pb-5">
+                                            <div>
+                                                <p className="text-sm font-semibold text-muted mb-1 uppercase tracking-wider">Total Est. Cost</p>
+                                                <p className="text-3xl font-black text-dark">₹{repair.total_amount || repair.estimatedCost || 'N/A'}</p>
+                                            </div>
+                                        </div>
+                                        
+                                        {/* Payment Summary */}
+                                        {repair.payment_mode && (
+                                            <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 space-y-3">
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-sm font-medium text-muted">Payment Mode</span>
+                                                    <span className="font-bold text-dark text-sm uppercase">
+                                                        {repair.payment_mode.replace('online_', '').replace('_', ' ')}
+                                                    </span>
                                                 </div>
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-sm font-medium text-muted">Status</span>
+                                                    <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
+                                                        repair.payment_status === 'paid' ? 'bg-green-100 text-green-700' :
+                                                        repair.payment_status === 'partially_paid' ? 'bg-indigo-100 text-indigo-700' :
+                                                        repair.payment_status === 'failed' ? 'bg-red-100 text-red-700' :
+                                                        'bg-yellow-100 text-yellow-700'
+                                                    }`}>
+                                                        {repair.payment_status?.replace('_', ' ')}
+                                                    </span>
+                                                </div>
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-sm font-medium text-muted">Paid Amount</span>
+                                                    <span className="font-bold text-green-600">₹{(repair.amount_paid_online || 0) + (repair.amount_paid_at_store || 0)}</span>
+                                                </div>
+                                                {repair.amount_due > 0 && (
+                                                    <div className="flex justify-between items-center border-t border-gray-200 pt-2 mt-2">
+                                                        <span className="text-sm font-bold text-dark">Amount Due</span>
+                                                        <span className="font-bold text-red-500">₹{repair.amount_due}</span>
+                                                    </div>
+                                                )}
                                             </div>
                                         )}
+
                                         {repair.assignedWorker && (
                                             <div className="flex items-center gap-4 bg-blue-50/50 p-4 rounded-2xl border border-blue-100/50">
                                                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-lg">
@@ -399,5 +442,13 @@ export default function TrackRepairPage() {
                 )}
             </section>
         </div>
+    );
+}
+
+export default function TrackRepairPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-surface flex items-center justify-center font-bold text-primary">Loading Tracking...</div>}>
+            <TrackRepairContent />
+        </Suspense>
     );
 }

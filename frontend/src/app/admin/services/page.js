@@ -8,7 +8,7 @@ export default function ServicesPage() {
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [editingId, setEditingId] = useState(null);
-    const [form, setForm] = useState({ name: '', description: '', icon: '', displayOrder: 0, isDefault: false });
+    const [form, setForm] = useState({ name: '', description: '', icon: '', displayOrder: 0, isDefault: false, defaultPrice: 0 });
 
     const headers = () => ({ Authorization: `Bearer ${localStorage.getItem('adminToken')}`, 'Content-Type': 'application/json' });
 
@@ -31,9 +31,9 @@ export default function ServicesPage() {
         if (data.success || data.data) { resetForm(); fetchServices(); } else alert(data.error || 'Failed');
     };
 
-    const resetForm = () => { setForm({ name: '', description: '', icon: '', displayOrder: 0, isDefault: false }); setEditingId(null); setShowForm(false); };
+    const resetForm = () => { setForm({ name: '', description: '', icon: '', displayOrder: 0, isDefault: false, defaultPrice: 0 }); setEditingId(null); setShowForm(false); };
 
-    const editService = (s) => { setForm({ name: s.name, description: s.description || '', icon: s.icon || '', displayOrder: s.displayOrder || 0, isDefault: s.isDefault || false }); setEditingId(s._id); setShowForm(true); };
+    const editService = (s) => { setForm({ name: s.name, description: s.description || '', icon: s.icon || '', displayOrder: s.displayOrder || 0, isDefault: s.isDefault || false, defaultPrice: s.defaultPrice || 0 }); setEditingId(s._id); setShowForm(true); };
 
     const deleteService = async (id) => { if (!confirm('Delete?')) return; await fetch(`${API}/api/services/${id}`, { method: 'DELETE', headers: headers() }); fetchServices(); };
 
@@ -61,7 +61,7 @@ export default function ServicesPage() {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <table className="w-full text-left text-sm">
                     <thead><tr className="bg-gray-50/50 border-b border-gray-100 text-[10px] font-bold uppercase text-gray-400 tracking-widest">
-                        <th className="p-4">Service Details</th><th className="p-4">Status</th><th className="p-4">Rank</th><th className="p-4 text-right">Actions</th>
+                        <th className="p-4">Service Details</th><th className="p-4">Default Price</th><th className="p-4">Status</th><th className="p-4">Rank</th><th className="p-4 text-right">Actions</th>
                     </tr></thead>
                     <tbody className="divide-y divide-gray-100">
                         {services.map(s => (
@@ -76,6 +76,9 @@ export default function ServicesPage() {
                                             <p className="text-gray-500 text-[11px] max-w-xs truncate">{s.description || 'No description provided'}</p>
                                         </div>
                                     </div>
+                                </td>
+                                <td className="p-4">
+                                    <span className="font-bold text-gray-900">₹{s.defaultPrice || 0}</span>
                                 </td>
                                 <td className="p-4">
                                     <div className="flex flex-col gap-1.5">
@@ -141,6 +144,11 @@ export default function ServicesPage() {
                             <div className="space-y-1.5">
                                 <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Display Order</label>
                                 <input type="number" value={form.displayOrder} onChange={e => setForm({ ...form, displayOrder: parseInt(e.target.value) || 0 })} 
+                                    className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-sm bg-gray-50 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all" />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Default Price (₹)</label>
+                                <input type="number" value={form.defaultPrice} onChange={e => setForm({ ...form, defaultPrice: parseInt(e.target.value) || 0 })} 
                                     className="w-full border border-gray-100 rounded-2xl px-4 py-3 text-sm bg-gray-50 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all" />
                             </div>
                             <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-2xl border border-gray-100">

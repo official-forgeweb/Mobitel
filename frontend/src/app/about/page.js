@@ -86,24 +86,28 @@ export default function AboutPage() {
                         <div className="w-full lg:w-1/2">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-4 pt-12">
-                                    <div className="bg-gray-200 aspect-square rounded-[2rem] overflow-hidden relative shadow-sm">
-                                        {/* Placeholder for actual image */}
-                                        <div className="absolute inset-0 bg-dark/5 flex justify-center items-center">
-                                            <svg className="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                    <div className="bg-gray-200 aspect-square rounded-[2rem] overflow-hidden relative shadow-sm group">
+                                        <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=600&auto=format&fit=crop" alt="State of the art repair facility" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                        <div className="absolute inset-0 bg-dark/20 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <span className="text-white font-bold text-xs uppercase tracking-widest">Our Facility</span>
                                         </div>
                                     </div>
-                                    <div className="bg-primary/10 aspect-[4/3] rounded-[2rem] overflow-hidden relative shadow-sm flex items-center justify-center border border-primary/20">
-                                        <span className="text-primary font-medium text-sm">Precision Equipment</span>
+                                    <div className="bg-primary/10 aspect-[4/3] rounded-[2rem] overflow-hidden relative shadow-sm flex items-center justify-center border border-primary/20 group">
+                                        <img src="https://images.unsplash.com/photo-1550009158-9ebf69173e03?q=80&w=600&auto=format&fit=crop" alt="Precision Equipment" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                        <div className="absolute inset-0 bg-primary/20 backdrop-blur-[2px] opacity-40"></div>
+                                        <span className="absolute z-10 text-white font-bold text-xs uppercase tracking-widest drop-shadow-md">Precision Tools</span>
                                     </div>
                                 </div>
                                 <div className="space-y-4 pb-12">
-                                    <div className="bg-gray-100 aspect-[4/3] rounded-[2rem] overflow-hidden relative shadow-sm flex items-center justify-center border border-gray-200">
-                                        <span className="text-dark font-medium px-4 text-center text-sm">Certified Micro-Soldering</span>
+                                    <div className="bg-gray-100 aspect-[4/3] rounded-[2rem] overflow-hidden relative shadow-sm flex items-center justify-center border border-gray-200 group">
+                                        <img src="/why-choose.png" alt="Certified Micro-Soldering" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-dark/60 to-transparent"></div>
+                                        <span className="absolute bottom-4 left-6 text-white font-bold text-xs uppercase tracking-widest">Certified Experts</span>
                                     </div>
-                                    <div className="bg-gray-200 aspect-square rounded-[2rem] overflow-hidden relative shadow-sm">
-                                        {/* Placeholder for actual image */}
-                                        <div className="absolute inset-0 bg-dark/5 flex justify-center items-center">
-                                            <svg className="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                    <div className="bg-gray-200 aspect-square rounded-[2rem] overflow-hidden relative shadow-sm group">
+                                        <img src="https://images.unsplash.com/photo-1512428559087-560fa5ceab42?q=80&w=600&auto=format&fit=crop" alt="Customer Service" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                        <div className="absolute inset-0 bg-dark/20 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <span className="text-white font-bold text-xs uppercase tracking-widest">Happy Customers</span>
                                         </div>
                                     </div>
                                 </div>

@@ -15,9 +15,9 @@ const getServices = async (req, res) => {
 
 const createService = async (req, res) => {
     try {
-        const { name, description, icon, displayOrder } = req.body;
+        const { name, description, icon, displayOrder, defaultPrice } = req.body;
         if (!name) return res.status(400).json({ error: 'Name is required' });
-        const service = new Service({ name, description: description || '', icon: icon || '', displayOrder: displayOrder || 0 });
+        const service = new Service({ name, description: description || '', icon: icon || '', displayOrder: displayOrder || 0, defaultPrice: defaultPrice || 0 });
         await service.save();
         res.status(201).json({ success: true, data: service });
     } catch (err) {

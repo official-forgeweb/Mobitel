@@ -89,6 +89,15 @@ app.use('/api/time-slots', timeSlotRoute);
 app.use('/api/settings', settingsRoute);
 app.use('/api/reports', reportsRoute);
 
+// ─── Payment Routes ───
+const razorpayRoute = require('./routes/razorpayRoute');
+const paymentRoute = require('./routes/paymentRoute');
+
+// For webhook signature verification, we need the raw body
+app.use('/api/razorpay/webhook', express.raw({ type: 'application/json' }));
+app.use('/api/razorpay', razorpayRoute);
+app.use('/api/admin/payments', paymentRoute);
+
 // Basic route
 app.get('/', (req, res) => {
     res.send('Mobitel Backend API is running');

@@ -1,5 +1,6 @@
 ﻿"use client";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 export default function HowItWorks({ data }) {
   const fallbackSteps = [
@@ -64,11 +65,13 @@ export default function HowItWorks({ data }) {
                     key={step.id || idx}
                     className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${activeStep === idx ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
                   >
-                    <img
+                    <Image
                       src={step.image || `/banners/banner${(idx % 4) + 1}.png`}
                       alt={step.title}
-                      className="w-full h-full object-cover scale-105 transition-transform duration-[10s] ease-linear"
+                      fill
+                      className="object-cover transition-transform duration-[10s] ease-linear"
                       style={{ transform: activeStep === idx ? 'scale(1.15)' : 'scale(1.05)' }}
+                      sizes="(max-width: 640px) 260px, 300px"
                     />
                     {/* Gradient overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
@@ -115,9 +118,9 @@ export default function HowItWorks({ data }) {
             </div>
 
             <div className="pt-2">
-              <button className="bg-[#F8D272] text-dark font-semibold text-[13px] px-8 py-3.5 rounded-full hover:bg-[#F2C14C] transition-colors shadow-sm">
+              <a href="/#brand-grid" className="inline-block bg-[#F8D272] text-dark font-semibold text-[13px] px-8 py-3.5 rounded-full hover:bg-[#F2C14C] transition-colors shadow-sm text-center">
                 Book a Repair
-              </button>
+              </a>
             </div>
           </div>
 

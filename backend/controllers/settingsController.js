@@ -23,6 +23,15 @@ const DEFAULTS = {
     bookingSettings: {
         leadTimeHours: 2,
         maxAdvanceDays: 30
+    },
+    paymentSettings: {
+        full_payment_enabled: true,
+        advance_payment_enabled: true,
+        advance_type: 'fixed', // 'fixed' or 'percentage'
+        advance_fixed_amount: 299,
+        advance_percentage: 20,
+        pay_at_store_enabled: true,
+        test_mode: true
     }
 };
 
