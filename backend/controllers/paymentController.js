@@ -1,6 +1,7 @@
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const Booking = require('../models/Booking');
+const BookingUpdate = require('../models/BookingUpdate');
 const Setting = require('../models/Setting');
 const { generateTrackingToken } = require('../services/tokenService');
 const { notifyPaymentSuccess, notifyRefundInitiated, notifyNewBooking } = require('../services/notificationService');
@@ -43,8 +44,23 @@ const createOrder = async (req, res) => {
         } = req.body;
 
         // Validate required fields
-        if (!customerName || !phone || !brand || !model || !serviceType || !payment_mode || total_amount === undefined) {
+        if (!customerName || !phone || !brand || !model || !serviceType || !payment_mode || total_amount === undefined || !preferredDate || !preferredTime) {
             return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Validate date/time is not in the past
+        const now = new Date();
+        const bookingDate = new Date(preferredDate);
+        
+        // Parse time slot (e.g. '10:00 AM')
+        const [time, period] = preferredTime.split(' ');
+        let [hour, minute] = time.split(':').map(Number);
+        if (period === 'PM' && hour !== 12) hour += 12;
+        if (period === 'AM' && hour === 12) hour = 0;
+        bookingDate.setHours(hour, minute, 0, 0);
+
+        if (bookingDate < now) {
+            return res.status(400).json({ error: 'Cannot book a repair in the past. Please select a future time slot.' });
         }
 
         const paymentSettings = await getPaymentSettings();
@@ -61,21 +77,33 @@ const createOrder = async (req, res) => {
         }
 
         // Calculate amounts
-        let amountToCharge = total_amount;
+        let numTotalAmount = Number(total_amount);
+        if (isNaN(numTotalAmount) || numTotalAmount < 0) {
+            return res.status(400).json({ error: 'Invalid total amount' });
+        }
+
+        if ((payment_mode === 'online_full' || payment_mode === 'online_advance') && numTotalAmount <= 0) {
+            return res.status(400).json({ error: 'Online payment requires an amount greater than zero' });
+        }
+
+        let amountToCharge = numTotalAmount;
         let advance_amount = 0;
-        let amount_due = 0;
+        let amount_due = numTotalAmount;
 
         if (payment_mode === 'online_advance') {
             if (paymentSettings.advance_type === 'fixed') {
                 advance_amount = paymentSettings.advance_fixed_amount;
             } else {
-                advance_amount = Math.ceil(total_amount * (paymentSettings.advance_percentage / 100));
+                advance_amount = Math.ceil(numTotalAmount * (paymentSettings.advance_percentage / 100));
             }
+            
+            if (advance_amount > numTotalAmount) advance_amount = numTotalAmount;
+            
             amountToCharge = advance_amount;
-            amount_due = total_amount - advance_amount;
+            // amount_due remains numTotalAmount until paid
         } else if (payment_mode === 'pay_at_store') {
             amountToCharge = 0;
-            amount_due = total_amount;
+            amount_due = numTotalAmount;
         }
 
         // Generate tracking token
@@ -105,6 +133,15 @@ const createOrder = async (req, res) => {
             });
             await booking.save();
 
+            // Create timeline entry
+            await BookingUpdate.create({
+                bookingId: booking._id,
+                status: 'Received',
+                note: 'Booking received (Pay at Store)',
+                isVisibleToCustomer: true,
+                updatedBy: { type: 'system', name: 'System' }
+            });
+
             // Send notifications
             notifyNewBooking(booking).catch(err => console.error('[Notification Error]', err));
 
@@ -119,7 +156,7 @@ const createOrder = async (req, res) => {
         // Create Razorpay order (amount in paise)
         const razorpay = getRazorpay();
         const order = await razorpay.orders.create({
-            amount: amountToCharge * 100, // Convert to paise
+            amount: Math.round(amountToCharge * 100), // Convert to paise and ensure integer
             currency: 'INR',
             receipt: trackingToken,
             notes: {
@@ -140,19 +177,28 @@ const createOrder = async (req, res) => {
             status: 'Received',
             payment_mode,
             payment_status: 'pending',
-            total_amount,
+            total_amount: numTotalAmount,
             advance_amount: payment_mode === 'online_advance' ? advance_amount : 0,
             amount_paid_online: 0,
             amount_paid_at_store: 0,
-            amount_due: payment_mode === 'online_advance' ? amount_due : 0,
+            amount_due: numTotalAmount,
             razorpay_order_id: order.id
         });
         await booking.save();
 
+        // Create initial timeline entry
+        await BookingUpdate.create({
+            bookingId: booking._id,
+            status: 'Received',
+            note: 'Booking received, payment pending',
+            isVisibleToCustomer: true,
+            updatedBy: { type: 'system', name: 'System' }
+        });
+
         res.status(201).json({
             success: true,
             order_id: order.id,
-            amount: amountToCharge * 100,
+            amount: Math.round(amountToCharge * 100),
             currency: 'INR',
             key_id: process.env.RAZORPAY_KEY_ID,
             booking_id: booking._id,
@@ -187,6 +233,14 @@ const verifyPayment = async (req, res) => {
             if (booking_id) {
                 await Booking.findByIdAndUpdate(booking_id, {
                     payment_status: 'failed'
+                });
+                
+                await BookingUpdate.create({
+                    bookingId: booking_id,
+                    status: 'Received',
+                    note: 'Payment verification failed (invalid signature)',
+                    isVisibleToCustomer: false,
+                    updatedBy: { type: 'system', name: 'System' }
                 });
             }
             return res.status(400).json({ error: 'Payment verification failed - invalid signature' });
@@ -225,6 +279,15 @@ const verifyPayment = async (req, res) => {
         booking.status = 'Received';
         await booking.save();
 
+        // Add payment to timeline
+        await BookingUpdate.create({
+            bookingId: booking._id,
+            status: 'Received',
+            note: `Payment of ₹${booking.amount_paid_online} verified successfully via Razorpay`,
+            isVisibleToCustomer: true,
+            updatedBy: { type: 'system', name: 'System' }
+        });
+
         // Send notifications
         notifyPaymentSuccess(booking).catch(err => console.error('[Notification Error]', err));
         notifyNewBooking(booking).catch(err => console.error('[Notification Error]', err));
@@ -250,9 +313,11 @@ const handleWebhook = async (req, res) => {
         // Verify webhook signature if secret is configured
         if (webhookSecret) {
             const signature = req.headers['x-razorpay-signature'];
+            const webhookBody = req.rawBody ? req.rawBody.toString() : JSON.stringify(req.body);
+            
             const expectedSignature = crypto
                 .createHmac('sha256', webhookSecret)
-                .update(JSON.stringify(req.body))
+                .update(webhookBody)
                 .digest('hex');
 
             if (signature !== expectedSignature) {
@@ -345,6 +410,10 @@ const initiateRefund = async (req, res) => {
         const booking = await Booking.findById(bookingId);
         if (!booking) return res.status(404).json({ error: 'Booking not found' });
 
+        if (booking.refund_status === 'initiated' || booking.refund_status === 'processed') {
+            return res.status(400).json({ error: 'Refund already initiated or processed for this booking' });
+        }
+
         if (!booking.razorpay_payment_id) {
             return res.status(400).json({ error: 'No online payment found for this booking' });
         }
@@ -355,7 +424,7 @@ const initiateRefund = async (req, res) => {
 
         const razorpay = getRazorpay();
         const refund = await razorpay.payments.refund(booking.razorpay_payment_id, {
-            amount: refund_amount * 100, // paise
+            amount: Math.round(refund_amount * 100), // paise
             notes: { reason: refund_reason, bookingToken: booking.trackingToken }
         });
 

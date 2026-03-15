@@ -17,13 +17,43 @@ function CheckoutContent() {
     address: "",
     landmark: "",
     pincode: "",
-    preferredDate: new Date().toISOString().split('T')[0],
+    preferredDate: new Date().toLocaleDateString('en-CA'),
     preferredTime: "",
     shopId: "",
     payment_mode: "online_full"
   });
 
   const timeSlots = ['10:00 AM', '11:00 AM', '12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM'];
+
+  const filteredTimeSlots = useMemo(() => {
+    const today = new Date().toLocaleDateString('en-CA');
+    if (formData.preferredDate !== today) return timeSlots;
+
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinutes = now.getMinutes();
+
+    return timeSlots.filter(slot => {
+        const [time, period] = slot.split(' ');
+        let [hour, minute] = time.split(':').map(Number);
+        if (period === 'PM' && hour !== 12) hour += 12;
+        if (period === 'AM' && hour === 12) hour = 0;
+        
+        // At least 1 hour buffer from now
+        const slotTime = new Date();
+        slotTime.setHours(hour, minute, 0, 0);
+        
+        const bufferTime = new Date(now.getTime() + 60 * 60 * 1000); // 1 hour buffer
+        return slotTime > bufferTime;
+    });
+  }, [formData.preferredDate]);
+
+  // Reset time if selected time is no longer valid (e.g. day changed)
+  useEffect(() => {
+    if (formData.preferredTime && !filteredTimeSlots.includes(formData.preferredTime)) {
+        setFormData(prev => ({ ...prev, preferredTime: "" }));
+    }
+  }, [filteredTimeSlots]);
   const shopLocations = [
     { id: 'shop1', name: 'Mobitel - Connaught Place', address: 'Shop No. 12, Block A, Connaught Place, New Delhi - 110001', hours: '10:00 AM - 8:00 PM', phone: '+91 98765 43210' },
     { id: 'shop2', name: 'Mobitel - Laxmi Nagar', address: 'Plot No. 5, Main Market, Laxmi Nagar, New Delhi - 110092', hours: '10:00 AM - 9:00 PM', phone: '+91 98765 43211' },
@@ -262,13 +292,13 @@ function CheckoutContent() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-dark mb-1 ml-1 uppercase">Preferred Date *</label>
-                      <input required type="date" min={new Date().toISOString().split('T')[0]} value={formData.preferredDate} onChange={e => setFormData({ ...formData, preferredDate: e.target.value })} className="w-full px-4 py-3.5 rounded-xl border border-border bg-surface outline-none text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                      <input required type="date" min={new Date().toLocaleDateString('en-CA')} value={formData.preferredDate} onChange={e => setFormData({ ...formData, preferredDate: e.target.value })} className="w-full px-4 py-3.5 rounded-xl border border-border bg-surface outline-none text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-dark mb-1 ml-1 uppercase">Preferred Time *</label>
                       <select required value={formData.preferredTime} onChange={e => setFormData({ ...formData, preferredTime: e.target.value })} className="w-full px-4 py-3.5 rounded-xl border border-border bg-surface outline-none text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none">
-                        <option value="">Select Time Slot</option>
-                        {timeSlots.map(slot => <option key={slot} value={slot}>{slot}</option>)}
+                        <option value="">{filteredTimeSlots.length > 0 ? "Select Time Slot" : "No slots available for today"}</option>
+                        {filteredTimeSlots.map(slot => <option key={slot} value={slot}>{slot}</option>)}
                       </select>
                     </div>
                   </div>

@@ -1,8 +1,9 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import QuickBookingModal from "./QuickBookingModal";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -16,10 +17,17 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
 
   useEffect(() => {
     if (menuOpen) setSearchOpen(false);
   }, [menuOpen]);
+
+  useEffect(() => {
+    const handleOpenModal = () => setBookingModalOpen(true);
+    window.addEventListener('openBookingModal', handleOpenModal);
+    return () => window.removeEventListener('openBookingModal', handleOpenModal);
+  }, []);
 
   useEffect(() => {
     if (searchOpen) setMenuOpen(false);
@@ -214,15 +222,15 @@ export default function Navbar() {
             </nav>
 
             {/* CTA Button */}
-            <a
-              href="/#brand-grid"
+            <button
+              onClick={() => setBookingModalOpen(true)}
               className="hidden md:flex items-center gap-1.5 bg-primary text-white text-[13px] font-medium cursor-pointer px-6 py-2.5 rounded-xl hover:bg-dark transition-all duration-300 shadow-sm shrink-0 ml-2"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
               </svg>
               Book Repair
-            </a>
+            </button>
 
             {/* Mobile search toggle */}
             {!searchOpen && (
@@ -331,17 +339,21 @@ export default function Navbar() {
                 </svg>
                 <span className="truncate">{location}</span>
               </div>
-              <a
-                href="/#brand-grid"
-                onClick={() => setMenuOpen(false)}
+              <button
+                onClick={() => { setMenuOpen(false); setBookingModalOpen(true); }}
                 className="w-full flex items-center justify-center gap-2 bg-primary text-white text-sm font-medium py-3 rounded-xl hover:bg-primary-dark transition-colors cursor-pointer"
               >
                 Book a Repair
-              </a>
+              </button>
             </div>
           </div>
         </div>
       )}
+
+      <QuickBookingModal 
+        isOpen={bookingModalOpen} 
+        onClose={() => setBookingModalOpen(false)} 
+      />
     </>
   );
 }

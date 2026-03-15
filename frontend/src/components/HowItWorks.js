@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
@@ -118,9 +118,12 @@ export default function HowItWorks({ data }) {
             </div>
 
             <div className="pt-2">
-              <a href="/#brand-grid" className="inline-block bg-[#F8D272] text-dark font-semibold text-[13px] px-8 py-3.5 rounded-full hover:bg-[#F2C14C] transition-colors shadow-sm text-center">
+              <button 
+                onClick={() => window.dispatchEvent(new Event('openBookingModal'))}
+                className="inline-block bg-[#F8D272] text-dark font-semibold text-[13px] px-8 py-3.5 rounded-full hover:bg-[#F2C14C] transition-colors shadow-sm text-center cursor-pointer"
+              >
                 Book a Repair
-              </a>
+              </button>
             </div>
           </div>
 

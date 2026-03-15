@@ -66,7 +66,12 @@ app.use(cors({
     },
     credentials: true,
 }));
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ 
+    limit: '10mb',
+    verify: (req, res, buf) => {
+        req.rawBody = buf;
+    }
+}));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // ─── Existing Routes ───
@@ -93,8 +98,7 @@ app.use('/api/reports', reportsRoute);
 const razorpayRoute = require('./routes/razorpayRoute');
 const paymentRoute = require('./routes/paymentRoute');
 
-// For webhook signature verification, we need the raw body
-app.use('/api/razorpay/webhook', express.raw({ type: 'application/json' }));
+// Payment routes
 app.use('/api/razorpay', razorpayRoute);
 app.use('/api/admin/payments', paymentRoute);
 

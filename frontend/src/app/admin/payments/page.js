@@ -102,8 +102,9 @@ export default function AdminPaymentsPage() {
                 headers: headers(),
                 body: JSON.stringify({ 
                     bookingId: refundModal.payment._id, 
-                    amount: refundModal.type === 'partial' ? Number(refundModal.amount) : undefined,
-                    reason: refundModal.reason
+                    refund_amount: Number(refundModal.amount),
+                    refund_reason: refundModal.reason,
+                    refund_type: refundModal.type
                 })
             });
             const data = await res.json();

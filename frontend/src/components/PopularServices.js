@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -176,9 +176,12 @@ export default function PopularServices({ data }) {
                   </p>
 
                   <div className="mb-8">
-                    <a href="/#brand-grid" className="bg-primary hover:bg-primary-dark text-white px-6 py-2.5 rounded-full font-bold text-xs transition-all uppercase tracking-widest">
+                    <button 
+                      onClick={() => window.dispatchEvent(new Event('openBookingModal'))}
+                      className="bg-primary hover:bg-primary-dark text-white px-6 py-2.5 rounded-full font-bold text-xs transition-all uppercase tracking-widest cursor-pointer"
+                    >
                       Book This Repair
-                    </a>
+                    </button>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-4">
