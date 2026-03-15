@@ -127,33 +127,66 @@ function CheckoutContent() {
     );
   };
 
-  const initializeRazorpay = async (order, bookingId) => {
-    // BYPASS RAZORPAY MODAL AND WEBHOOK FOR TESTING
-    try {
-        const dummyResponse = {
-            razorpay_order_id: order.order_id,
-            razorpay_payment_id: "pay_test_" + Math.random().toString(36).substring(7),
-            razorpay_signature: "dummy_signature_bypass",
-            booking_id: bookingId
-        };
-        
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/razorpay/verify-payment`, {
+  const initializeRazorpay = (order, bookingId) => {
+    if (typeof window === 'undefined' || !window.Razorpay) {
+      alert("Razorpay SDK not loaded yet. Please wait a moment and try again.");
+      setIsProcessing(false);
+      console.error("Razorpay SDK missing from window object.");
+      return;
+    }
+
+    const options = {
+      key: order.key_id,
+      amount: order.amount,
+      currency: "INR",
+      name: "Mobitel Repair",
+      description: "Repair Booking Payment",
+      order_id: order.order_id,
+      prefill: {
+        name: formData.name,
+        contact: formData.phone,
+        email: formData.email
+      },
+      theme: { color: "#2563eb" },
+      handler: async function (response) {
+        try {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/razorpay/verify-payment`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(dummyResponse)
-        });
-        const data = await res.json();
-        
-        if (data.success) {
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              booking_id: bookingId
+            })
+          });
+          const data = await res.json();
+          if (data.success) {
             router.push(`/booking/success?token=${data.trackingToken}`);
-        } else {
-            alert("Payment bypass failed: " + (data.error || "Unknown error"));
+          } else {
+            alert("Payment verification failed: " + (data.error || "Unknown error"));
             setIsProcessing(false);
+          }
+        } catch (err) {
+          console.error("Verification error:", err);
+          alert("Error verifying payment with server.");
+          setIsProcessing(false);
         }
-    } catch (err) {
-        console.error("Bypass error:", err);
-        alert("Error simulating payment verification with server.");
+      }
+    };
+
+    try {
+      const rzp = new window.Razorpay(options);
+      rzp.on("payment.failed", function (response) {
+        console.error("Razorpay payment failure:", response.error);
+        alert("Payment failed: " + response.error.description);
         setIsProcessing(false);
+      });
+      rzp.open();
+    } catch (err) {
+      console.error("Error creating Razorpay instance:", err);
+      alert("Failed to open Razorpay modal.");
+      setIsProcessing(false);
     }
   };
 
