@@ -159,6 +159,7 @@ const createOrder = async (req, res) => {
             amount: Math.round(amountToCharge * 100), // Convert to paise and ensure integer
             currency: 'INR',
             receipt: trackingToken,
+            payment_capture: 1,
             notes: {
                 customerName,
                 phone,
