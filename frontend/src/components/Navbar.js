@@ -94,7 +94,7 @@ export default function Navbar() {
       {/* Announcement bar + Mobile Location */}
       <div className="bg-primary font-sans text-white text-xs py-1.5 px-4 font-medium tracking-wide flex items-center justify-between md:justify-center">
         <div className="hidden md:block">
-          50% off on all screen repairs this week &nbsp;&nbsp; Free doorstep pickup &amp; delivery &nbsp;&nbsp; Call: <a href="tel:+919876543210" className="text-white hover:text-gray-200 cursor-pointer">9876543210</a>
+          50% off on all screen repairs this week &nbsp;&nbsp; Free doorstep pickup &amp; delivery &nbsp;&nbsp; Call: <a href="tel:+918287853207" className="text-white hover:text-gray-200 cursor-pointer">8287853207</a>
         </div>
 
         {/* Mobile-only location topbar */}
@@ -119,7 +119,7 @@ export default function Navbar() {
 
         {/* Mobile-only call to action */}
         <div className="md:hidden">
-          <a href="tel:+919876543210" className="bg-white/20 px-3 py-1 rounded-full text-[10px] font-medium cursor-pointer">Call Now</a>
+          <a href="tel:+918287853207" className="bg-white/20 px-3 py-1 rounded-full text-[10px] font-medium cursor-pointer">Call Now</a>
         </div>
       </div>
 

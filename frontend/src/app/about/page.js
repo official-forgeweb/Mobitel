@@ -194,7 +194,7 @@ export default function AboutPage() {
                             View Repair Services
                         </Link>
                         <a
-                            href="tel:+919876543210"
+                            href="tel:+918287853207"
                             className="bg-white border border-border text-dark hover:bg-surface px-8 py-4 rounded-full font-medium text-sm transition-colors w-full sm:w-auto"
                         >
                             Call For A Quote

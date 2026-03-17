@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, memo, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -119,7 +119,7 @@ export default function BrandCategories({ data }) {
   const [serviceType, setServiceType] = useState(null); // 'home' | 'shop'
   const [bookingSubmitted, setBookingSubmitted] = useState(false);
   const [bookingForm, setBookingForm] = useState({
-    name: '', phone: '', email: '', date: '', time: '', address: '', landmark: '', pincode: '', selectedShop: '',
+    name: '', phone: '', email: '', date: '', time: '', address: '', landmark: '', pincode: '', selectedShop: 'shop1',
   });
 
   const [brandsList, setBrandsList] = useState([]);
@@ -183,9 +183,7 @@ export default function BrandCategories({ data }) {
   }, [selectedModel, selectedBrand]);
 
   const shopLocations = [
-    { id: 'shop1', name: 'Mobitel - Connaught Place', address: 'Shop No. 12, Block A, Connaught Place, New Delhi - 110001', hours: '10:00 AM - 8:00 PM', phone: '+91 98765 43210' },
-    { id: 'shop2', name: 'Mobitel - Laxmi Nagar', address: 'Plot No. 5, Main Market, Laxmi Nagar, New Delhi - 110092', hours: '10:00 AM - 9:00 PM', phone: '+91 98765 43211' },
-    { id: 'shop3', name: 'Mobitel - Nehru Place', address: '2nd Floor, Shop 204, Nehru Place, New Delhi - 110019', hours: '11:00 AM - 8:00 PM', phone: '+91 98765 43212' },
+    { id: 'shop1', name: 'Mobitel - Ballabhgarh', address: '983H+6QP, Sector 4R, Sector 4, Ballabhgarh, Faridabad, Haryana 121004', hours: '10:00 AM - 8:00 PM', phone: '+91 82878 53207' },
   ];
 
   const timeSlots = ['10:00 AM', '11:00 AM', '12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM'];

@@ -1,4 +1,4 @@
-﻿export default function Footer() {
+export default function Footer() {
   const services = ["Screen Repair","Battery Replacement","Water Damage","Charging Port","Camera Repair","Speaker Fix","Back Glass","Software Issues"];
   const brands = ["Apple","Samsung","OnePlus","Xiaomi","Oppo","Vivo","Realme","Google Pixel"];
   const links = ["About Us","How It Works","Pricing","Careers","Blog","Contact","Privacy Policy","Terms of Service"];
@@ -42,7 +42,7 @@
           </ul>
           <div className="bg-white/5 rounded-xl p-4">
             <p className="text-xs text-gray-400 mb-1">Mon-Sat / 9am-8pm</p>
-            <a href="tel:+919999999999" className="text-base font-bold text-white hover:text-primary transition-colors">+91 99999 99999</a>
+            <a href="tel:+918287853207" className="text-base font-bold text-white hover:text-primary transition-colors">+91 82878 53207</a>
             <p className="text-xs text-gray-400 mt-2">support@mobitel.in</p>
           </div>
         </div>

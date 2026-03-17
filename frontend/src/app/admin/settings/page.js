@@ -111,7 +111,7 @@ export default function SettingsPage() {
                             className="w-full border rounded-lg px-3 py-2 text-sm" /></div>
                     <div><label className="block text-xs font-medium text-gray-500 mb-1">Admin WhatsApp Numbers (comma-separated)</label>
                         <input value={notifPrefs.adminWhatsapp} onChange={e => setNotifPrefs({ ...notifPrefs, adminWhatsapp: e.target.value })}
-                            placeholder="+919876543210, +919876543211"
+                            placeholder="+918287853207"
                             className="w-full border rounded-lg px-3 py-2 text-sm" /></div>
                 </div>
                 <button onClick={saveNotifPrefs} disabled={saving} className="mt-4 px-5 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 disabled:opacity-50">

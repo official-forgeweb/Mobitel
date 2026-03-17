@@ -145,7 +145,7 @@ export default function ServicesPage() {
                             Book a Repair Online
                         </a>
                         <a
-                            href="tel:+919876543210"
+                            href="tel:+918287853207"
                             className="bg-white border border-border text-dark hover:bg-gray-50 px-8 py-3.5 rounded-full font-medium text-sm transition-colors w-full sm:w-auto shadow-sm"
                         >
                             Call Us Directly
@@ -372,7 +372,7 @@ export default function ServicesPage() {
                             Book Appointment
                         </a>
                         <a
-                            href="tel:+919876543210"
+                            href="tel:+918287853207"
                             className="bg-white border border-border text-dark hover:bg-surface px-8 py-4 rounded-full font-medium text-sm transition-colors w-full sm:w-auto"
                         >
                             Call Us Now

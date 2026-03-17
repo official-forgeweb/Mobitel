@@ -21,7 +21,7 @@ function CheckoutContent() {
     pincode: "",
     preferredDate: new Date().toLocaleDateString('en-CA'),
     preferredTime: "",
-    shopId: "",
+    shopId: "shop1",
     payment_mode: "online_full"
   });
 
@@ -57,9 +57,7 @@ function CheckoutContent() {
     }
   }, [filteredTimeSlots]);
   const shopLocations = [
-    { id: 'shop1', name: 'Mobitel - Connaught Place', address: 'Shop No. 12, Block A, Connaught Place, New Delhi - 110001', hours: '10:00 AM - 8:00 PM', phone: '+91 98765 43210' },
-    { id: 'shop2', name: 'Mobitel - Laxmi Nagar', address: 'Plot No. 5, Main Market, Laxmi Nagar, New Delhi - 110092', hours: '10:00 AM - 9:00 PM', phone: '+91 98765 43211' },
-    { id: 'shop3', name: 'Mobitel - Nehru Place', address: '2nd Floor, Shop 204, Nehru Place, New Delhi - 110019', hours: '11:00 AM - 8:00 PM', phone: '+91 98765 43212' },
+    { id: 'shop1', name: 'Mobitel - Ballabhgarh', address: '983H+6QP, Sector 4R, Sector 4, Ballabhgarh, Faridabad, Haryana 121004', hours: '10:00 AM - 8:00 PM', phone: '+91 82878 53207' },
   ];
 
   const queryDetails = {
@@ -134,13 +132,18 @@ function CheckoutContent() {
           const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/location?lat=${latitude}&lon=${longitude}`);
           const data = await res.json();
           if (data && data.display_name) {
-            setFormData(prev => ({ ...prev, address: data.display_name }));
+            let cleanAddress = data.display_name;
+            // If it starts with a plus code like '87CQ+H58, ', remove it for a cleaner UI
+            if (cleanAddress.match(/^[A-Z0-9]{4}\+[A-Z0-9]{2,3},\s/)) {
+              cleanAddress = cleanAddress.replace(/^[A-Z0-9]{4}\+[A-Z0-9]{2,3},\s/, '');
+            }
+            setFormData(prev => ({ ...prev, address: cleanAddress }));
             
             // Extract pincode from google results if available
             if (data.results && data.results[0]) {
                const pincodeComp = data.results[0].address_components?.find(c => c.types.includes("postal_code"));
                if (pincodeComp) {
-                 setFormData(prev => ({ ...prev, address: data.results[0].formatted_address, pincode: pincodeComp.long_name }));
+                 setFormData(prev => ({ ...prev, pincode: pincodeComp.long_name }));
                }
             }
           } else {
