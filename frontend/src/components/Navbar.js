@@ -61,17 +61,25 @@ export default function Navbar() {
     navigator.geolocation.getCurrentPosition(
       async ({ coords: { latitude, longitude } }) => {
         try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/location?lat=${latitude}&lon=${longitude}`);
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/location?lat=${latitude}&lon=${longitude}`);
           const data = await res.json();
           if (data && data.display_name) {
-            const parts = data.display_name.split(", ").slice(0, 3);
-            setLocation(parts.join(", "));
+            let cleanAddress = data.display_name;
+            // If it starts with a plus code like '87CQ+H58, ', remove it for a cleaner UI
+            if (cleanAddress.match(/^[A-Z0-9]{4}\+[A-Z0-9]{2,3},\s/)) {
+              cleanAddress = cleanAddress.replace(/^[A-Z0-9]{4}\+[A-Z0-9]{2,3},\s/, '');
+            }
+            setLocation(cleanAddress);
           } else {
             setLocation("Unknown Location");
           }
-        } catch { setLocation("Location error"); }
+        } catch (err) { 
+          console.error("Navbar location error:", err);
+          setLocation("Location error"); 
+        }
       },
-      () => setLocation("Location denied")
+      () => setLocation("Location denied"),
+      { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
     );
   }, []);
 

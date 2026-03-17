@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useMemo, Suspense } from "react";
+import { useState, useEffect, useMemo, Suspense, useRef } from "react";
 import Script from "next/script";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -9,6 +9,8 @@ function CheckoutContent() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
   const [paymentSettings, setPaymentSettings] = useState(null);
+  const autocompleteRef = useRef(null);
+  const addressInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -88,6 +90,29 @@ function CheckoutContent() {
     }
   }, [queryDetails.price]);
 
+  // Google Maps Autocomplete
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.google && addressInputRef.current && !autocompleteRef.current) {
+      autocompleteRef.current = new window.google.maps.places.Autocomplete(addressInputRef.current, {
+        componentRestrictions: { country: "in" },
+        fields: ["formatted_address", "address_components", "geometry"],
+      });
+
+      autocompleteRef.current.addListener("place_changed", () => {
+        const place = autocompleteRef.current.getPlace();
+        if (place.formatted_address) {
+          setFormData(prev => ({ ...prev, address: place.formatted_address }));
+          
+          // Extract pincode if available
+          const pincodeComp = place.address_components?.find(c => c.types.includes("postal_code"));
+          if (pincodeComp) {
+            setFormData(prev => ({ ...prev, address: place.formatted_address, pincode: pincodeComp.long_name }));
+          }
+        }
+      });
+    }
+  }, [addressInputRef.current]);
+
   const advanceAmount = useMemo(() => {
     if (!paymentSettings || !queryDetails.price) return 0;
     if (paymentSettings.advance_type === "fixed") {
@@ -109,12 +134,20 @@ function CheckoutContent() {
           const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/location?lat=${latitude}&lon=${longitude}`);
           const data = await res.json();
           if (data && data.display_name) {
-            const parts = data.display_name.split(", ").slice(0, 4);
-            setFormData(prev => ({ ...prev, address: parts.join(", ") }));
+            setFormData(prev => ({ ...prev, address: data.display_name }));
+            
+            // Extract pincode from google results if available
+            if (data.results && data.results[0]) {
+               const pincodeComp = data.results[0].address_components?.find(c => c.types.includes("postal_code"));
+               if (pincodeComp) {
+                 setFormData(prev => ({ ...prev, address: data.results[0].formatted_address, pincode: pincodeComp.long_name }));
+               }
+            }
           } else {
             alert("Could not detect exact street address.");
           }
-        } catch {
+        } catch (err) {
+          console.error("Location error:", err);
           alert("Error fetching location from server.");
         } finally {
           setIsFetchingLocation(false);
@@ -123,7 +156,8 @@ function CheckoutContent() {
       () => {
         alert("Location permissions denied.");
         setIsFetchingLocation(false);
-      }
+      },
+      { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
     );
   };
 
@@ -312,7 +346,15 @@ function CheckoutContent() {
                         <label className="block text-xs font-bold text-dark uppercase ml-1">Street Address *</label>
                         <button type="button" onClick={fetchLocation} disabled={isFetchingLocation} className="text-[10px] font-bold text-primary hover:text-dark px-2 py-1 bg-primary/10 rounded-md">Auto Fetch Location</button>
                       </div>
-                      <textarea required rows="2" value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-border bg-surface outline-none text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none mb-4"></textarea>
+                      <textarea 
+                        ref={addressInputRef}
+                        required 
+                        rows="2" 
+                        value={formData.address} 
+                        onChange={e => setFormData({ ...formData, address: e.target.value })} 
+                        placeholder="Search for your building, street or area..."
+                        className="w-full px-4 py-3 rounded-xl border border-border bg-surface outline-none text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none mb-4"
+                      ></textarea>
                       
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
@@ -446,6 +488,10 @@ export default function CheckoutPage() {
     return (
         <>
             <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
+            <Script 
+              src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`} 
+              strategy="beforeInteractive"
+            />
             <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 rounded-full border-4 border-primary border-t-transparent animate-spin"></div></div>}>
                 <CheckoutContent />
             </Suspense>
