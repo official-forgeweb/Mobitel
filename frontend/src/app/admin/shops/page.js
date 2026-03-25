@@ -64,7 +64,7 @@ export default function ShopsAdminPage() {
             });
 
             if (res.ok) {
-                setShops(shops.filter((s) => s.id !== id));
+                setShops(shops.filter((s) => (s._id || s.id) !== id));
             } else {
                 alert("Failed to delete shop.");
             }
@@ -154,7 +154,7 @@ export default function ShopsAdminPage() {
                         ) : (
                             <ul className="divide-y divide-gray-100">
                                 {shops.map((shop) => (
-                                    <li key={shop.id} className="p-6 hover:bg-gray-50 transition-colors flex flex-col sm:flex-row gap-4 items-start justify-between">
+                                    <li key={shop._id || shop.id} className="p-6 hover:bg-gray-50 transition-colors flex flex-col sm:flex-row gap-4 items-start justify-between">
                                         <div>
                                             <h3 className="text-lg font-bold text-gray-900 mb-1">{shop.name}</h3>
                                             <p className="text-sm text-gray-600 mb-2 flex items-start gap-1.5">
@@ -174,11 +174,11 @@ export default function ShopsAdminPage() {
                                             )}
                                         </div>
                                         <button
-                                            onClick={() => handleDeleteShop(shop.id)}
-                                            disabled={deleting === shop.id}
+                                            onClick={() => handleDeleteShop(shop._id || shop.id)}
+                                            disabled={deleting === (shop._id || shop.id)}
                                             className="shrink-0 text-red-500 hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
                                         >
-                                            {deleting === shop.id ? "Deleting..." : "Delete"}
+                                            {deleting === (shop._id || shop.id) ? "Deleting..." : "Delete"}
                                         </button>
                                     </li>
                                 ))}

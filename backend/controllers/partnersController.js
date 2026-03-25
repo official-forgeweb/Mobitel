@@ -91,4 +91,15 @@ const addPartner = async (req, res) => {
     }
 };
 
-module.exports = { getPartners, addPartner };
+const updatePartner = async (req, res) => {
+    try {
+        const partner = await Partner.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!partner) return res.status(404).json({ error: 'Partner not found' });
+        res.json({ success: true, data: partner });
+    } catch (err) {
+        console.error("Error updating delivery partner in MongoDB:", err);
+        res.status(500).json({ error: 'Failed to update delivery partner' });
+    }
+};
+
+module.exports = { getPartners, addPartner, updatePartner };

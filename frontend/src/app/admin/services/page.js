@@ -140,10 +140,11 @@ export default function ServicesPage() {
                                     </td>
                                     <td className="px-6 py-5">
                                         <div className="flex flex-col gap-2">
-                                            <button onClick={() => toggleActive(s)} 
-                                                className={`w-fit px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border ${s.isActive ? 'bg-green-100 text-green-700 border-green-200' : 'bg-red-50 text-red-500 border-red-100 opacity-50'}`}>
-                                                {s.isActive ? 'Active' : 'Hidden'}
-                                            </button>
+                                            <label className="relative inline-flex items-center cursor-pointer mb-2" title={s.isActive ? 'Deactivate Service' : 'Activate Service'}>
+                                                <input type="checkbox" className="sr-only peer" checked={s.isActive !== false} onChange={() => toggleActive(s)} />
+                                                <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                                <span className="ml-3 text-xs font-bold text-gray-700">{s.isActive !== false ? 'Active' : 'Hidden'}</span>
+                                            </label>
                                             <button onClick={() => toggleDefault(s)} 
                                                 className={`w-fit px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border ${s.isDefault ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-200' : 'bg-white text-gray-400 border-gray-200 hover:border-blue-400 hover:text-blue-500'}`}>
                                                 {s.isDefault ? 'Featured ★' : 'Standard'}

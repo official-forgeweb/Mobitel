@@ -82,6 +82,13 @@ export default function BrandsPage() {
         fetchBrands();
     };
 
+    const toggleModelActive = async (model) => {
+        await fetch(`${API}/api/device-models/${model._id}`, {
+            method: 'PUT', headers: headers(), body: JSON.stringify({ isActive: !model.isActive })
+        });
+        fetchModels(selectedBrand._id);
+    };
+
     const SafeImage = ({ src, alt, fallback, className }) => {
         const [error, setError] = useState(false);
         if (error || !src) return fallback;
@@ -125,10 +132,10 @@ export default function BrandsPage() {
                                     </div>
                                 </div>
                                 <div className="flex gap-2" onClick={e => e.stopPropagation()}>
-                                    <button onClick={() => toggleBrandActive(b)} title={b.isActive ? 'Deactivate' : 'Activate'} 
-                                        className={`p-1.5 rounded-lg transition-colors ${b.isActive ? 'text-green-500 hover:bg-green-50' : 'text-gray-400 hover:bg-gray-100'}`}>
-                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                    </button>
+                                    <label className="relative inline-flex items-center cursor-pointer ml-2" title={b.isActive ? 'Deactivate Brand' : 'Activate Brand'}>
+                                        <input type="checkbox" className="sr-only peer" checked={b.isActive !== false} onChange={() => toggleBrandActive(b)} />
+                                        <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                    </label>
                                     <button onClick={() => { setBrandForm({ name: b.name, logo: b.logo || '', displayOrder: b.displayOrder || 0 }); setEditingBrand(b._id); setShowBrandForm(true); }}
                                         className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">
                                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
@@ -178,6 +185,10 @@ export default function BrandsPage() {
                                     </div>
                                 </div>
                                 <div className="flex gap-2">
+                                    <label className="relative inline-flex items-center cursor-pointer ml-2" title={m.isActive ? 'Deactivate Model' : 'Activate Model'}>
+                                        <input type="checkbox" className="sr-only peer" checked={m.isActive !== false} onChange={() => toggleModelActive(m)} />
+                                        <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                    </label>
                                     <button onClick={() => { setModelForm({ name: m.name, image: m.image || '', displayOrder: m.displayOrder || 0 }); setEditingModel(m._id); setShowModelForm(true); }}
                                         className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">
                                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>

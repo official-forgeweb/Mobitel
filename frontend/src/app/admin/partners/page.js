@@ -62,6 +62,24 @@ export default function DeliveryPartnersPage() {
         }
     };
 
+    const togglePartnerStatus = async (partner) => {
+        try {
+            const newStatus = partner.status === 'active' ? 'inactive' : 'active';
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/partners/${partner._id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: newStatus }),
+            });
+            if (res.ok) {
+                fetchPartners();
+            } else {
+                alert("Failed to update partner status");
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     if (loading) {
         return (
             <div className="p-8 flex justify-center items-center h-full">
@@ -100,11 +118,12 @@ export default function DeliveryPartnersPage() {
                                     <th className="p-4">Email Address</th>
                                     <th className="p-4">Created On</th>
                                     <th className="p-4">Status</th>
+                                    <th className="p-4 text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100 text-sm">
                                 {partners.map(partner => (
-                                    <tr key={partner.id} className="hover:bg-gray-50 transition-colors">
+                                    <tr key={partner._id || partner.id} className="hover:bg-gray-50 transition-colors">
                                         <td className="p-4 font-medium text-gray-900 flex items-center gap-3">
                                             <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs uppercase">
                                                 {partner.name.charAt(0)}
@@ -114,9 +133,16 @@ export default function DeliveryPartnersPage() {
                                         <td className="p-4 text-gray-600">{partner.email}</td>
                                         <td className="p-4 text-gray-500">{new Date(partner.createdAt).toLocaleDateString()}</td>
                                         <td className="p-4">
-                                            <span className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${partner.status === 'active' ? 'bg-green-100 text-green-800 border-green-200' : 'bg-gray-100 text-gray-800 border-gray-200'}`}>
-                                                {partner.status}
-                                            </span>
+                                            <label className="relative inline-flex items-center cursor-pointer" title={partner.status === 'active' ? 'Deactivate Partner' : 'Activate Partner'}>
+                                                <input type="checkbox" className="sr-only peer" checked={partner.status === 'active'} onChange={() => togglePartnerStatus(partner)} />
+                                                <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                                <span className="ml-3 text-xs font-bold text-gray-700 capitalize">{partner.status}</span>
+                                            </label>
+                                        </td>
+                                        <td className="p-4 text-right">
+                                            <button onClick={() => {}} title="Edit Partner" className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">
+                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}

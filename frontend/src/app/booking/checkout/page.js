@@ -21,9 +21,11 @@ function CheckoutContent() {
     pincode: "",
     preferredDate: new Date().toLocaleDateString('en-CA'),
     preferredTime: "",
-    shopId: "shop1",
+    shopId: "",
     payment_mode: "online_full"
   });
+
+  const [shopLocations, setShopLocations] = useState([]);
 
   const timeSlots = ['10:00 AM', '11:00 AM', '12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM'];
 
@@ -56,9 +58,6 @@ function CheckoutContent() {
         setFormData(prev => ({ ...prev, preferredTime: "" }));
     }
   }, [filteredTimeSlots]);
-  const shopLocations = [
-    { id: 'shop1', name: 'Mobitel - Ballabhgarh', address: '983H+6QP, Sector 4R, Sector 4, Ballabhgarh, Faridabad, Haryana 121004', hours: '10:00 AM - 8:00 PM', phone: '+91 82878 53207' },
-  ];
 
   const queryDetails = {
     brand: searchParams.get('brand') || "",
@@ -77,6 +76,16 @@ function CheckoutContent() {
       .then(res => res.json())
       .then(data => setPaymentSettings(data))
       .catch(err => console.error("Error fetching settings:", err));
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/shops`)
+      .then(res => res.json())
+      .then(data => {
+          setShopLocations(data);
+          if (data && data.length > 0 && searchParams.get('visitType') !== "Home Service") {
+              setFormData(prev => ({ ...prev, shopId: data[0]._id || data[0].id }));
+          }
+      })
+      .catch(err => console.error("Error fetching shops:", err));
   }, []);
 
   useEffect(() => {
@@ -253,7 +262,10 @@ function CheckoutContent() {
         pincode: formData.pincode,
         shopId: queryDetails.visitType === "Shop Visit" ? formData.shopId : "",
         payment_mode: formData.payment_mode,
-        total_amount: queryDetails.price || 0
+        total_amount: queryDetails.price || 0,
+        brandId: queryDetails.brandId,
+        modelId: queryDetails.modelId,
+        serviceId: queryDetails.serviceId
       };
 
       console.log("Submitting booking with payload:", payload);
@@ -375,15 +387,17 @@ function CheckoutContent() {
                     <h3 className="text-lg font-bold text-dark mb-4 border-b pb-2">Select Shop Location</h3>
                     <div className="space-y-3">
                       {shopLocations.map((shop) => (
-                        <label key={shop.id} className={`flex items-start gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.shopId === shop.id ? 'border-primary bg-primary/5 shadow-md' : 'border-gray-100 bg-white hover:border-primary/30 hover:shadow-sm'}`}>
-                          <input type="radio" name="shop" required value={shop.id} checked={formData.shopId === shop.id} onChange={() => setFormData({ ...formData, shopId: shop.id })} className="mt-1 accent-primary" />
+                        <label key={shop._id || shop.id} className={`flex items-start gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${formData.shopId === (shop._id || shop.id) ? 'border-primary bg-primary/5 shadow-md' : 'border-gray-100 bg-white hover:border-primary/30 hover:shadow-sm'}`}>
+                          <input type="radio" name="shop" required value={shop._id || shop.id} checked={formData.shopId === (shop._id || shop.id)} onChange={() => setFormData({ ...formData, shopId: shop._id || shop.id })} className="mt-1 accent-primary" />
                           <div className="flex-1">
                             <h5 className="font-semibold text-dark text-sm">{shop.name}</h5>
                             <p className="text-xs text-muted mt-1">{shop.address}</p>
                             <div className="flex flex-wrap gap-3 mt-2">
-                              <span className="text-xs text-green-600 flex items-center gap-1 font-medium italic">
-                                {shop.hours}
-                              </span>
+                              {shop.contact && (
+                                <span className="text-xs text-green-600 flex items-center gap-1 font-medium italic">
+                                  {shop.contact}
+                                </span>
+                              )}
                             </div>
                           </div>
                         </label>

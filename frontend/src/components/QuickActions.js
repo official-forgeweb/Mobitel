@@ -40,9 +40,9 @@ export default function QuickActions() {
     const fetchInitialData = async () => {
       try {
         const [bRes, mRes, sRes, pRes] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/brands`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/device-models`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/services`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/brands?active=true`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/device-models?active=true`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/services?active=true`),
           fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/razorpay/payment-settings`)
         ]);
         setBrands(await bRes.json());
