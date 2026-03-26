@@ -6,10 +6,11 @@ import Link from "next/link";
 const services = [
     {
         id: "screen",
+        slug: "screen-replacement",
         title: "Screen Repair",
         short: "Cracked or unresponsive? Back to perfect.",
         desc: "We use premium OEM-grade displays to restore your device to factory condition — fast. Most screen repairs are done in under an hour, so you don't have to stay disconnected for long.",
-        price: "599",
+        price: "999",
         iconBg: "bg-red-50 text-red-500",
         blob: "bg-red-500/5",
         icon: (
@@ -22,10 +23,11 @@ const services = [
     },
     {
         id: "battery",
+        slug: "battery-replacement",
         title: "Battery Replacement",
         short: "Dying too fast? Get full-day stamina back.",
         desc: "We install high-capacity, certified batteries to bring your phone's endurance back to day-one levels. Stop carrying a power bank constantly; restore your battery health in minutes.",
-        price: "899",
+        price: "499",
         iconBg: "bg-green-50 text-green-500",
         blob: "bg-green-500/5",
         icon: (
@@ -38,10 +40,11 @@ const services = [
     },
     {
         id: "water",
+        slug: "water-damage-repair",
         title: "Water Damage Repair",
         short: "Dropped it in water? Act fast.",
         desc: "Advanced ultrasonic cleaning and component-level motherboard diagnostics. Don't turn it on — bring it to us immediately for the best chance of complete data and device recovery.",
-        price: "1,299",
+        price: "999",
         iconBg: "bg-blue-50 text-blue-500",
         blob: "bg-blue-500/5",
         icon: (
@@ -54,6 +57,7 @@ const services = [
     },
     {
         id: "charging",
+        slug: "charging-port-repair",
         title: "Charging Port Fix",
         short: "Can't plug in without a struggle?",
         desc: "We clean, resolder, or fully replace faulty charging ports so you can plug in effortlessly every single time. Supports USB-C, Lightning, and older Micro-USB interfaces.",
@@ -69,6 +73,7 @@ const services = [
     },
     {
         id: "camera",
+        slug: "camera-repair",
         title: "Camera Replacement",
         short: "Blurry shots or a broken lens?",
         desc: "We swap out front or rear camera modules to restore crisp, clear photos. Original components for Apple, Samsung, OnePlus, and other major smartphone brands.",
@@ -85,6 +90,7 @@ const services = [
     },
     {
         id: "motherboard",
+        slug: "motherboard-repair",
         title: "Motherboard Diagnostics",
         short: "Phone dead or boot-looping?",
         desc: "Our micro-soldering experts perform advanced logic board diagnosis and repair. We address complex issues like no power, random restarts, or localized overheating.",
@@ -211,8 +217,8 @@ export default function ServicesPage() {
                                                 </p>
                                             </div>
 
-                                            <a
-                                                href="/#brand-grid"
+                                            <Link
+                                                href={`/services/${svc.slug}`}
                                                 className="group/btn relative inline-flex items-center justify-center bg-white hover:bg-dark text-dark hover:text-white border border-border hover:border-dark px-8 py-4 rounded-full transition-all duration-300 font-medium text-sm w-full sm:w-auto shadow-sm hover:shadow-lg overflow-hidden"
                                             >
                                                 <span className="relative z-10 flex items-center gap-2">
@@ -221,7 +227,7 @@ export default function ServicesPage() {
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
                                                     </svg>
                                                 </span>
-                                            </a>
+                                            </Link>
                                         </div>
                                     </div>
                                 </div>

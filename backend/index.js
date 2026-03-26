@@ -25,6 +25,7 @@ const pricingRoute = require('./routes/pricingRoute');
 const timeSlotRoute = require('./routes/timeSlotRoute');
 const settingsRoute = require('./routes/settingsRoute');
 const reportsRoute = require('./routes/reportsRoute');
+const blogRoute = require('./routes/blogRoute');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -96,6 +97,7 @@ app.use('/api/pricing', apiCache(300), pricingRoute);
 app.use('/api/time-slots', apiCache(300), timeSlotRoute);
 app.use('/api/settings', settingsRoute);
 app.use('/api/reports', reportsRoute);
+app.use('/api/blog', blogRoute);
 
 // ─── Payment Routes ───
 const razorpayRoute = require('./routes/razorpayRoute');

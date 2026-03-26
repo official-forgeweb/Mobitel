@@ -1,12 +1,12 @@
 export const metadata = {
-  title: "Professional Mobile Repair Services | Mobitel",
-  description: "Browse our comprehensive list of mobile repair services including screen replacements, battery issues, water damage repair, and motherboard-level micro-soldering.",
+  title: "Mobile Repair Services in Faridabad | All Brands | Mobitel",
+  description: "Complete mobile phone repair services in Faridabad. Screen replacement, battery replacement, charging port repair, water damage repair, camera fix & more. All brands serviced. 90-day warranty.",
   alternates: {
     canonical: 'https://www.mobitel.in/services',
   },
   openGraph: {
-    title: "Professional Mobile Repair Services | Mobitel",
-    description: "Browse our comprehensive list of mobile repair services including screen replacements, battery issues, water damage repair, and motherboard soldering.",
+    title: "Mobile Repair Services in Faridabad | All Brands | Mobitel",
+    description: "Complete mobile phone repair services in Faridabad. Screen replacement, battery replacement & more. All brands. 90-day warranty.",
     url: 'https://www.mobitel.in/services',
     images: [{ url: 'https://www.mobitel.in/banners/banner3.png' }]
   }
