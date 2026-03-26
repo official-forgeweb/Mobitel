@@ -5,6 +5,9 @@ const mongoose = require('mongoose');
 
 dotenv.config();
 
+// Import cache middleware
+const { apiCache } = require('./middleware/cache');
+
 // Import routes
 const locationRoute = require('./routes/locationRoute');
 const adminRoute = require('./routes/adminRoute');
@@ -86,11 +89,11 @@ app.use('/api/upload', uploadRoute);
 // ─── New Routes ───
 app.use('/api/bookings', bookingRoute);
 app.use('/api/workers', workerRoute);
-app.use('/api/brands', brandRoute);
-app.use('/api/device-models', deviceModelRoute);
-app.use('/api/services', serviceRoute);
-app.use('/api/pricing', pricingRoute);
-app.use('/api/time-slots', timeSlotRoute);
+app.use('/api/brands', apiCache(300), brandRoute);
+app.use('/api/device-models', apiCache(300), deviceModelRoute);
+app.use('/api/services', apiCache(300), serviceRoute);
+app.use('/api/pricing', apiCache(300), pricingRoute);
+app.use('/api/time-slots', apiCache(300), timeSlotRoute);
 app.use('/api/settings', settingsRoute);
 app.use('/api/reports', reportsRoute);
 

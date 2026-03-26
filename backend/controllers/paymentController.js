@@ -3,6 +3,8 @@ const crypto = require('crypto');
 const Booking = require('../models/Booking');
 const BookingUpdate = require('../models/BookingUpdate');
 const Setting = require('../models/Setting');
+const Pricing = require('../models/Pricing');
+const Service = require('../models/Service');
 const { generateTrackingToken } = require('../services/tokenService');
 const { notifyPaymentSuccess, notifyRefundInitiated, notifyNewBooking } = require('../services/notificationService');
 
@@ -18,18 +20,28 @@ const getRazorpay = () => {
     return razorpayInstance;
 };
 
+// Simple in-memory cache for settings (api response caching to boost performance)
+let settingsCache = { data: null, lastFetch: 0 };
+const CACHE_TTL = 5 * 60 * 1000; // 5 mins
+
 // ─── Helper: Get payment settings ───
 const getPaymentSettings = async () => {
-    const setting = await Setting.findOne({ key: 'paymentSettings' });
-    return setting?.value || {
+    if (settingsCache.data && Date.now() - settingsCache.lastFetch < CACHE_TTL) {
+        return settingsCache.data;
+    }
+    const setting = await Setting.findOne({ key: 'paymentSettings' }).lean(); // Faster query mapping
+    const value = setting?.value || {
         full_payment_enabled: true,
         advance_payment_enabled: true,
         advance_type: 'fixed',
         advance_fixed_amount: 299,
         advance_percentage: 20,
         pay_at_store_enabled: true,
+        pay_at_store_enabled: true,
         test_mode: true
     };
+    settingsCache = { data: value, lastFetch: Date.now() };
+    return value;
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -40,7 +52,7 @@ const createOrder = async (req, res) => {
         const {
             customerName, phone, email, brand, model, serviceType,
             issue, preferredDate, preferredTime, address, landmark,
-            pincode, shopId, payment_mode, total_amount
+            pincode, shopId, payment_mode, total_amount, brandId, modelId, serviceId
         } = req.body;
 
         // Validate required fields
@@ -80,6 +92,21 @@ const createOrder = async (req, res) => {
         let numTotalAmount = Number(total_amount);
         if (isNaN(numTotalAmount) || numTotalAmount < 0) {
             return res.status(400).json({ error: 'Invalid total amount' });
+        }
+
+        // --- SECURITY VALIDATION: Prevent Client-Side Price Spoofing ---
+        if (brandId && modelId && serviceId) {
+            const pricing = await Pricing.findOne({ brandId, modelId, serviceId }).lean();
+            if (pricing && pricing.price !== numTotalAmount && numTotalAmount !== 0) {
+                console.warn(`[SECURITY WARNING] Client bypassed price: Expected ₹${pricing.price}, Got ₹${numTotalAmount}`);
+                return res.status(403).json({ error: 'Tampering detected: Payment amount does not match backend rates.' });
+            }
+        } else if (serviceId) {
+            const service = await Service.findById(serviceId).lean();
+            if (service && service.defaultPrice && service.defaultPrice !== numTotalAmount && numTotalAmount !== 0) {
+                console.warn(`[SECURITY WARNING] Client bypassed service price: Expected ₹${service.defaultPrice}, Got ₹${numTotalAmount}`);
+                return res.status(403).json({ error: 'Tampering detected: Payment amount does not match backend baseline rates.' });
+            }
         }
 
         if ((payment_mode === 'online_full' || payment_mode === 'online_advance') && numTotalAmount <= 0) {
