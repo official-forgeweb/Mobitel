@@ -73,12 +73,6 @@ export function generateLocalBusinessSchema() {
         }],
       })),
     },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: RATINGS.value,
-      reviewCount: RATINGS.count,
-      bestRating: RATINGS.bestRating,
-    },
     sameAs: Object.values(SOCIAL_LINKS),
   };
 }
