@@ -1,4 +1,4 @@
-﻿import BannerCarousel from "@/components/BannerCarousel";
+import BannerCarousel from "@/components/BannerCarousel";
 import BrandCategories from "@/components/BrandCategories";
 import dynamic from "next/dynamic";
 
@@ -13,7 +13,7 @@ export const revalidate = 60;
 
 async function getCmsData() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/cms`, { next: { revalidate: 60 } });
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/cms`, { next: { revalidate: 60 } });
     if (!res.ok) throw new Error('Failed to fetch CMS data');
     return res.json();
   } catch (error) {

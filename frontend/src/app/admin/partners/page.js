@@ -14,7 +14,7 @@ export default function DeliveryPartnersPage() {
 
     const fetchPartners = async () => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/partners`);
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/partners`);
             const data = await res.json();
             setPartners(data);
         } catch (err) {
@@ -34,7 +34,7 @@ export default function DeliveryPartnersPage() {
         setErrorMsg("");
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/partners`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/partners`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
@@ -65,7 +65,7 @@ export default function DeliveryPartnersPage() {
     const togglePartnerStatus = async (partner) => {
         try {
             const newStatus = partner.status === 'active' ? 'inactive' : 'active';
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/partners/${partner._id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/partners/${partner._id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status: newStatus }),

@@ -72,12 +72,12 @@ function CheckoutContent() {
   };
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/razorpay/payment-settings`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/razorpay/payment-settings`)
       .then(res => res.json())
       .then(data => setPaymentSettings(data))
       .catch(err => console.error("Error fetching settings:", err));
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/shops`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/shops`)
       .then(res => res.json())
       .then(data => {
           setShopLocations(data);
@@ -138,7 +138,7 @@ function CheckoutContent() {
     navigator.geolocation.getCurrentPosition(
       async ({ coords: { latitude, longitude } }) => {
         try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/location?lat=${latitude}&lon=${longitude}`);
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/location?lat=${latitude}&lon=${longitude}`);
           const data = await res.json();
           if (data && data.display_name) {
             let cleanAddress = data.display_name;
@@ -194,9 +194,14 @@ function CheckoutContent() {
         email: formData.email
       },
       theme: { color: "#2563eb" },
+      modal: {
+        ondismiss: function () {
+          setIsProcessing(false);
+        }
+      },
       handler: async function (response) {
         try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/razorpay/verify-payment`, {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/razorpay/verify-payment`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -270,7 +275,7 @@ function CheckoutContent() {
 
       console.log("Submitting booking with payload:", payload);
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/razorpay/create-order`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/razorpay/create-order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)

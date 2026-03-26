@@ -1,4 +1,4 @@
-﻿import { Poppins } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import ClientLayoutWrapper from "@/components/ClientLayoutWrapper";
 
@@ -18,7 +18,7 @@ export const metadata = {
 export default async function RootLayout({ children }) {
   let cmsData = {};
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/cms`, { next: { revalidate: 3600 } });
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/cms`, { next: { revalidate: 3600 } });
     if (res.ok) {
       cmsData = await res.json();
     }
@@ -30,7 +30,7 @@ export default async function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://images.unsplash.com" />
-        <link rel="preconnect" href="http://127.0.0.1:5001" />
+        <link rel="preconnect" href="https://www.mobitel.in" />
       </head>
       <body className={`${poppins.variable} font-sans transition-colors duration-500`} suppressHydrationWarning>
         <div className="min-h-screen bg-surface flex flex-col">

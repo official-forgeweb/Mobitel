@@ -128,7 +128,7 @@ export default function BrandCategories({ data }) {
   const [repairIssuesList, setRepairIssuesList] = useState([]);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/brands?active=true`).then(r => r.json()).then(setBrandsList).catch(console.error);
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/brands?active=true`).then(r => r.json()).then(setBrandsList).catch(console.error);
   }, []);
 
   // Fetch specific services for the selected model
@@ -136,7 +136,7 @@ export default function BrandCategories({ data }) {
     if (selectedModel) {
       if (selectedModel._id) {
         setIsLoadingModels(true); // Re-use loading state for issues
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/pricing/model/${selectedBrand._id}/${selectedModel._id}`)
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/pricing/model/${selectedBrand._id}/${selectedModel._id}`)
           .then(r => r.json())
           .then(data => {
             if (data && data.length > 0) {
@@ -149,7 +149,7 @@ export default function BrandCategories({ data }) {
               setRepairIssuesList(modelServices);
             } else {
               // Fallback to default services if no specific pricing exists
-              fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/services?active=true`)
+              fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/services?active=true`)
                 .then(r => r.json())
                 .then(svcs => {
                    setRepairIssuesList(svcs.map(s => ({
@@ -168,7 +168,7 @@ export default function BrandCategories({ data }) {
           });
       } else {
         // "Other Model" selected - show all services
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/services?active=true`)
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/services?active=true`)
           .then(r => r.json())
           .then(svcs => {
              setRepairIssuesList(svcs.map(s => ({
@@ -192,7 +192,7 @@ export default function BrandCategories({ data }) {
     if (selectedBrand) {
       if (selectedBrand._id) {
         setIsLoadingModels(true);
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/device-models?brandId=${selectedBrand._id}&active=true`)
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/device-models?brandId=${selectedBrand._id}&active=true`)
           .then(r => r.json())
           .then(data => {
             setModelsList(data);

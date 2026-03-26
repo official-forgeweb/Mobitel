@@ -40,10 +40,10 @@ export default function QuickActions() {
     const fetchInitialData = async () => {
       try {
         const [bRes, mRes, sRes, pRes] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/brands?active=true`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/device-models?active=true`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/services?active=true`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/razorpay/payment-settings`)
+          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/brands?active=true`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/device-models?active=true`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/services?active=true`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/razorpay/payment-settings`)
         ]);
         setBrands(await bRes.json());
         setAllModels(await mRes.json());
@@ -68,7 +68,7 @@ export default function QuickActions() {
       }
       setIsLoadingPrice(true);
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/pricing?brandId=${formData.brandId}&modelId=${formData.modelId}&serviceId=${formData.serviceId}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/pricing?brandId=${formData.brandId}&modelId=${formData.modelId}&serviceId=${formData.serviceId}`);
         const data = await res.json();
         if (data && data.length > 0) {
           setPriceDetails({ price: data[0].price, priceMax: data[0].priceMax });

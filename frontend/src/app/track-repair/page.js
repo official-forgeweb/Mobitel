@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+const API = process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in';
 
 const statusConfig = {
     "Received": { label: "Received", color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-200", dot: "bg-blue-400" },

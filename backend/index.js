@@ -58,7 +58,7 @@ app.use(async (req, res, next) => {
     next();
 });
 
-const allowedOrigins = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',').map(url => url.trim()) : ['http://localhost:3000', 'http://127.0.0.1:3000'];
+const allowedOrigins = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',').map(url => url.trim()) : ['https://www.mobitel.in', 'https://www.mobitel.in'];
 app.use(cors({
     origin: function (origin, callback) {
         if (!origin || allowedOrigins.some(o => origin.startsWith(o))) {

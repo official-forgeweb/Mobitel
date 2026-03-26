@@ -1,6 +1,6 @@
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 // wait, native fetch is in node 18+
-fetch('http://localhost:5001/api/bookings', {
+fetch('https://www.mobitel.in/api/bookings', {
   method: 'POST',
   body: JSON.stringify({
     customerName:'Test User',

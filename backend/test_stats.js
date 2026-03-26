@@ -5,7 +5,7 @@ const args = {
   headers: { 'Authorization': `Bearer ${token}` }
 };
 import('node-fetch').then(({default: fetch}) => {
-  fetch('http://localhost:5001/api/bookings/stats/overview', args)
+  fetch('https://www.mobitel.in/api/bookings/stats/overview', args)
     .then(async r => {
       console.log('Status:', r.status);
       console.log('Body:', await r.text());

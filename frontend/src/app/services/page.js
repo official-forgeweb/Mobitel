@@ -105,7 +105,7 @@ export default function ServicesPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/cms/services`)
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/cms/services`)
             .then(res => res.json())
             .then(data => {
                 setCmsData(data);

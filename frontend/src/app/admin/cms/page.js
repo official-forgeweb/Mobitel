@@ -12,7 +12,7 @@ export default function CmsEditorPage() {
 
     const fetchCmsData = (slug) => {
         setLoading(true);
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/cms/${slug}`)
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/cms/${slug}`)
             .then(res => res.json())
             .then(data => {
                 setCmsData(data || {});
@@ -73,7 +73,7 @@ export default function CmsEditorPage() {
     const handleSave = async () => {
         setSaving(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/cms/${pageSlug}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/cms/${pageSlug}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(cmsData),
@@ -168,7 +168,7 @@ export default function CmsEditorPage() {
         formData.append('image', file);
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001'}/api/upload`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/upload`, {
                 method: "POST",
                 body: formData
             });

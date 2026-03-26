@@ -61,7 +61,7 @@ export default function Navbar() {
     navigator.geolocation.getCurrentPosition(
       async ({ coords: { latitude, longitude } }) => {
         try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'}/api/location?lat=${latitude}&lon=${longitude}`);
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/location?lat=${latitude}&lon=${longitude}`);
           const data = await res.json();
           if (data && data.display_name) {
             let cleanAddress = data.display_name;

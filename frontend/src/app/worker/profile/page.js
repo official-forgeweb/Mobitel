@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from 'react';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API = process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in';
 
 export default function PartnerProfilePage() {
     const [profile, setProfile] = useState(null);
