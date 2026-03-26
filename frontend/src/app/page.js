@@ -11,6 +11,20 @@ const FAQ = dynamic(() => import("@/components/FAQ"), { ssr: true });
 
 export const revalidate = 60;
 
+export const metadata = {
+  title: "Mobitel - Expert Mobile Repair at Doorstep & Store",
+  description: "Get your smartphone repaired at your convenience. Mobitel provides expert home and shop-visit repairs for screens, batteries, cameras & more with a 90-day warranty.",
+  alternates: {
+    canonical: 'https://www.mobitel.in',
+  },
+  openGraph: {
+    title: "Mobitel - Expert Mobile Repair at Doorstep & Store",
+    description: "Get your smartphone repaired at your convenience. Mobitel provides expert home and shop-visit repairs for screens, batteries, cameras & more with a 90-day warranty.",
+    url: 'https://www.mobitel.in',
+    images: [{ url: 'https://www.mobitel.in/banners/banner1.png' }]
+  }
+};
+
 async function getCmsData() {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/cms`, { next: { revalidate: 60 } });
@@ -27,6 +41,7 @@ export default async function Home() {
 
   return (
     <div className="bg-background">
+      <h1 className="sr-only">Mobitel - Number 1 Mobile Phone Repair Service in Your Area</h1>
       <BannerCarousel data={cmsData?.bannerCarousel} />
       <BrandCategories data={cmsData?.brandCategories} />
 
