@@ -1,4 +1,5 @@
 const Brand = require('../models/Brand');
+const { clearCache } = require('../middleware/cache');
 
 const getBrands = async (req, res) => {
     try {
@@ -19,6 +20,7 @@ const createBrand = async (req, res) => {
         if (!name) return res.status(400).json({ error: 'Name is required' });
         const brand = new Brand({ name, logo: logo || '', displayOrder: displayOrder || 0 });
         await brand.save();
+        clearCache('/api/brands');
         res.status(201).json({ success: true, data: brand });
     } catch (err) {
         if (err.code === 11000) return res.status(400).json({ error: 'Brand already exists' });
@@ -31,6 +33,7 @@ const updateBrand = async (req, res) => {
     try {
         const brand = await Brand.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!brand) return res.status(404).json({ error: 'Brand not found' });
+        clearCache('/api/brands');
         res.json({ success: true, data: brand });
     } catch (err) {
         console.error('Error updating brand:', err);
@@ -41,6 +44,7 @@ const updateBrand = async (req, res) => {
 const deleteBrand = async (req, res) => {
     try {
         await Brand.findByIdAndDelete(req.params.id);
+        clearCache('/api/brands');
         res.json({ success: true });
     } catch (err) {
         console.error('Error deleting brand:', err);

@@ -1,4 +1,5 @@
 const Pricing = require('../models/Pricing');
+const { clearCache } = require('../middleware/cache');
 
 const getPricing = async (req, res) => {
     try {
@@ -30,6 +31,7 @@ const createPricing = async (req, res) => {
         }
         const pricing = new Pricing(req.body);
         await pricing.save();
+        clearCache('/api/pricing');
         res.status(201).json({ success: true, data: pricing });
     } catch (err) {
         if (err.code === 11000) return res.status(400).json({ error: 'Pricing for this combination already exists' });
@@ -42,6 +44,7 @@ const updatePricing = async (req, res) => {
     try {
         const pricing = await Pricing.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!pricing) return res.status(404).json({ error: 'Pricing not found' });
+        clearCache('/api/pricing');
         res.json({ success: true, data: pricing });
     } catch (err) {
         console.error('Error updating pricing:', err);
@@ -52,6 +55,7 @@ const updatePricing = async (req, res) => {
 const deletePricing = async (req, res) => {
     try {
         await Pricing.findByIdAndDelete(req.params.id);
+        clearCache('/api/pricing');
         res.json({ success: true });
     } catch (err) {
         console.error('Error deleting pricing:', err);

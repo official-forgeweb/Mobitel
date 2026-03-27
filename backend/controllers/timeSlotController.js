@@ -1,5 +1,6 @@
 const { TimeSlot, BlockedDate } = require('../models/TimeSlot');
 const Booking = require('../models/Booking');
+const { clearCache } = require('../middleware/cache');
 
 // ─── Get all time slots ───
 const getTimeSlots = async (req, res) => {
@@ -16,6 +17,7 @@ const createTimeSlot = async (req, res) => {
     try {
         const slot = new TimeSlot(req.body);
         await slot.save();
+        clearCache('/api/time-slots');
         res.status(201).json({ success: true, data: slot });
     } catch (err) {
         if (err.code === 11000) return res.status(400).json({ error: 'Time slot already exists for this day/time' });
@@ -28,6 +30,7 @@ const updateTimeSlot = async (req, res) => {
     try {
         const slot = await TimeSlot.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!slot) return res.status(404).json({ error: 'Time slot not found' });
+        clearCache('/api/time-slots');
         res.json({ success: true, data: slot });
     } catch (err) {
         console.error('Error updating time slot:', err);
@@ -38,6 +41,7 @@ const updateTimeSlot = async (req, res) => {
 const deleteTimeSlot = async (req, res) => {
     try {
         await TimeSlot.findByIdAndDelete(req.params.id);
+        clearCache('/api/time-slots');
         res.json({ success: true });
     } catch (err) {
         console.error('Error deleting time slot:', err);
@@ -60,6 +64,7 @@ const addBlockedDate = async (req, res) => {
     try {
         const bd = new BlockedDate(req.body);
         await bd.save();
+        clearCache('/api/time-slots');
         res.status(201).json({ success: true, data: bd });
     } catch (err) {
         if (err.code === 11000) return res.status(400).json({ error: 'Date already blocked' });
@@ -71,6 +76,7 @@ const addBlockedDate = async (req, res) => {
 const removeBlockedDate = async (req, res) => {
     try {
         await BlockedDate.findByIdAndDelete(req.params.id);
+        clearCache('/api/time-slots');
         res.json({ success: true });
     } catch (err) {
         console.error('Error removing blocked date:', err);

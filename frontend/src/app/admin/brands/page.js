@@ -76,17 +76,41 @@ export default function BrandsPage() {
     };
 
     const toggleBrandActive = async (brand) => {
-        await fetch(`${API}/api/brands/${brand._id}`, {
-            method: 'PUT', headers: headers(), body: JSON.stringify({ isActive: !brand.isActive })
-        });
-        fetchBrands();
+        const newStatus = !brand.isActive;
+        // Optimistic update
+        setBrands(prev => prev.map(b => b._id === brand._id ? { ...b, isActive: newStatus } : b));
+        
+        try {
+            const res = await fetch(`${API}/api/brands/${brand._id}`, {
+                method: 'PUT', headers: headers(), body: JSON.stringify({ isActive: newStatus })
+            });
+            if (!res.ok) {
+                setBrands(prev => prev.map(b => b._id === brand._id ? { ...b, isActive: !newStatus } : b));
+                alert('Failed to update status');
+            }
+        } catch (err) {
+            setBrands(prev => prev.map(b => b._id === brand._id ? { ...b, isActive: !newStatus } : b));
+            console.error(err);
+        }
     };
 
     const toggleModelActive = async (model) => {
-        await fetch(`${API}/api/device-models/${model._id}`, {
-            method: 'PUT', headers: headers(), body: JSON.stringify({ isActive: !model.isActive })
-        });
-        fetchModels(selectedBrand._id);
+        const newStatus = !model.isActive;
+        // Optimistic update
+        setModels(prev => prev.map(m => m._id === model._id ? { ...m, isActive: newStatus } : m));
+
+        try {
+            const res = await fetch(`${API}/api/device-models/${model._id}`, {
+                method: 'PUT', headers: headers(), body: JSON.stringify({ isActive: newStatus })
+            });
+            if (!res.ok) {
+                setModels(prev => prev.map(m => m._id === model._id ? { ...m, isActive: !newStatus } : m));
+                alert('Failed to update status');
+            }
+        } catch (err) {
+            setModels(prev => prev.map(m => m._id === model._id ? { ...m, isActive: !newStatus } : m));
+            console.error(err);
+        }
     };
 
     const SafeImage = ({ src, alt, fallback, className }) => {

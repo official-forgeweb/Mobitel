@@ -63,19 +63,24 @@ export default function DeliveryPartnersPage() {
     };
 
     const togglePartnerStatus = async (partner) => {
+        const currentStatus = partner.status;
+        const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+        
+        // Optimistic update
+        setPartners(prev => prev.map(p => p._id === partner._id ? { ...p, status: newStatus } : p));
+
         try {
-            const newStatus = partner.status === 'active' ? 'inactive' : 'active';
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/partners/${partner._id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status: newStatus }),
             });
-            if (res.ok) {
-                fetchPartners();
-            } else {
+            if (!res.ok) {
+                setPartners(prev => prev.map(p => p._id === partner._id ? { ...p, status: currentStatus } : p));
                 alert("Failed to update partner status");
             }
         } catch (err) {
+            setPartners(prev => prev.map(p => p._id === partner._id ? { ...p, status: currentStatus } : p));
             console.error(err);
         }
     };

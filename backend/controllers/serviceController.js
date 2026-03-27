@@ -1,4 +1,5 @@
 const Service = require('../models/Service');
+const { clearCache } = require('../middleware/cache');
 
 const getServices = async (req, res) => {
     try {
@@ -19,6 +20,7 @@ const createService = async (req, res) => {
         if (!name) return res.status(400).json({ error: 'Name is required' });
         const service = new Service({ name, description: description || '', icon: icon || '', displayOrder: displayOrder || 0, defaultPrice: defaultPrice || 0 });
         await service.save();
+        clearCache('/api/services');
         res.status(201).json({ success: true, data: service });
     } catch (err) {
         if (err.code === 11000) return res.status(400).json({ error: 'Service already exists' });
@@ -31,6 +33,7 @@ const updateService = async (req, res) => {
     try {
         const service = await Service.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!service) return res.status(404).json({ error: 'Service not found' });
+        clearCache('/api/services');
         res.json({ success: true, data: service });
     } catch (err) {
         console.error('Error updating service:', err);
@@ -41,6 +44,7 @@ const updateService = async (req, res) => {
 const deleteService = async (req, res) => {
     try {
         await Service.findByIdAndDelete(req.params.id);
+        clearCache('/api/services');
         res.json({ success: true });
     } catch (err) {
         console.error('Error deleting service:', err);

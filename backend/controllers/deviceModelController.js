@@ -1,4 +1,5 @@
 const DeviceModel = require('../models/DeviceModel');
+const { clearCache } = require('../middleware/cache');
 
 const getDeviceModels = async (req, res) => {
     try {
@@ -20,6 +21,7 @@ const createDeviceModel = async (req, res) => {
         if (!name || !brandId) return res.status(400).json({ error: 'Name and brandId are required' });
         const model = new DeviceModel({ name, brandId, image: image || '', displayOrder: displayOrder || 0, specs: specs || {} });
         await model.save();
+        clearCache('/api/device-models');
         res.status(201).json({ success: true, data: model });
     } catch (err) {
         if (err.code === 11000) return res.status(400).json({ error: 'Model already exists for this brand' });
@@ -32,6 +34,7 @@ const updateDeviceModel = async (req, res) => {
     try {
         const model = await DeviceModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!model) return res.status(404).json({ error: 'Model not found' });
+        clearCache('/api/device-models');
         res.json({ success: true, data: model });
     } catch (err) {
         console.error('Error updating device model:', err);
@@ -42,6 +45,7 @@ const updateDeviceModel = async (req, res) => {
 const deleteDeviceModel = async (req, res) => {
     try {
         await DeviceModel.findByIdAndDelete(req.params.id);
+        clearCache('/api/device-models');
         res.json({ success: true });
     } catch (err) {
         console.error('Error deleting device model:', err);

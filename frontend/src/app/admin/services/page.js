@@ -49,13 +49,41 @@ export default function ServicesPage() {
     const deleteService = async (id) => { if (!confirm('Delete?')) return; await fetch(`${API}/api/services/${id}`, { method: 'DELETE', headers: headers() }); fetchServices(); };
 
     const toggleActive = async (s) => {
-        await fetch(`${API}/api/services/${s._id}`, { method: 'PUT', headers: headers(), body: JSON.stringify({ isActive: !s.isActive }) });
-        fetchServices();
+        const newStatus = !s.isActive;
+        // Optimistic update
+        setServices(prev => prev.map(item => item._id === s._id ? { ...item, isActive: newStatus } : item));
+
+        try {
+            const res = await fetch(`${API}/api/services/${s._id}`, {
+                method: 'PUT', headers: headers(), body: JSON.stringify({ isActive: newStatus })
+            });
+            if (!res.ok) {
+                setServices(prev => prev.map(item => item._id === s._id ? { ...item, isActive: !newStatus } : item));
+                alert('Failed to update service status');
+            }
+        } catch (err) {
+            setServices(prev => prev.map(item => item._id === s._id ? { ...item, isActive: !newStatus } : item));
+            console.error(err);
+        }
     };
 
     const toggleDefault = async (s) => {
-        await fetch(`${API}/api/services/${s._id}`, { method: 'PUT', headers: headers(), body: JSON.stringify({ isDefault: !s.isDefault }) });
-        fetchServices();
+        const newStatus = !s.isDefault;
+        // Optimistic update
+        setServices(prev => prev.map(item => item._id === s._id ? { ...item, isDefault: newStatus } : item));
+
+        try {
+            const res = await fetch(`${API}/api/services/${s._id}`, {
+                method: 'PUT', headers: headers(), body: JSON.stringify({ isDefault: newStatus })
+            });
+            if (!res.ok) {
+                setServices(prev => prev.map(item => item._id === s._id ? { ...item, isDefault: !newStatus } : item));
+                alert('Failed to update featured status');
+            }
+        } catch (err) {
+            setServices(prev => prev.map(item => item._id === s._id ? { ...item, isDefault: !newStatus } : item));
+            console.error(err);
+        }
     };
 
     const seedData = async () => {
