@@ -31,7 +31,7 @@ const banners = [
   },
   {
     id: 3,
-    title: "Battery Replacement ₹499",
+    title: "Battery Replacement",
     subtitle: "Original batteries with 6-month warranty",
     cta: "Get Yours",
     image: "/banners/banner3.png",
