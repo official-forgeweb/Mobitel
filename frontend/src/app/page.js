@@ -70,46 +70,7 @@ export default async function Home() {
 
       <PopularServices data={cmsData?.popularServices} />
 
-      {/* Separator */}
-      <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent my-[-1px] relative z-10" />
 
-      {/* ── Our Services in City ── */}
-      <section className="py-16 md:py-20 bg-surface">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <span className="inline-block text-xs font-bold uppercase tracking-widest text-primary bg-primary-light px-3 py-1 rounded-full mb-3">Our Services</span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-dark">Mobile Repair Services in {LOCATION.city}</h2>
-            <p className="text-body text-sm mt-2 max-w-lg mx-auto leading-relaxed">
-              From cracked screens to dead batteries, we fix every smartphone issue with genuine parts and expert technicians. All services available with doorstep pickup in {LOCATION.city}.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {SERVICE_LIST.map((service) => (
-              <Link
-                key={service.slug}
-                href={`/services/${service.slug}`}
-                className="group bg-white rounded-2xl border border-border p-5 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 text-center"
-              >
-                <div className="text-3xl mb-3">{service.icon}</div>
-                <h3 className="text-sm font-semibold text-dark group-hover:text-primary transition-colors">{service.name}</h3>
-                <p className="text-xs text-muted mt-1">From ₹{service.startingPrice.toLocaleString('en-IN')}</p>
-              </Link>
-            ))}
-          </div>
-          <div className="text-center mt-8">
-            <Link
-              href="/services"
-              className="inline-flex items-center gap-2 text-primary font-medium text-sm hover:underline"
-            >
-              View All Services
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" /></svg>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Separator */}
-      <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent my-[-1px] relative z-10" />
 
       <WhyChooseUs data={cmsData?.whyChooseUs} />
 

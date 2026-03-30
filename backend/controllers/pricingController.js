@@ -90,6 +90,7 @@ const bulkUpdatePricing = async (req, res) => {
             }
         }
 
+        clearCache('/api/pricing');
         res.json({ success: true, data: results, count: results.length });
     } catch (err) {
         console.error('Error bulk updating pricing:', err);

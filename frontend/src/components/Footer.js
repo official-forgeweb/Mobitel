@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { LOCATION, CONTACT, WORKING_HOURS, SOCIAL_LINKS, SERVICE_LIST } from "@/lib/seo-config";
 
-const footerServices = SERVICE_LIST.slice(0, 8);
+const footerServices = SERVICE_LIST.filter(s => ['screen-replacement', 'battery-replacement', 'charging-port-repair', 'camera-repair'].includes(s.slug));
 const brands = ["Apple", "Samsung", "OnePlus", "Xiaomi", "Oppo", "Vivo", "Realme", "Google Pixel"];
 
 const quickLinks = [
