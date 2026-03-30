@@ -43,7 +43,7 @@ export default function PricingPage() {
       </section>
 
       {/* Service-wise Pricing */}
-      {SERVICE_LIST.map((service) => (
+      {SERVICE_LIST.filter(s => ['screen-replacement', 'battery-replacement', 'charging-port-repair', 'camera-repair'].includes(s.slug)).map((service) => (
         <section key={service.slug} className="pb-12 relative z-10">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-4">

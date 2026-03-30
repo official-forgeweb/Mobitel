@@ -3,12 +3,12 @@ import { LOCATION, CONTACT } from "@/lib/seo-config";
 import { generateBreadcrumbSchema, JsonLd } from "@/lib/schema-generator";
 
 export const metadata = {
-  title: `90-Day Repair Warranty | Mobitel ${LOCATION.city}`,
-  description: `Every phone repair at Mobitel ${LOCATION.city} comes with a 90-day warranty on parts and labor. Learn what's covered, how to claim warranty, and our commitment to quality.`,
+  title: `6-months Repair Warranty | Mobitel ${LOCATION.city}`,
+  description: `Every phone repair at Mobitel ${LOCATION.city} comes with a 6-months warranty on parts and labor. Learn what's covered, how to claim warranty, and our commitment to quality.`,
   alternates: { canonical: 'https://www.mobitel.in/warranty' },
   openGraph: {
-    title: `90-Day Repair Warranty | Mobitel ${LOCATION.city}`,
-    description: `Every repair backed by 90-day warranty. Parts and labor covered.`,
+    title: `6-months Repair Warranty | Mobitel ${LOCATION.city}`,
+    description: `Every repair backed by 6-months warranty. Parts and labor covered.`,
     url: 'https://www.mobitel.in/warranty',
   },
 };
@@ -36,9 +36,9 @@ export default function WarrantyPage() {
       <section className="relative pt-8 pb-16 px-4 z-10">
         <div className="max-w-4xl mx-auto text-center">
           <div className="text-5xl mb-4">🛡️</div>
-          <h1 className="text-3xl md:text-5xl font-semibold text-dark mb-6 tracking-tight">90-Day Repair Warranty</h1>
+          <h1 className="text-3xl md:text-5xl font-semibold text-dark mb-6 tracking-tight">6-months Repair Warranty</h1>
           <p className="text-body text-lg font-light leading-relaxed max-w-2xl mx-auto">
-            Every repair at Mobitel {LOCATION.city} is backed by our comprehensive 90-day warranty. We stand behind the quality of our work and the parts we use.
+            Every repair at Mobitel {LOCATION.city} is backed by our comprehensive 6-months warranty. We stand behind the quality of our work and the parts we use.
           </p>
         </div>
       </section>
@@ -116,9 +116,9 @@ export default function WarrantyPage() {
           <div className="bg-primary/5 rounded-2xl border border-primary/20 p-8">
             <h2 className="text-xl md:text-2xl font-semibold text-dark mb-4">Warranty Period Details</h2>
             <div className="space-y-3 text-sm text-body">
-              <p><strong>Duration:</strong> 90 days from the date of repair completion.</p>
+              <p><strong>Duration:</strong> 6-months from the date of repair completion.</p>
               <p><strong>Proof Required:</strong> Original repair invoice or digital receipt (sent via SMS/email).</p>
-              <p><strong>Number of Claims:</strong> Unlimited claims within the 90-day warranty period for the same repair.</p>
+              <p><strong>Number of Claims:</strong> Unlimited claims within the 6-months warranty period for the same repair.</p>
               <p><strong>Transferable:</strong> Warranty stays with the device, not the owner. If you sell your phone, the warranty transfers to the new owner.</p>
               <p><strong>Location:</strong> Warranty can be claimed at our {LOCATION.city} shop or via doorstep pickup.</p>
             </div>
@@ -130,7 +130,7 @@ export default function WarrantyPage() {
       <section className="py-16 bg-dark text-white relative z-10">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <h2 className="text-2xl md:text-3xl font-semibold mb-4">Repair with Confidence</h2>
-          <p className="text-gray-300 mb-8 font-light">Every repair backed by our 90-day warranty. Book your repair today.</p>
+          <p className="text-gray-300 mb-8 font-light">Every repair backed by our 6-months warranty. Book your repair today.</p>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
             <a href="/#brand-grid" className="bg-primary hover:bg-primary-dark text-white px-8 py-3.5 rounded-full font-medium text-sm transition-colors w-full sm:w-auto shadow-md">
               Book Repair Now

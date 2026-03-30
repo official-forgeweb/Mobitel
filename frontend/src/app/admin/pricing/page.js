@@ -23,8 +23,11 @@ export default function PricingPage() {
     const [queueModelId, setQueueModelId] = useState('');
     const [queueModels, setQueueModels] = useState([]);
     const [selectedQueue, setSelectedQueue] = useState([]);
-    const [bulkForm, setBulkForm] = useState({ serviceId: '', price: '', priceMax: '', estimatedTime: '', isAvailable: true });
     const [submitting, setSubmitting] = useState(false);
+
+    // Service queue for bulk add
+    const [serviceQueue, setServiceQueue] = useState([]);
+    const [svcForm, setSvcForm] = useState({ serviceId: '', price: '', priceMax: '', estimatedTime: '', isAvailable: true });
 
     // View
     const [viewMode, setViewMode] = useState('grouped');
@@ -99,23 +102,40 @@ export default function PricingPage() {
         return Object.values(groups);
     }, [selectedQueue]);
 
+    // ── SERVICE QUEUE MANAGEMENT ──
+    const addServiceToQueue = () => {
+        if (!svcForm.serviceId || !svcForm.price) return;
+        if (serviceQueue.some(s => s.serviceId === svcForm.serviceId)) return alert('This service is already in the queue');
+        const svc = services.find(s => s._id === svcForm.serviceId);
+        setServiceQueue(prev => [...prev, { ...svcForm, serviceName: svc?.name || '', price: svcForm.price, priceMax: svcForm.priceMax }]);
+        setSvcForm({ serviceId: '', price: '', priceMax: '', estimatedTime: '', isAvailable: true });
+    };
+
+    const removeServiceFromQueue = (serviceId) => setServiceQueue(prev => prev.filter(s => s.serviceId !== serviceId));
+
     // ── SUBMIT HANDLERS ──
     const handleBulkSubmit = async (e) => {
         e.preventDefault();
         if (!selectedQueue.length) return alert('Please add at least one model to the queue');
-        if (!bulkForm.serviceId || !bulkForm.price) return alert('Service and price are required');
+        if (!serviceQueue.length) return alert('Please add at least one service with pricing');
         setSubmitting(true);
-        const items = selectedQueue.map(q => ({
-            brandId: q.brandId, modelId: q.modelId, serviceId: bulkForm.serviceId,
-            price: parseFloat(bulkForm.price), priceMax: bulkForm.priceMax ? parseFloat(bulkForm.priceMax) : null,
-            estimatedTime: bulkForm.estimatedTime, isAvailable: bulkForm.isAvailable
-        }));
+        // Create items for every model × service combination
+        const items = [];
+        for (const model of selectedQueue) {
+            for (const svc of serviceQueue) {
+                items.push({
+                    brandId: model.brandId, modelId: model.modelId, serviceId: svc.serviceId,
+                    price: parseFloat(svc.price), priceMax: svc.priceMax ? parseFloat(svc.priceMax) : null,
+                    estimatedTime: svc.estimatedTime, isAvailable: svc.isAvailable
+                });
+            }
+        }
         try {
             const res = await fetch(`${API}/api/pricing/bulk`, { method: 'POST', headers: headers(), body: JSON.stringify({ items }) });
             const data = await res.json();
             if (data.success) {
-                setShowBulkForm(false); setSelectedQueue([]); setQueueBrandId(''); setQueueModelId('');
-                setBulkForm({ serviceId: '', price: '', priceMax: '', estimatedTime: '', isAvailable: true });
+                setShowBulkForm(false); setSelectedQueue([]); setServiceQueue([]); setQueueBrandId(''); setQueueModelId('');
+                setSvcForm({ serviceId: '', price: '', priceMax: '', estimatedTime: '', isAvailable: true });
                 fetchPricing();
             } else alert(data.error || 'Failed');
         } catch (err) { console.error(err); alert('Error applying bulk pricing'); }
@@ -183,7 +203,7 @@ export default function PricingPage() {
                     }} className="px-4 py-2.5 bg-indigo-500 text-white rounded-xl font-bold text-xs hover:bg-indigo-600 shadow-lg shadow-indigo-200 transition-all">
                         Init Defaults
                     </button>
-                    <button onClick={() => { setShowBulkForm(true); setSelectedQueue([]); setBulkForm({ serviceId: '', price: '', priceMax: '', estimatedTime: '', isAvailable: true }); setQueueBrandId(''); setQueueModelId(''); }}
+                    <button onClick={() => { setShowBulkForm(true); setSelectedQueue([]); setServiceQueue([]); setSvcForm({ serviceId: '', price: '', priceMax: '', estimatedTime: '', isAvailable: true }); setQueueBrandId(''); setQueueModelId(''); }}
                         className="px-5 py-2.5 bg-primary text-white rounded-xl font-bold text-sm hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all flex items-center gap-2">
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
                         Add Pricing
@@ -328,7 +348,7 @@ export default function PricingPage() {
                         <div className="flex justify-between items-center p-6 pb-4 border-b border-gray-100 shrink-0">
                             <div>
                                 <h3 className="text-xl font-bold text-gray-900">Add Pricing</h3>
-                                <p className="text-xs text-gray-400 mt-0.5">Apply the same service pricing to multiple models at once</p>
+                                <p className="text-xs text-gray-400 mt-0.5">Apply multiple services to multiple models at once</p>
                             </div>
                             <button onClick={() => setShowBulkForm(false)} className="text-gray-400 hover:text-gray-600 p-1">
                                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -402,42 +422,83 @@ export default function PricingPage() {
                                 </div>
                             )}
 
-                            {/* STEP 2 — SET SERVICE & PRICE */}
+                            {/* STEP 2 — ADD SERVICES & PRICES */}
                             <div>
                                 <div className="flex items-center gap-2 mb-3">
                                     <div className="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-[10px] font-bold">2</div>
-                                    <h4 className="text-sm font-bold text-gray-900">Set Service & Price</h4>
+                                    <h4 className="text-sm font-bold text-gray-900">Add Services & Prices</h4>
                                 </div>
-                                <div className="space-y-3">
-                                    <div className="space-y-1">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block ml-1">Service Type</label>
-                                        <select value={bulkForm.serviceId} onChange={e => setBulkForm({ ...bulkForm, serviceId: e.target.value })}
-                                            className="w-full border border-gray-100 rounded-xl px-3 py-2.5 text-sm bg-gray-50 focus:bg-white focus:ring-4 focus:ring-primary/10 transition-all outline-none">
-                                            <option value="">Select Service *</option>{services.map(s => <option key={s._id} value={s._id}>{s.name}</option>)}
-                                        </select>
-                                    </div>
+
+                                {/* Service input form */}
+                                <div className="space-y-3 p-4 bg-gray-50/50 rounded-2xl border border-gray-100">
                                     <div className="grid grid-cols-2 gap-3">
+                                        <div className="space-y-1 col-span-2 sm:col-span-1">
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block ml-1">Service</label>
+                                            <select value={svcForm.serviceId} onChange={e => setSvcForm({ ...svcForm, serviceId: e.target.value })}
+                                                className="w-full border border-gray-100 rounded-xl px-3 py-2.5 text-sm bg-white focus:ring-4 focus:ring-primary/10 transition-all outline-none">
+                                                <option value="">Select Service</option>
+                                                {services.filter(s => !serviceQueue.some(sq => sq.serviceId === s._id)).map(s => <option key={s._id} value={s._id}>{s.name}</option>)}
+                                            </select>
+                                        </div>
+                                        <div className="space-y-1 col-span-2 sm:col-span-1">
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block ml-1">Estimated Time</label>
+                                            <input placeholder="e.g., 30-45 Mins" value={svcForm.estimatedTime} onChange={e => setSvcForm({ ...svcForm, estimatedTime: e.target.value })}
+                                                className="w-full border border-gray-100 rounded-xl px-3 py-2.5 text-sm bg-white focus:ring-4 focus:ring-primary/10 transition-all outline-none" />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-3">
                                         <div className="space-y-1">
                                             <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block ml-1">Min Price (₹)</label>
-                                            <input type="number" placeholder="0" value={bulkForm.price} onChange={e => setBulkForm({ ...bulkForm, price: e.target.value })}
-                                                className="w-full border border-gray-100 rounded-xl px-3 py-2.5 text-sm bg-gray-50 focus:bg-white focus:ring-4 focus:ring-primary/10 transition-all outline-none" />
+                                            <input type="number" placeholder="0" value={svcForm.price} onChange={e => setSvcForm({ ...svcForm, price: e.target.value })}
+                                                className="w-full border border-gray-100 rounded-xl px-3 py-2.5 text-sm bg-white focus:ring-4 focus:ring-primary/10 transition-all outline-none" />
                                         </div>
                                         <div className="space-y-1">
                                             <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block ml-1">Max Price (₹)</label>
-                                            <input type="number" placeholder="Optional" value={bulkForm.priceMax} onChange={e => setBulkForm({ ...bulkForm, priceMax: e.target.value })}
-                                                className="w-full border border-gray-100 rounded-xl px-3 py-2.5 text-sm bg-gray-50 focus:bg-white focus:ring-4 focus:ring-primary/10 transition-all outline-none" />
+                                            <input type="number" placeholder="Optional" value={svcForm.priceMax} onChange={e => setSvcForm({ ...svcForm, priceMax: e.target.value })}
+                                                className="w-full border border-gray-100 rounded-xl px-3 py-2.5 text-sm bg-white focus:ring-4 focus:ring-primary/10 transition-all outline-none" />
+                                        </div>
+                                        <div className="flex items-end">
+                                            <button type="button" onClick={addServiceToQueue} disabled={!svcForm.serviceId || !svcForm.price}
+                                                className="w-full px-4 py-2.5 bg-indigo-500 text-white rounded-xl font-bold text-sm hover:bg-indigo-600 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                                                + Add Service
+                                            </button>
                                         </div>
                                     </div>
-                                    <div className="space-y-1">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block ml-1">Estimated Time</label>
-                                        <input placeholder="e.g., 30-45 Mins" value={bulkForm.estimatedTime} onChange={e => setBulkForm({ ...bulkForm, estimatedTime: e.target.value })}
-                                            className="w-full border border-gray-100 rounded-xl px-3 py-2.5 text-sm bg-gray-50 focus:bg-white focus:ring-4 focus:ring-primary/10 transition-all outline-none" />
-                                    </div>
-                                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                                        <input type="checkbox" id="bulkAvail" className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary" checked={bulkForm.isAvailable} onChange={e => setBulkForm({ ...bulkForm, isAvailable: e.target.checked })} />
-                                        <label htmlFor="bulkAvail" className="text-sm font-bold text-gray-700 cursor-pointer">Available for Online Booking</label>
+                                    <div className="flex items-center gap-3">
+                                        <input type="checkbox" id="svcAvail" className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary" checked={svcForm.isAvailable} onChange={e => setSvcForm({ ...svcForm, isAvailable: e.target.checked })} />
+                                        <label htmlFor="svcAvail" className="text-xs font-medium text-gray-500 cursor-pointer">Available for Online Booking</label>
                                     </div>
                                 </div>
+
+                                {/* Service queue display */}
+                                {serviceQueue.length > 0 && (
+                                    <div className="mt-4 space-y-2">
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-xs font-bold text-gray-600">
+                                                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500 text-white text-[10px] font-bold mr-1.5">{serviceQueue.length}</span>
+                                                Services Added
+                                            </span>
+                                            <button type="button" onClick={() => setServiceQueue([])} className="text-[10px] font-bold text-red-400 hover:text-red-600 uppercase tracking-widest transition-colors">Clear All</button>
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            {serviceQueue.map((svc, idx) => (
+                                                <div key={svc.serviceId} className="flex items-center justify-between px-4 py-2.5 bg-white border border-gray-100 rounded-xl group hover:border-gray-200 transition-all">
+                                                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                                                        <span className="text-sm font-semibold text-gray-800 truncate">{svc.serviceName}</span>
+                                                        <span className="text-xs font-bold text-primary whitespace-nowrap">₹{svc.price}{svc.priceMax ? ` – ₹${svc.priceMax}` : ''}</span>
+                                                        {svc.estimatedTime && <span className="text-[10px] text-gray-400 italic whitespace-nowrap">{svc.estimatedTime}</span>}
+                                                        <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${svc.isAvailable ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'}`}>
+                                                            {svc.isAvailable ? 'On' : 'Off'}
+                                                        </span>
+                                                    </div>
+                                                    <button type="button" onClick={() => removeServiceFromQueue(svc.serviceId)} className="p-1 text-gray-300 hover:text-red-500 transition-colors shrink-0 ml-2">
+                                                        <CloseIcon />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
@@ -445,12 +506,12 @@ export default function PricingPage() {
                         <div className="flex gap-3 p-6 pt-4 border-t border-gray-100 shrink-0">
                             <button type="button" onClick={() => setShowBulkForm(false)}
                                 className="flex-1 px-4 py-3 text-sm font-bold border border-gray-100 rounded-2xl bg-white hover:bg-gray-50 text-gray-500 transition-all">Cancel</button>
-                            <button type="button" onClick={handleBulkSubmit} disabled={submitting || !selectedQueue.length || !bulkForm.serviceId || !bulkForm.price}
+                            <button type="button" onClick={handleBulkSubmit} disabled={submitting || !selectedQueue.length || !serviceQueue.length}
                                 className="flex-[2] px-6 py-3 bg-primary text-white rounded-2xl font-bold text-sm shadow-xl shadow-primary/30 hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                                 {submitting ? (
                                     <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> Applying...</>
                                 ) : (
-                                    <>Apply to {selectedQueue.length} Model{selectedQueue.length !== 1 ? 's' : ''} →</>
+                                    <>Apply {serviceQueue.length} Service{serviceQueue.length !== 1 ? 's' : ''} × {selectedQueue.length} Model{selectedQueue.length !== 1 ? 's' : ''} ({selectedQueue.length * serviceQueue.length} entries) →</>
                                 )}
                             </button>
                         </div>

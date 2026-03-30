@@ -71,7 +71,12 @@ export default function PartnerLayout({ children }) {
         <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 font-sans">
             {/* Mobile Header */}
             <div className="md:hidden flex items-center justify-between bg-gradient-to-r from-[#4a0000] to-[#2a0000] text-white px-5 py-4 shadow-md sticky top-0 z-50">
-                <div className="text-xl font-black tracking-tight">Mobi<span className="text-[#F8D272]">tel</span> <span className="text-[10px] uppercase tracking-widest bg-white/20 px-2 py-1 rounded-full ml-1">Partner</span></div>
+                <div className="flex items-center gap-2">
+                    <Link href="/worker" className="block relative h-10 w-36">
+                        <img src="/logo/navbar_logo(3).png" alt="Mobitel Partner" className="object-contain h-full w-full object-left" />
+                    </Link>
+                    <span className="text-[10px] uppercase tracking-widest bg-white/20 px-2 py-1 rounded-full ml-1 font-bold">Partner</span>
+                </div>
                 <div className="flex items-center gap-3">
                     <span className="text-sm text-white/80">👋 {partnerName}</span>
                 </div>
@@ -80,9 +85,11 @@ export default function PartnerLayout({ children }) {
             {/* Sidebar (Desktop & Tablet) */}
             <aside className="hidden md:flex w-72 bg-gradient-to-b from-[#4a0000] to-[#2a0000] text-white shadow-2xl flex-col sticky top-0 h-screen overflow-y-auto z-40 relative">
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 pointer-events-none"></div>
-                <div className="p-8 text-2xl font-black tracking-tight border-b border-white/10 z-10 relative flex items-center justify-between">
-                    <div>Mobi<span className="text-[#F8D272]">tel</span></div>
-                    <span className="text-[10px] uppercase tracking-widest bg-white/10 px-2 py-1 rounded-full font-bold">Partner</span>
+                <div className="p-8 text-2xl font-black tracking-tight border-b border-white/10 z-10 relative flex flex-col gap-2 justify-start">
+                    <Link href="/worker" className="block relative h-14 w-48">
+                        <img src="/logo/navbar_logo(3).png" alt="Mobitel Partner" className="object-contain h-full w-full object-left" />
+                    </Link>
+                    <span className="text-[10px] uppercase tracking-widest bg-white/10 px-2 py-1 rounded-full font-bold self-start mt-2">Partner Area</span>
                 </div>
                 
                 <div className="px-6 py-4 border-b border-white/10 z-10 relative bg-black/10">

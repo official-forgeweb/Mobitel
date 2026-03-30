@@ -9,7 +9,6 @@ const HowItWorks = dynamic(() => import("@/components/HowItWorks"), { ssr: true 
 const PopularServices = dynamic(() => import("@/components/PopularServices"), { ssr: true });
 const WhyChooseUs = dynamic(() => import("@/components/WhyChooseUs"), { ssr: true });
 const Testimonials = dynamic(() => import("@/components/Testimonials"), { ssr: true });
-const AppDownload = dynamic(() => import("@/components/AppDownload"), { ssr: true });
 const FAQ = dynamic(() => import("@/components/FAQ"), { ssr: true });
 
 export const revalidate = 60;
@@ -116,12 +115,7 @@ export default async function Home() {
       {/* Separator */}
       <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent my-[-1px] relative z-10" />
 
-      <AppDownload data={cmsData?.appDownload} />
-
-      {/* Separator */}
-      <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent my-[-1px] relative z-10" />
-
-      <FAQ data={cmsData?.faq} />
+      <FAQ data={{ items: homepageFaqs, title: "Frequently Asked Questions", subtitle: "Got Questions?" }} />
     </div>
   );
 }

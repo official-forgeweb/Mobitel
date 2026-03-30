@@ -89,10 +89,9 @@ export default function AdminLayout({ children }) {
 
             {/* Mobile Header */}
             <div className="md:hidden flex items-center justify-between bg-white px-5 py-4 shadow-md border-b sticky top-0 z-50">
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-xl">M</div>
-                    <span className="text-xl font-black text-gray-900 tracking-tight">Admin<span className="text-primary">Panel</span></span>
-                </div>
+                <Link href="/admin" className="block relative h-10 w-36">
+                    <img src="/logo/navbar_logo(3).png" alt="Mobitel Admin" className="object-contain h-full w-full object-left" />
+                </Link>
                 <button 
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
                     className={`p-2 rounded-xl transition-all duration-300 ${mobileMenuOpen ? 'bg-primary/10 text-primary rotate-90' : 'bg-gray-100 text-gray-600'}`}
@@ -117,10 +116,9 @@ export default function AdminLayout({ children }) {
                 
                 {/* Sidebar Header */}
                 <div className="p-8 text-2xl font-black tracking-tight border-b border-white/5 z-10 relative flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-[#F8D272] rounded-lg flex items-center justify-center text-[#3a0000] font-black text-lg">M</div>
-                        <div>Mobi<span className="text-[#F8D272]">tel</span></div>
-                    </div>
+                    <Link href="/admin" className="block relative h-14 w-48">
+                        <img src="/logo/navbar_logo(3).png" alt="Mobitel Admin" className="object-contain h-full w-full object-left" />
+                    </Link>
                 </div>
 
                 {/* Navigation Items */}
