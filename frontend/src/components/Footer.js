@@ -29,9 +29,8 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
         {/* Column 1: Brand + Address */}
         <div>
-          <div className="flex items-center gap-2 mb-4">
-            <span className="bg-primary text-white text-lg font-black px-2.5 py-0.5 rounded-lg">M</span>
-            <span className="text-xl font-black tracking-tight">Mobitel</span>
+          <div className="block relative h-24 w-64 mb-6">
+            <img src="/logo/footer_logo(3).png" alt="Mobitel Home" className="object-contain h-full w-full object-left" />
           </div>
           <p className="text-gray-400 text-sm leading-relaxed mb-4">
             Your trusted mobile repair partner in {LOCATION.city}. Fast, reliable, and affordable repairs with a 90-day warranty on all services.

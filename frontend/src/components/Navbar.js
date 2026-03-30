@@ -135,16 +135,8 @@ export default function Navbar() {
           <div className="flex items-center gap-4 h-16">
 
             {/* Logo */}
-            <a href="/" className={`flex items-center gap-2 shrink-0 cursor-pointer ${searchOpen ? 'hidden xs:flex' : ''}`}>
-              <div className="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-primary flex items-center justify-center shadow-sm">
-                <svg className="w-4.5 h-4.5 md:w-5 md:h-5 text-white" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
-                </svg>
-              </div>
-              <div className="leading-none">
-                <span className="text-base md:text-lg font-semibold text-dark tracking-tight">Mobi<span className="text-primary">tel</span></span>
-                <div className="text-[8px] md:text-[9px] font-medium text-muted tracking-widest uppercase">Repair Experts</div>
-              </div>
+            <a href="/" className={`block relative h-10 w-36 shrink-0 cursor-pointer ${searchOpen ? 'hidden xs:block' : ''}`}>
+              <img src="/logo/navbar_logo(3).png" alt="Mobitel Logo" className="object-contain h-full w-full object-left" />
             </a>
 
             {/* Mobile Search Bar mode */}
@@ -307,14 +299,8 @@ export default function Navbar() {
             {/* Drawer header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-white sticky top-0 z-10">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                  <svg className="w-4.5 h-4.5 text-white" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
-                  </svg>
-                </div>
-                <div className="leading-none">
-                  <span className="font-semibold text-dark">Mobi<span className="text-primary">tel</span></span>
-                  <div className="text-[8px] font-medium text-muted uppercase tracking-tighter">Repair Experts</div>
+                <div className="block relative h-8 w-28">
+                  <img src="/logo/navbar_logo(3).png" alt="Mobitel Logo" className="object-contain h-full w-full object-left" />
                 </div>
               </div>
               <button onClick={() => setMenuOpen(false)} className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center cursor-pointer">
