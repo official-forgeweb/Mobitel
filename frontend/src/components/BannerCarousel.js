@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
@@ -145,6 +145,7 @@ export default function BannerCarousel({ data }) {
           }
           className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-sm text-white rounded-full p-2 transition-colors"
           aria-label="Previous"
+          suppressHydrationWarning={true}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -154,6 +155,7 @@ export default function BannerCarousel({ data }) {
           onClick={() => goTo((current + 1) % activeBanners.length)}
           className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-sm text-white rounded-full p-2 transition-colors"
           aria-label="Next"
+          suppressHydrationWarning={true}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -169,6 +171,7 @@ export default function BannerCarousel({ data }) {
               className={`h-2 rounded-full transition-all duration-300 ${i === current ? "w-6 bg-white" : "w-2 bg-white/50"
                 }`}
               aria-label={`Go to slide ${i + 1}`}
+              suppressHydrationWarning={true}
             />
           ))}
         </div>

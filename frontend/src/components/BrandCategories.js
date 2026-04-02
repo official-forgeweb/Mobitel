@@ -9,6 +9,7 @@ const BrandItem = memo(({ brand, onClick }) => {
     <button
       onClick={() => onClick(brand)}
       className="group flex flex-col items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-white rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-[border-color,box-shadow,transform] duration-200 outline-none w-full cursor-pointer will-change-transform"
+      suppressHydrationWarning={true}
     >
       <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-xl bg-surface group-hover:bg-primary/5 transition-colors overflow-hidden">
         <BrandLogo brand={brand} />
@@ -50,6 +51,7 @@ const ModelItem = memo(({ model, idx, onClick }) => {
     <button
       onClick={() => onClick(model)}
       className="flex flex-col items-center justify-start p-3 sm:p-4 rounded-xl border border-gray-100 bg-white hover:border-primary/40 hover:bg-primary/5 transition-[border-color,background-color] duration-200 group gap-2 sm:gap-3"
+      suppressHydrationWarning={true}
     >
       <div className="w-full aspect-[3/4] max-h-20 sm:max-h-32 bg-surface rounded-lg flex items-center justify-center mb-1 group-hover:bg-white transition-colors border border-transparent group-hover:border-primary/10 overflow-hidden relative">
         <ModelImage model={model} />
@@ -306,7 +308,7 @@ export default function BrandCategories({ data }) {
             <div className="flex items-center justify-between p-5 border-b border-border bg-surface/50 rounded-t-3xl shrink-0">
               <div className="flex items-center gap-4">
                 {(selectedModel || selectedIssue || serviceType || bookingSubmitted) ? (
-                  <button onClick={bookingSubmitted ? resetAll : handleBack} className="w-10 h-10 flex items-center justify-center rounded-full bg-white text-dark hover:bg-gray-100 transition-colors focus:outline-none border border-border shadow-sm">
+                  <button onClick={bookingSubmitted ? resetAll : handleBack} className="w-10 h-10 flex items-center justify-center rounded-full bg-white text-dark hover:bg-gray-100 transition-colors focus:outline-none border border-border shadow-sm" suppressHydrationWarning={true}>
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={bookingSubmitted ? "M6 18L18 6M6 6l12 12" : "M10 19l-7-7m0 0l7-7m-7 7h18"} />
                     </svg>

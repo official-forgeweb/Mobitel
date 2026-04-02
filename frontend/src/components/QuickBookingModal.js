@@ -188,6 +188,7 @@ export default function QuickBookingModal({ isOpen, onClose }) {
                 value={selectedBrandId} 
                 onChange={handleBrandChange} 
                 className="w-full px-4 py-3.5 rounded-xl border border-border bg-surface outline-none text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none"
+                suppressHydrationWarning={true}
               >
                 <option value="">Choose a brand...</option>
                 {brands.map(brand => (
@@ -213,6 +214,7 @@ export default function QuickBookingModal({ isOpen, onClose }) {
                 onChange={handleModelChange} 
                 disabled={!selectedBrandId || models.length === 0}
                 className="w-full px-4 py-3.5 rounded-xl border border-border bg-surface outline-none text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none disabled:opacity-50 disabled:bg-gray-50"
+                suppressHydrationWarning={true}
               >
                 <option value="">{models.length > 0 ? "Choose a model..." : (selectedBrandId ? "No models found" : "Select brand first")}</option>
                 {models.map(model => (
@@ -238,6 +240,7 @@ export default function QuickBookingModal({ isOpen, onClose }) {
                 onChange={handleServiceChange} 
                 disabled={!selectedModelId || pricing.length === 0}
                 className="w-full px-4 py-3.5 rounded-xl border border-border bg-surface outline-none text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none disabled:opacity-50 disabled:bg-gray-50"
+                suppressHydrationWarning={true}
               >
                 <option value="">{pricing.length > 0 ? "Choose a service..." : (selectedModelId ? "No services found" : "Select model first")}</option>
                 {pricing.map(p => {
@@ -297,6 +300,7 @@ export default function QuickBookingModal({ isOpen, onClose }) {
             onClick={handleComplete}
             disabled={!selectedBrandId || !selectedModelId || !selectedServiceId}
             className="w-full bg-primary text-white font-black py-4 rounded-xl shadow-lg shadow-primary/25 hover:bg-primary-dark transition-all transform active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
+            suppressHydrationWarning={true}
           >
             Proceed to Checkout
           </button>

@@ -11,6 +11,8 @@ function CheckoutContent() {
   const [paymentSettings, setPaymentSettings] = useState(null);
   const autocompleteRef = useRef(null);
   const addressInputRef = useRef(null);
+  const [userLocation, setUserLocation] = useState(null);
+  const [shopDistances, setShopDistances] = useState({});
 
   const [formData, setFormData] = useState({
     name: "",
@@ -77,7 +79,7 @@ function CheckoutContent() {
       .then(data => setPaymentSettings(data))
       .catch(err => console.error("Error fetching settings:", err));
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/shops`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/shops?active=true`)
       .then(res => res.json())
       .then(data => {
           setShopLocations(data);
@@ -119,6 +121,64 @@ function CheckoutContent() {
       });
     }
   }, [addressInputRef.current]);
+
+  // Status for distance calculation: 'idle', 'fetching-coords', 'calculating-dist', 'denied', 'failed'
+  const [distanceStatus, setDistanceStatus] = useState('idle');
+
+  // Fetch coordinates implicitly to show distance to shops
+  useEffect(() => {
+    if (queryDetails.visitType === "Shop Visit" && "geolocation" in navigator) {
+      setDistanceStatus('fetching-coords');
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({ lat: position.coords.latitude, lng: position.coords.longitude });
+          setDistanceStatus('calculating-dist');
+        },
+        (err) => {
+          console.log('Location access denied for distance matrix calculation');
+          setDistanceStatus(err.code === 1 ? 'denied' : 'failed');
+        },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    } else if (queryDetails.visitType === "Shop Visit") {
+      setDistanceStatus('failed');
+    }
+  }, [queryDetails.visitType]);
+
+  // Calculate Distance to all shops using Google Maps
+  useEffect(() => {
+    if (userLocation && shopLocations.length > 0 && typeof window !== 'undefined' && window.google) {
+      try {
+        const service = new window.google.maps.DistanceMatrixService();
+        const shopAddresses = shopLocations.map(shop => shop.address);
+        
+        service.getDistanceMatrix({
+          origins: [userLocation],
+          destinations: shopAddresses,
+          travelMode: window.google.maps.TravelMode.DRIVING,
+        }, (response, status) => {
+          if (status === 'OK' && response.rows[0].elements) {
+            const distances = {};
+            let hasAtLeastOne = false;
+            response.rows[0].elements.forEach((element, index) => {
+              if (element.status === 'OK' && element.distance) {
+                const shopId = shopLocations[index]._id || shopLocations[index].id;
+                distances[shopId] = element.distance.text + " away";
+                hasAtLeastOne = true;
+              }
+            });
+            setShopDistances(distances);
+            setDistanceStatus(hasAtLeastOne ? 'idle' : 'failed');
+          } else {
+            setDistanceStatus('failed');
+          }
+        });
+      } catch (err) {
+        console.error("Distance Matrix error:", err);
+        setDistanceStatus('failed');
+      }
+    }
+  }, [userLocation, shopLocations]);
 
   const advanceAmount = useMemo(() => {
     if (!paymentSettings || !queryDetails.price) return 0;
@@ -327,15 +387,15 @@ function CheckoutContent() {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-xs font-bold text-dark mb-1 ml-1 uppercase">Full Name *</label>
-                      <input required type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="w-full px-4 py-3.5 rounded-xl border border-border bg-surface outline-none text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                      <input required type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="w-full px-4 py-3.5 rounded-xl border border-border bg-surface outline-none text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" suppressHydrationWarning={true} />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-dark mb-1 ml-1 uppercase">Phone Number *</label>
-                      <input required type="tel" pattern="[0-9]{10}" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} className="w-full px-4 py-3.5 rounded-xl border border-border bg-surface outline-none text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                      <input required type="tel" pattern="[0-9]{10}" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} className="w-full px-4 py-3.5 rounded-xl border border-border bg-surface outline-none text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" suppressHydrationWarning={true} />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-dark mb-1 ml-1 uppercase">Email Address</label>
-                      <input type="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className="w-full px-4 py-3.5 rounded-xl border border-border bg-surface outline-none text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                      <input type="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className="w-full px-4 py-3.5 rounded-xl border border-border bg-surface outline-none text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" suppressHydrationWarning={true} />
                     </div>
                   </div>
                 </div>
@@ -346,11 +406,11 @@ function CheckoutContent() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-dark mb-1 ml-1 uppercase">Preferred Date *</label>
-                      <input required type="date" min={new Date().toLocaleDateString('en-CA')} value={formData.preferredDate} onChange={e => setFormData({ ...formData, preferredDate: e.target.value })} className="w-full px-4 py-3.5 rounded-xl border border-border bg-surface outline-none text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                      <input required type="date" min={new Date().toLocaleDateString('en-CA')} value={formData.preferredDate} onChange={e => setFormData({ ...formData, preferredDate: e.target.value })} className="w-full px-4 py-3.5 rounded-xl border border-border bg-surface outline-none text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" suppressHydrationWarning={true} />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-dark mb-1 ml-1 uppercase">Preferred Time *</label>
-                      <select required value={formData.preferredTime} onChange={e => setFormData({ ...formData, preferredTime: e.target.value })} className="w-full px-4 py-3.5 rounded-xl border border-border bg-surface outline-none text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none">
+                      <select required value={formData.preferredTime} onChange={e => setFormData({ ...formData, preferredTime: e.target.value })} className="w-full px-4 py-3.5 rounded-xl border border-border bg-surface outline-none text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none" suppressHydrationWarning={true}>
                         <option value="">{filteredTimeSlots.length > 0 ? "Select Time Slot" : "No slots available for today"}</option>
                         {filteredTimeSlots.map(slot => <option key={slot} value={slot}>{slot}</option>)}
                       </select>
@@ -374,6 +434,7 @@ function CheckoutContent() {
                         onChange={e => setFormData({ ...formData, address: e.target.value })} 
                         placeholder="Search for your building, street or area..."
                         className="w-full px-4 py-3 rounded-xl border border-border bg-surface outline-none text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none mb-4"
+                        suppressHydrationWarning={true}
                       ></textarea>
                       
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -396,14 +457,13 @@ function CheckoutContent() {
                           <input type="radio" name="shop" required value={shop._id || shop.id} checked={formData.shopId === (shop._id || shop.id)} onChange={() => setFormData({ ...formData, shopId: shop._id || shop.id })} className="mt-1 accent-primary" />
                           <div className="flex-1">
                             <h5 className="font-semibold text-dark text-sm">{shop.name}</h5>
-                            <p className="text-xs text-muted mt-1">{shop.address}</p>
-                            <div className="flex flex-wrap gap-3 mt-2">
-                              {shop.contact && (
-                                <span className="text-xs text-green-600 flex items-center gap-1 font-medium italic">
-                                  {shop.contact}
-                                </span>
-                              )}
-                            </div>
+                            <p className="text-xs text-primary font-medium mt-1">
+                              {shopDistances[shop._id || shop.id] 
+                                ? shopDistances[shop._id || shop.id] 
+                                : (distanceStatus === 'fetching-coords' || distanceStatus === 'calculating-dist' 
+                                    ? "Calculating distance..." 
+                                    : shop.address)}
+                            </p>
                           </div>
                         </label>
                       ))}
@@ -487,7 +547,7 @@ function CheckoutContent() {
                 </div>
 
                 <div className="pt-2">
-                    <button form="checkoutform" type="submit" disabled={isProcessing} className="w-full bg-primary text-white font-bold rounded-xl py-4 hover:bg-primary-dark transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-primary/30">
+                    <button form="checkoutform" type="submit" disabled={isProcessing} className="w-full bg-primary text-white font-bold rounded-xl py-4 hover:bg-primary-dark transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-primary/30" suppressHydrationWarning={true}>
                         {isProcessing ? "Processing..." : (
                             queryDetails.price === 0 || formData.payment_mode === 'pay_at_store' 
                             ? "Complete Booking" 

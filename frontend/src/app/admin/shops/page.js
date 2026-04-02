@@ -55,6 +55,25 @@ export default function ShopsAdminPage() {
         }
     };
 
+    const handleToggleShop = async (id, currentStatus) => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/shops/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ isActive: !currentStatus }),
+            });
+
+            if (res.ok) {
+                setShops(shops.map(s => (s._id || s.id) === id ? { ...s, isActive: !currentStatus } : s));
+            } else {
+                alert("Failed to update shop status.");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Error updating shop status.");
+        }
+    };
+
     const handleDeleteShop = async (id) => {
         if (!confirm("Are you sure you want to delete this shop?")) return;
         setDeleting(id);
@@ -154,9 +173,16 @@ export default function ShopsAdminPage() {
                         ) : (
                             <ul className="divide-y divide-gray-100">
                                 {shops.map((shop) => (
-                                    <li key={shop._id || shop.id} className="p-6 hover:bg-gray-50 transition-colors flex flex-col sm:flex-row gap-4 items-start justify-between">
-                                        <div>
-                                            <h3 className="text-lg font-bold text-gray-900 mb-1">{shop.name}</h3>
+                                    <li key={shop._id || shop.id} className={`p-6 hover:bg-gray-50 transition-colors flex flex-col sm:flex-row gap-4 items-start justify-between ${!shop.isActive ? 'opacity-60 grayscale-[0.5]' : ''}`}>
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-3 mb-1">
+                                                <h3 className="text-lg font-bold text-gray-900">{shop.name}</h3>
+                                                {shop.isActive ? (
+                                                    <span className="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Active</span>
+                                                ) : (
+                                                    <span className="bg-gray-100 text-gray-500 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Inactive</span>
+                                                )}
+                                            </div>
                                             <p className="text-sm text-gray-600 mb-2 flex items-start gap-1.5">
                                                 <svg className="w-4 h-4 mt-0.5 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -173,13 +199,23 @@ export default function ShopsAdminPage() {
                                                 </p>
                                             )}
                                         </div>
-                                        <button
-                                            onClick={() => handleDeleteShop(shop._id || shop.id)}
-                                            disabled={deleting === (shop._id || shop.id)}
-                                            className="shrink-0 text-red-500 hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
-                                        >
-                                            {deleting === (shop._id || shop.id) ? "Deleting..." : "Delete"}
-                                        </button>
+                                        <div className="flex items-center gap-3 self-end sm:self-center">
+                                            {/* Toggle Switch */}
+                                            <button 
+                                                onClick={() => handleToggleShop(shop._id || shop.id, shop.isActive)}
+                                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${shop.isActive ? 'bg-primary' : 'bg-gray-300'}`}
+                                            >
+                                                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${shop.isActive ? 'translate-x-6' : 'translate-x-1'}`} />
+                                            </button>
+
+                                            <button
+                                                onClick={() => handleDeleteShop(shop._id || shop.id)}
+                                                disabled={deleting === (shop._id || shop.id)}
+                                                className="shrink-0 text-red-500 hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+                                            >
+                                                {deleting === (shop._id || shop.id) ? "Deleting..." : "Delete"}
+                                            </button>
+                                        </div>
                                     </li>
                                 ))}
                             </ul>

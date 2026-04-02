@@ -11,9 +11,9 @@ const getPricing = async (req, res) => {
         if (available === 'true') filter.isAvailable = true;
 
         const pricing = await Pricing.find(filter)
-            .populate('brandId', 'name')
-            .populate('modelId', 'name')
-            .populate('serviceId', 'name')
+            .populate('brandId', 'name isActive')
+            .populate('modelId', 'name isActive')
+            .populate('serviceId', 'name isActive')
             .sort({ createdAt: -1 });
 
         res.json(pricing);

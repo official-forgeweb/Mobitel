@@ -225,6 +225,7 @@ export default function Navbar() {
             <button
               onClick={() => setBookingModalOpen(true)}
               className="hidden md:flex items-center gap-1.5 bg-primary text-white text-[13px] font-medium cursor-pointer px-6 py-2.5 rounded-xl hover:bg-dark transition-all duration-300 shadow-sm shrink-0 ml-2"
+              suppressHydrationWarning={true}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
@@ -336,6 +337,7 @@ export default function Navbar() {
               <button
                 onClick={() => { setMenuOpen(false); setBookingModalOpen(true); }}
                 className="w-full flex items-center justify-center gap-2 bg-primary text-white text-sm font-medium py-3 rounded-xl hover:bg-primary-dark transition-colors cursor-pointer"
+                suppressHydrationWarning={true}
               >
                 Book a Repair
               </button>

@@ -83,7 +83,29 @@ const logNotification = async (bookingId, channel, recipient, event, success, er
 // ─── High-level notification functions ───
 
 const notifyNewBooking = async (booking) => {
-    const { trackingToken, customerName, brand, model, serviceType, email, phone } = booking;
+    const { trackingToken, customerName, brand, model, serviceType, email, phone, shopId } = booking;
+    
+    let shopDetailsHtml = '';
+    let shopDetailsText = '';
+
+    if (shopId && booking.address === 'Shop Visit') {
+        try {
+            const Shop = require('../models/Shop');
+            const shop = await Shop.findById(shopId);
+            if (shop) {
+                shopDetailsHtml = `
+                    <div style="background: #eef; padding: 16px; border-radius: 8px; margin: 16px 0;">
+                        <h3 style="margin-top:0; color:#333;">Store Visit Details</h3>
+                        <p style="margin: 4px 0;"><strong>Address:</strong> ${shop.address}</p>
+                        <p style="margin: 4px 0;"><strong>Contact:</strong> ${shop.contact}</p>
+                    </div>
+                `;
+                shopDetailsText = `\n\n📌 Store Visit Details:\n📍 Address: ${shop.address}\n📞 Phone: ${shop.contact}`;
+            }
+        } catch (err) {
+            console.error("Failed to fetch shop details:", err);
+        }
+    }
 
     // Email to customer
     if (email) {
@@ -97,6 +119,7 @@ const notifyNewBooking = async (booking) => {
                     <p style="margin: 4px 0;"><strong>Device:</strong> ${brand} ${model}</p>
                     <p style="margin: 4px 0;"><strong>Service:</strong> ${serviceType}</p>
                 </div>
+                ${shopDetailsHtml}
                 <p>Use your tracking token to check repair status anytime at our website.</p>
                 <p style="color: #666;">— The Mobitel Team</p>
             </div>
@@ -106,7 +129,7 @@ const notifyNewBooking = async (booking) => {
 
     // WhatsApp to customer
     if (phone) {
-        const msg = `✅ Mobitel Booking Confirmed!\n\nHi ${customerName}, your repair for ${brand} ${model} (${serviceType}) is confirmed.\n\nTracking Token: ${trackingToken}\n\nTrack your repair anytime on our website.`;
+        const msg = `✅ Mobitel Booking Confirmed!\n\nHi ${customerName}, your repair for ${brand} ${model} (${serviceType}) is confirmed.\n\nTracking Token: ${trackingToken}${shopDetailsText}\n\nTrack your repair anytime on our website.`;
         const success = await sendWhatsApp(phone, msg);
         await logNotification(booking._id, 'whatsapp', phone, 'booking_created', success);
     }

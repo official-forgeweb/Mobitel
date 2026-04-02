@@ -2,11 +2,24 @@ const Shop = require('../models/Shop');
 
 const getShops = async (req, res) => {
     try {
-        const shops = await Shop.find().sort({ createdAt: -1 });
+        const query = {};
+        if (req.query.active === 'true') query.isActive = true;
+        const shops = await Shop.find(query).sort({ createdAt: -1 });
         res.json(shops);
     } catch (err) {
         console.error("Error reading shops data from MongoDB:", err);
         res.status(500).json({ error: 'Failed to read shops data' });
+    }
+};
+
+const updateShop = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const shop = await Shop.findByIdAndUpdate(id, req.body, { new: true });
+        res.json({ success: true, data: shop });
+    } catch (err) {
+        console.error("Error updating shop in MongoDB:", err);
+        res.status(500).json({ error: 'Failed to update shop' });
     }
 };
 
@@ -15,7 +28,8 @@ const addShop = async (req, res) => {
         const newShop = new Shop({
             name: req.body.name,
             address: req.body.address,
-            contact: req.body.contact || ''
+            contact: req.body.contact || '',
+            isActive: true
         });
 
         await newShop.save();
@@ -37,4 +51,4 @@ const deleteShop = async (req, res) => {
     }
 };
 
-module.exports = { getShops, addShop, deleteShop };
+module.exports = { getShops, addShop, deleteShop, updateShop };

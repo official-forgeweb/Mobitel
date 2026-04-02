@@ -179,6 +179,7 @@ export default function PopularServices({ data }) {
                     <button 
                       onClick={() => window.dispatchEvent(new Event('openBookingModal'))}
                       className="bg-primary hover:bg-primary-dark text-white px-6 py-2.5 rounded-full font-bold text-xs transition-all uppercase tracking-widest cursor-pointer"
+                      suppressHydrationWarning={true}
                     >
                       Book This Repair
                     </button>

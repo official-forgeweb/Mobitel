@@ -39,8 +39,8 @@ export default function PricingPage() {
     const fetchAll = async () => {
         try {
             const [b, s] = await Promise.all([
-                fetch(`${API}/api/brands`).then(r => r.json()),
-                fetch(`${API}/api/services`).then(r => r.json()),
+                fetch(`${API}/api/brands?active=true`).then(r => r.json()),
+                fetch(`${API}/api/services?active=true`).then(r => r.json()),
             ]);
             setBrands(b); setServices(s);
         } catch (err) { console.error(err); }
@@ -61,7 +61,7 @@ export default function PricingPage() {
     const fetchModelsForBrand = async (brandId, setter) => {
         if (!brandId) { setter([]); return; }
         try {
-            const res = await fetch(`${API}/api/device-models?brandId=${brandId}`);
+            const res = await fetch(`${API}/api/device-models?brandId=${brandId}&active=true`);
             setter(await res.json());
         } catch (err) { console.error(err); }
     };
@@ -156,10 +156,13 @@ export default function PricingPage() {
         fetchPricing();
     };
 
-    // ── GROUPED DATA ──
     const groupedPricing = useMemo(() => {
         const groups = {};
-        pricing.forEach(p => {
+        // Filter out pricing entries for inactive brands/models
+        const activePricing = pricing.filter(p => !p.brandId || p.brandId.isActive !== false)
+                                     .filter(p => !p.modelId || p.modelId.isActive !== false);
+                                     
+        activePricing.forEach(p => {
             const bId = p.brandId?._id || 'unknown';
             if (!groups[bId]) groups[bId] = { name: p.brandId?.name || '?', id: bId, models: {} };
             const mId = p.modelId?._id || 'unknown';
@@ -303,7 +306,7 @@ export default function PricingPage() {
                                 <th className="p-4">Brand / Model</th><th className="p-4">Service</th><th className="p-4">Rate (₹)</th><th className="p-4">Estimates</th><th className="p-4">Status</th><th className="p-4 text-right">Actions</th>
                             </tr></thead>
                             <tbody className="divide-y divide-gray-100">
-                                {pricing.map(p => (
+                                {pricing.filter(p => (!p.brandId || p.brandId.isActive !== false) && (!p.modelId || p.modelId.isActive !== false)).map(p => (
                                     <tr key={p._id} className="hover:bg-gray-50/80 transition-colors">
                                         <td className="p-4">
                                             <div className="font-bold text-gray-900">{p.brandId?.name || '-'}</div>

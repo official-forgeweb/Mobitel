@@ -152,6 +152,7 @@ export default function QuickActions() {
             key={s._id}
             onClick={() => handleOpenModal(s._id)}
             className="group flex items-center gap-2 px-4 py-3 text-xs font-bold text-dark hover:bg-primary hover:text-white border-b border-border last:border-0 transition-all duration-300 whitespace-nowrap text-left"
+            suppressHydrationWarning={true}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-border group-hover:bg-white transition-colors shrink-0" />
             {s.name}
@@ -169,6 +170,7 @@ export default function QuickActions() {
           <button
             onClick={() => window.dispatchEvent(new Event('openBookingModal'))}
             className="bg-primary text-white text-sm font-bold px-6 py-3 rounded-xl hover:bg-dark transition-colors shrink-0 shadow-md"
+            suppressHydrationWarning={true}
           >
             Book Now
           </button>
