@@ -57,7 +57,7 @@ export default function QuickActions() {
   }, []);
 
   // Filter models based on selected brand
-  const filteredModels = allModels.filter(m => m.brandId?._id === formData.brandId || m.brandId === formData.brandId);
+  const filteredModels = Array.isArray(allModels) ? allModels.filter(m => m.brandId?._id === formData.brandId || m.brandId === formData.brandId) : [];
 
   // Fetch Pricing when combo changes
   useEffect(() => {
@@ -110,9 +110,9 @@ export default function QuickActions() {
       if (!formData.serviceType) {
         return alert("Please select a service type (Home Service or Shop Visit).");
       }
-      const brandObj = brands.find(b => b._id === formData.brandId) || { name: "Unknown" };
-      const modelObj = allModels.find(m => m._id === formData.modelId) || { name: "Unknown" };
-      const serviceObj = services.find(s => s._id === formData.serviceId) || { name: "Unknown" };
+      const brandObj = (Array.isArray(brands) ? brands : []).find(b => b._id === formData.brandId) || { name: "Unknown" };
+      const modelObj = (Array.isArray(allModels) ? allModels : []).find(m => m._id === formData.modelId) || { name: "Unknown" };
+      const serviceObj = (Array.isArray(services) ? services : []).find(s => s._id === formData.serviceId) || { name: "Unknown" };
 
       const params = new URLSearchParams({
         brand: brandObj.name,
@@ -147,7 +147,7 @@ export default function QuickActions() {
         <div className="bg-primary px-3 py-3">
           <p className="text-white text-[10px] font-bold uppercase tracking-widest text-center">Quick Fix</p>
         </div>
-        {services.slice(0, 6).map((s) => (
+        {(Array.isArray(services) ? services : []).slice(0, 6).map((s) => (
           <button
             key={s._id}
             onClick={() => handleOpenModal(s._id)}
@@ -189,7 +189,7 @@ export default function QuickActions() {
               </button>
             </div>
             <div className="flex flex-col gap-2 max-h-[60vh] overflow-y-auto">
-              {services.map((s) => (
+              {(Array.isArray(services) ? services : []).map((s) => (
                 <button
                   key={s._id}
                   onClick={() => {

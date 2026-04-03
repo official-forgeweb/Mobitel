@@ -95,18 +95,23 @@ const createOrder = async (req, res) => {
         }
 
         // --- SECURITY VALIDATION: Prevent Client-Side Price Spoofing ---
-        if (brandId && modelId && serviceId) {
-            const pricing = await Pricing.findOne({ brandId, modelId, serviceId }).lean();
-            if (pricing && pricing.price !== numTotalAmount && numTotalAmount !== 0) {
-                console.warn(`[SECURITY WARNING] Client bypassed price: Expected ₹${pricing.price}, Got ₹${numTotalAmount}`);
-                return res.status(403).json({ error: 'Tampering detected: Payment amount does not match backend rates.' });
+        try {
+            if (brandId && modelId && serviceId) {
+                const pricing = await Pricing.findOne({ brandId, modelId, serviceId }).lean();
+                if (pricing && pricing.price !== numTotalAmount && numTotalAmount !== 0) {
+                    console.warn(`[SECURITY WARNING] Client bypassed price: Expected ₹${pricing.price}, Got ₹${numTotalAmount}`);
+                    return res.status(403).json({ error: 'Tampering detected: Payment amount does not match backend rates.' });
+                }
+            } else if (serviceId) {
+                const service = await Service.findById(serviceId).lean();
+                if (service && service.defaultPrice && service.defaultPrice !== numTotalAmount && numTotalAmount !== 0) {
+                    console.warn(`[SECURITY WARNING] Client bypassed service price: Expected ₹${service.defaultPrice}, Got ₹${numTotalAmount}`);
+                    return res.status(403).json({ error: 'Tampering detected: Payment amount does not match backend baseline rates.' });
+                }
             }
-        } else if (serviceId) {
-            const service = await Service.findById(serviceId).lean();
-            if (service && service.defaultPrice && service.defaultPrice !== numTotalAmount && numTotalAmount !== 0) {
-                console.warn(`[SECURITY WARNING] Client bypassed service price: Expected ₹${service.defaultPrice}, Got ₹${numTotalAmount}`);
-                return res.status(403).json({ error: 'Tampering detected: Payment amount does not match backend baseline rates.' });
-            }
+        } catch (dbErr) {
+            console.warn(`[SECURITY WARNING] DB error during price validation (likely invalid ObjectID from tampered URL URL):`, dbErr.message);
+            return res.status(400).json({ error: 'Invalid checkout URL parameters. Please restart your booking.' });
         }
 
         if ((payment_mode === 'online_full' || payment_mode === 'online_advance') && numTotalAmount <= 0) {

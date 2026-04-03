@@ -13,6 +13,7 @@ function CheckoutContent() {
   const addressInputRef = useRef(null);
   const [userLocation, setUserLocation] = useState(null);
   const [shopDistances, setShopDistances] = useState({});
+  const [googleReady, setGoogleReady] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -90,6 +91,27 @@ function CheckoutContent() {
       .catch(err => console.error("Error fetching shops:", err));
   }, []);
 
+  // Track Google Maps API readiness via custom event from Script onReady
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.google && window.google.maps) {
+      setGoogleReady(true);
+      return;
+    }
+    const handler = () => setGoogleReady(true);
+    window.addEventListener('google-maps-ready', handler);
+    // Also poll as fallback in case event was missed
+    const interval = setInterval(() => {
+      if (typeof window !== 'undefined' && window.google && window.google.maps) {
+        setGoogleReady(true);
+        clearInterval(interval);
+      }
+    }, 300);
+    return () => {
+      window.removeEventListener('google-maps-ready', handler);
+      clearInterval(interval);
+    };
+  }, []);
+
   useEffect(() => {
     // If price is 0, default to pay_at_store but let them see why
     if (queryDetails.price === 0) {
@@ -124,10 +146,14 @@ function CheckoutContent() {
 
   // Status for distance calculation: 'idle', 'fetching-coords', 'calculating-dist', 'denied', 'failed'
   const [distanceStatus, setDistanceStatus] = useState('idle');
+  const geoFetched = useRef(false);
 
   // Fetch coordinates implicitly to show distance to shops
   useEffect(() => {
-    if (queryDetails.visitType === "Shop Visit" && "geolocation" in navigator) {
+    if (geoFetched.current) return;
+    const visitType = searchParams.get('visitType') || 'Shop Visit';
+    if (visitType === "Shop Visit" && "geolocation" in navigator) {
+      geoFetched.current = true;
       setDistanceStatus('fetching-coords');
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -138,47 +164,68 @@ function CheckoutContent() {
           console.log('Location access denied for distance matrix calculation');
           setDistanceStatus(err.code === 1 ? 'denied' : 'failed');
         },
-        { enableHighAccuracy: true, timeout: 8000 }
+        { enableHighAccuracy: true, timeout: 10000 }
       );
-    } else if (queryDetails.visitType === "Shop Visit") {
+    } else if (visitType === "Shop Visit") {
       setDistanceStatus('failed');
     }
-  }, [queryDetails.visitType]);
+  }, [searchParams]);
+
+  // Timeout fallback: if distance is still calculating after 15s, fall back to showing address
+  useEffect(() => {
+    if (distanceStatus === 'fetching-coords' || distanceStatus === 'calculating-dist') {
+      const timeout = setTimeout(() => {
+        setDistanceStatus(prev => {
+          if (prev === 'fetching-coords' || prev === 'calculating-dist') {
+            console.warn('[Distance] Timed out waiting for distance calculation, falling back to address.');
+            return 'failed';
+          }
+          return prev;
+        });
+      }, 15000);
+      return () => clearTimeout(timeout);
+    }
+  }, [distanceStatus]);
 
   // Calculate Distance to all shops using Google Maps
   useEffect(() => {
-    if (userLocation && shopLocations.length > 0 && typeof window !== 'undefined' && window.google) {
-      try {
-        const service = new window.google.maps.DistanceMatrixService();
-        const shopAddresses = shopLocations.map(shop => shop.address);
-        
-        service.getDistanceMatrix({
-          origins: [userLocation],
-          destinations: shopAddresses,
-          travelMode: window.google.maps.TravelMode.DRIVING,
-        }, (response, status) => {
-          if (status === 'OK' && response.rows[0].elements) {
-            const distances = {};
-            let hasAtLeastOne = false;
-            response.rows[0].elements.forEach((element, index) => {
-              if (element.status === 'OK' && element.distance) {
-                const shopId = shopLocations[index]._id || shopLocations[index].id;
-                distances[shopId] = element.distance.text + " away";
-                hasAtLeastOne = true;
-              }
-            });
-            setShopDistances(distances);
-            setDistanceStatus(hasAtLeastOne ? 'idle' : 'failed');
-          } else {
-            setDistanceStatus('failed');
-          }
-        });
-      } catch (err) {
-        console.error("Distance Matrix error:", err);
-        setDistanceStatus('failed');
-      }
+    if (!userLocation || shopLocations.length === 0 || !googleReady) return;
+    
+    try {
+      const service = new window.google.maps.DistanceMatrixService();
+      const shopAddresses = shopLocations.map(shop => shop.address);
+      const origin = new window.google.maps.LatLng(userLocation.lat, userLocation.lng);
+      
+      console.log('[Distance] Calculating distances from', userLocation, 'to', shopAddresses.length, 'shops');
+      
+      service.getDistanceMatrix({
+        origins: [origin],
+        destinations: shopAddresses,
+        travelMode: window.google.maps.TravelMode.DRIVING,
+      }, (response, status) => {
+        console.log('[Distance] DistanceMatrix response status:', status);
+        if (status === 'OK' && response?.rows?.[0]?.elements) {
+          const distances = {};
+          let hasAtLeastOne = false;
+          response.rows[0].elements.forEach((element, index) => {
+            if (element.status === 'OK' && element.distance) {
+              const shopId = shopLocations[index]._id || shopLocations[index].id;
+              distances[shopId] = element.distance.text + " away";
+              hasAtLeastOne = true;
+            }
+          });
+          setShopDistances(distances);
+          setDistanceStatus(hasAtLeastOne ? 'idle' : 'failed');
+        } else {
+          console.error('[Distance] DistanceMatrix failed:', status, response);
+          setDistanceStatus('failed');
+        }
+      });
+    } catch (err) {
+      console.error('[Distance] DistanceMatrix error:', err);
+      setDistanceStatus('failed');
     }
-  }, [userLocation, shopLocations]);
+  }, [userLocation, shopLocations, googleReady]);
 
   const advanceAmount = useMemo(() => {
     if (!paymentSettings || !queryDetails.price) return 0;
@@ -477,7 +524,7 @@ function CheckoutContent() {
                         <h3 className="text-lg font-bold text-dark mb-4 border-b pb-2">Payment Option</h3>
                         {queryDetails.price === 0 && (
                           <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-xl text-[11px] text-blue-700 font-medium">
-                            Note: Online payment is not available for services with "Price on inspection". Please proceed with "Pay at Store".
+                            Note: Online payment is not available for services with &quot;Price on inspection&quot;. Please proceed with &quot;{queryDetails.visitType === "Home Service" ? "Pay at Home" : "Pay at Shop"}&quot;.
                           </div>
                         )}
                         <div className="space-y-3">
@@ -505,8 +552,15 @@ function CheckoutContent() {
                             <label className={`cursor-pointer border-2 rounded-xl p-4 flex gap-3 transition-all ${formData.payment_mode === 'pay_at_store' ? 'border-primary bg-primary/5' : 'border-border bg-white'}`}>
                                 <input type="radio" value="pay_at_store" checked={formData.payment_mode === 'pay_at_store'} onChange={() => setFormData(prev => ({ ...prev, payment_mode: 'pay_at_store' }))} className="mt-0.5 mt-1 accent-primary w-4 h-4" />
                                 <div>
-                                <p className="font-bold text-dark text-sm leading-none mb-1">Pay at Store {queryDetails.price === 0 && '(Recommended)'}</p>
-                                <p className="text-[11px] text-muted font-medium">Confirm booking now, pay {queryDetails.price > 0 ? `₹${queryDetails.price}` : 'after inspection'} later</p>
+                                <p className="font-bold text-dark text-sm leading-none mb-1">
+                                  {queryDetails.visitType === "Home Service" ? "Pay at Home" : "Pay at Shop"} {queryDetails.price === 0 && '(Recommended)'}
+                                </p>
+                                <p className="text-[11px] text-muted font-medium">
+                                  {queryDetails.visitType === "Home Service" 
+                                    ? `Confirm booking now, pay ${queryDetails.price > 0 ? `₹${queryDetails.price}` : 'after inspection'} when technician arrives`
+                                    : `Confirm booking now, pay ${queryDetails.price > 0 ? `₹${queryDetails.price}` : 'after inspection'} at the shop`
+                                  }
+                                </p>
                                 </div>
                             </label>
                             )}
@@ -572,7 +626,12 @@ export default function CheckoutPage() {
             <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
             <Script 
               src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`} 
-              strategy="beforeInteractive"
+              strategy="afterInteractive"
+              onReady={() => {
+                if (typeof window !== 'undefined') {
+                  window.dispatchEvent(new Event('google-maps-ready'));
+                }
+              }}
             />
             <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 rounded-full border-4 border-primary border-t-transparent animate-spin"></div></div>}>
                 <CheckoutContent />
