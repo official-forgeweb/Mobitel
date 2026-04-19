@@ -18,13 +18,20 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
+  const [bookingModalData, setBookingModalData] = useState(null);
+
+  const [searchResults, setSearchResults] = useState({ models: [], services: [] });
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     if (menuOpen) setSearchOpen(false);
   }, [menuOpen]);
 
   useEffect(() => {
-    const handleOpenModal = () => setBookingModalOpen(true);
+    const handleOpenModal = (e) => {
+      setBookingModalData(e.detail || null);
+      setBookingModalOpen(true);
+    };
     window.addEventListener('openBookingModal', handleOpenModal);
     return () => window.removeEventListener('openBookingModal', handleOpenModal);
   }, []);
@@ -43,6 +50,47 @@ export default function Navbar() {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Live Search Fetching
+  useEffect(() => {
+    const query = searchVal.trim().toLowerCase();
+    if (query.length < 2) {
+      setSearchResults({ models: [], services: [] });
+      return;
+    }
+    const timer = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const [modelsRes, servicesRes] = await Promise.all([
+          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/device-models?active=true`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/services?active=true`)
+        ]);
+        const models = await modelsRes.json();
+        const services = await servicesRes.json();
+
+        setSearchResults({
+          models: models.filter(m => m.name.toLowerCase().includes(query) || (m.brandId && m.brandId.name && m.brandId.name.toLowerCase().includes(query))).slice(0, 5),
+          services: services.filter(s => s.name.toLowerCase().includes(query)).slice(0, 5)
+        });
+      } catch (err) {
+        console.error("Search error", err);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [searchVal]);
+
+  const handleSelectSearchResult = (type, item) => {
+    setSearchVal("");
+    setSearchOpen(false);
+    if (type === 'model') {
+      window.dispatchEvent(new CustomEvent('openBookingModal', { detail: { brandId: item.brandId?._id, modelId: item._id } }));
+    } else if (type === 'service') {
+      window.dispatchEvent(new CustomEvent('openBookingModal', { detail: { serviceId: item._id } }));
+    }
+  };
 
   // Focus search when opened
   useEffect(() => {
@@ -150,14 +198,14 @@ export default function Navbar() {
                   onChange={(e) => setSearchVal(e.target.value)}
                   className="flex-1 bg-transparent text-sm text-dark placeholder-muted outline-none"
                 />
-                <button onClick={() => setSearchOpen(false)} className="p-1 hover:bg-surface-dark rounded-lg transition-colors">
+                <button onClick={() => setSearchOpen(false)} className="p-1 hover:bg-surface-dark rounded-lg transition-colors cursor-pointer">
                   <svg className="w-4 h-4 text-muted" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               </div>
             ) : (
-              <div className="hidden md:flex flex-1 max-w-[180px] relative">
+              <div className="hidden md:flex flex-1 max-w-[180px] lg:max-w-[240px] relative">
                 <div className="flex items-center w-full bg-surface border border-border rounded-xl px-4 py-2 gap-2 focus-within:border-primary focus-within:bg-white transition-all duration-200 group">
                   <svg className="w-4 h-4 text-muted group-focus-within:text-primary shrink-0 transition-colors" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
@@ -170,6 +218,46 @@ export default function Navbar() {
                     className="flex-1 bg-transparent text-sm w-full text-dark placeholder-muted outline-none"
                   />
                 </div>
+                
+                {/* Desktop Search Dropdown */}
+                {searchVal.trim().length >= 2 && (
+                  <div className="absolute top-12 left-0 w-full md:w-[300px] bg-white border border-border rounded-xl shadow-xl overflow-hidden z-50">
+                    {isSearching ? (
+                      <div className="p-4 text-sm text-muted text-center">Searching...</div>
+                    ) : (
+                      <div className="max-h-[60vh] overflow-y-auto">
+                        {searchResults.models.length === 0 && searchResults.services.length === 0 ? (
+                          <div className="p-4 text-sm text-muted text-center">No results found</div>
+                        ) : (
+                          <>
+                            {searchResults.models.length > 0 && (
+                              <div className="p-2">
+                                <div className="text-xs font-bold text-primary uppercase tracking-wider px-2 mb-1">Devices</div>
+                                {searchResults.models.map(m => (
+                                  <button key={m._id} onClick={() => handleSelectSearchResult('model', m)} className="w-full text-left px-3 py-2 text-sm text-dark hover:bg-surface rounded-lg transition-colors flex items-center gap-2 cursor-pointer">
+                                    <svg className="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                    <span className="truncate">{m.name} {m.brandId && m.brandId.name ? `(${m.brandId.name})` : ''}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                            {searchResults.services.length > 0 && (
+                              <div className="p-2 border-t border-border">
+                                <div className="text-xs font-bold text-primary uppercase tracking-wider px-2 mb-1">Services</div>
+                                {searchResults.services.map(s => (
+                                  <button key={s._id} onClick={() => handleSelectSearchResult('service', s)} className="w-full text-left px-3 py-2 text-sm text-dark hover:bg-surface rounded-lg transition-colors flex items-center gap-2 cursor-pointer">
+                                    <svg className="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                    <span className="truncate">{s.name}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
@@ -246,7 +334,45 @@ export default function Navbar() {
               </button>
             )}
 
-
+            {/* Mobile Search Dropdown (positioned absolutely below header when searchOpen) */}
+            {searchOpen && searchVal.trim().length >= 2 && (
+              <div className="absolute top-16 left-0 w-full bg-white border-b border-border shadow-xl z-50 md:hidden">
+                {isSearching ? (
+                  <div className="p-4 text-sm text-muted text-center">Searching...</div>
+                ) : (
+                  <div className="max-h-[60vh] overflow-y-auto">
+                    {searchResults.models.length === 0 && searchResults.services.length === 0 ? (
+                      <div className="p-4 text-sm text-muted text-center">No results found</div>
+                    ) : (
+                      <>
+                        {searchResults.models.length > 0 && (
+                          <div className="p-2">
+                            <div className="text-xs font-bold text-primary uppercase tracking-wider px-2 mb-1">Devices</div>
+                            {searchResults.models.map(m => (
+                              <button key={m._id} onClick={() => handleSelectSearchResult('model', m)} className="w-full text-left px-3 py-3 text-sm text-dark hover:bg-surface rounded-lg transition-colors flex items-center gap-2 cursor-pointer">
+                                <svg className="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                <span className="truncate">{m.name} {m.brandId && m.brandId.name ? `(${m.brandId.name})` : ''}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                        {searchResults.services.length > 0 && (
+                          <div className="p-2 border-t border-border">
+                            <div className="text-xs font-bold text-primary uppercase tracking-wider px-2 mb-1">Services</div>
+                            {searchResults.services.map(s => (
+                              <button key={s._id} onClick={() => handleSelectSearchResult('service', s)} className="w-full text-left px-3 py-3 text-sm text-dark hover:bg-surface rounded-lg transition-colors flex items-center gap-2 cursor-pointer">
+                                <svg className="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                <span className="truncate">{s.name}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Hamburger for mobile */}
             {!searchOpen && (
@@ -348,7 +474,8 @@ export default function Navbar() {
 
       <QuickBookingModal 
         isOpen={bookingModalOpen} 
-        onClose={() => setBookingModalOpen(false)} 
+        onClose={() => setBookingModalOpen(false)}
+        initialData={bookingModalData}
       />
     </>
   );

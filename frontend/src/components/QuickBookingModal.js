@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "https://www.mobitel.in";
 
-export default function QuickBookingModal({ isOpen, onClose }) {
+export default function QuickBookingModal({ isOpen, onClose, initialData }) {
   const router = useRouter();
   const [loadingBrands, setLoadingBrands] = useState(false);
   const [loadingModels, setLoadingModels] = useState(false);
@@ -25,13 +25,26 @@ export default function QuickBookingModal({ isOpen, onClose }) {
   // Reset state when modal opens
   useEffect(() => {
     if (isOpen) {
-      setSelectedBrandId("");
+      const initBrand = initialData?.brandId || "";
+      const initModel = initialData?.modelId || "";
+      const initService = initialData?.serviceId || "";
+
+      setSelectedBrandId(initBrand);
       setSelectedModelId("");
-      setSelectedServiceId("");
+      setSelectedServiceId(initService);
       setVisitType("Shop Visit");
       fetchBrands();
+      
+      if (initBrand) {
+        fetchModels(initBrand).then(() => {
+            setSelectedModelId(initModel);
+            if (initModel) {
+                fetchPricing(initBrand, initModel);
+            }
+        });
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, initialData]);
 
   const fetchBrands = async () => {
     setLoadingBrands(true);
