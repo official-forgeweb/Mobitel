@@ -524,7 +524,7 @@ function CheckoutContent() {
                         <h3 className="text-lg font-bold text-dark mb-4 border-b pb-2">Payment Option</h3>
                         {queryDetails.price === 0 && (
                           <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-xl text-[11px] text-blue-700 font-medium">
-                            Note: Online payment is not available for services with &quot;Price on inspection&quot;. Please proceed with &quot;{queryDetails.visitType === "Home Service" ? "Pay at Home" : "Pay at Shop"}&quot;.
+                            Note: Online payment is not available for services with &quot;Price on inspection&quot;. Please proceed with &quot;{queryDetails.visitType === "Home Service" ? "Cash On Delivery / Pay After Service" : "Pay After Service"}&quot;.
                           </div>
                         )}
                         <div className="space-y-3">
@@ -553,12 +553,12 @@ function CheckoutContent() {
                                 <input type="radio" value="pay_at_store" checked={formData.payment_mode === 'pay_at_store'} onChange={() => setFormData(prev => ({ ...prev, payment_mode: 'pay_at_store' }))} className="mt-0.5 mt-1 accent-primary w-4 h-4" />
                                 <div>
                                 <p className="font-bold text-dark text-sm leading-none mb-1">
-                                  {queryDetails.visitType === "Home Service" ? "Pay at Home" : "Pay at Shop"} {queryDetails.price === 0 && '(Recommended)'}
+                                  {queryDetails.visitType === "Home Service" ? "Cash On Delivery (COD) / Pay After Service" : "Pay After Service (At Shop)"} {queryDetails.price === 0 && '(Recommended)'}
                                 </p>
                                 <p className="text-[11px] text-muted font-medium">
                                   {queryDetails.visitType === "Home Service" 
                                     ? `Confirm booking now, pay ${queryDetails.price > 0 ? `₹${queryDetails.price}` : 'after inspection'} when technician arrives`
-                                    : `Confirm booking now, pay ${queryDetails.price > 0 ? `₹${queryDetails.price}` : 'after inspection'} at the shop`
+                                    : `Confirm booking now, pay ${queryDetails.price > 0 ? `₹${queryDetails.price}` : 'after inspection'} after the service is completed`
                                   }
                                 </p>
                                 </div>
