@@ -78,6 +78,24 @@ const trackBooking = async (req, res) => {
             updatedBy: u.updatedBy?.name || 'System'
         }));
 
+        // Fetch shop details if this is a Shop Visit booking
+        let shopDetails = null;
+        if (booking.shopId && booking.address === 'Shop Visit') {
+            try {
+                const Shop = require('../models/Shop');
+                const shop = await Shop.findById(booking.shopId);
+                if (shop) {
+                    shopDetails = {
+                        name: shop.name,
+                        address: shop.address,
+                        contact: shop.contact
+                    };
+                }
+            } catch (shopErr) {
+                console.error('Error fetching shop for tracking:', shopErr.message);
+            }
+        }
+
         res.json({
             trackingToken: booking.trackingToken,
             brand: booking.brand,
@@ -93,6 +111,8 @@ const trackBooking = async (req, res) => {
             assignedWorker: booking.assignedWorker ? {
                 name: booking.assignedWorker.name.split(' ')[0] // First name only for privacy
             } : null,
+            // ─── Shop Details (for Shop Visit bookings) ───
+            shopDetails,
             // ─── Payment Summary ───
             payment_mode: booking.payment_mode,
             payment_status: booking.payment_status,
