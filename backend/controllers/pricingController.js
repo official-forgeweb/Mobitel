@@ -99,12 +99,62 @@ const bulkUpdatePricing = async (req, res) => {
 };
 
 // Get pricing for a specific brand+model combination (PUBLIC for frontend booking)
+// Always returns ALL active services — uses custom pricing where it exists,
+// falls back to default service price otherwise. Hides only if isAvailable === false.
 const getPricingForModel = async (req, res) => {
     try {
         const { brandId, modelId } = req.params;
-        const pricing = await Pricing.find({ brandId, modelId, isAvailable: true })
+        const Service = require('../models/Service');
+
+        // 1. Fetch all active services
+        const allServices = await Service.find({ isActive: true }).sort({ displayOrder: 1 });
+
+        // 2. Fetch all custom pricing for this brand+model (including isAvailable: false)
+        const customPricing = await Pricing.find({ brandId, modelId })
             .populate('serviceId', 'name description icon');
-        res.json(pricing);
+
+        // 3. Build a map of serviceId -> pricing entry for quick lookup
+        const pricingMap = {};
+        for (const p of customPricing) {
+            const sid = p.serviceId?._id?.toString() || p.serviceId?.toString();
+            if (sid) pricingMap[sid] = p;
+        }
+
+        // 4. Merge: for each service, use custom pricing if exists, else default
+        const merged = [];
+        for (const svc of allServices) {
+            const sid = svc._id.toString();
+            const custom = pricingMap[sid];
+
+            if (custom) {
+                // Custom pricing exists — skip if explicitly disabled
+                if (custom.isAvailable === false) continue;
+                merged.push({
+                    _id: custom._id,
+                    brandId: custom.brandId,
+                    modelId: custom.modelId,
+                    serviceId: { _id: svc._id, name: svc.name, description: svc.description, icon: svc.icon },
+                    price: custom.price,
+                    priceMax: custom.priceMax || null,
+                    estimatedTime: custom.estimatedTime || '',
+                    isAvailable: true
+                });
+            } else {
+                // No custom pricing — use default service price
+                merged.push({
+                    _id: `default_${sid}`,
+                    brandId,
+                    modelId,
+                    serviceId: { _id: svc._id, name: svc.name, description: svc.description, icon: svc.icon },
+                    price: svc.defaultPrice || 0,
+                    priceMax: null,
+                    estimatedTime: '',
+                    isAvailable: true
+                });
+            }
+        }
+
+        res.json(merged);
     } catch (err) {
         console.error('Error fetching pricing for model:', err);
         res.status(500).json({ error: 'Failed to fetch pricing' });
