@@ -13,21 +13,22 @@ const poppins = Poppins({
 
 export const metadata = {
   metadataBase: new URL('https://www.mobitel.in'),
-  title: `Mobile Repair in Faridabad | Screen & Battery Replacement | Mobitel`,
-  description: `Best mobile phone repair service in Faridabad. iPhone & Samsung screen replacement from ₹999. Battery replacement from ₹499. Same-day doorstep repair. 90-day warranty. Trusted by 250+ customers. Book online now!`,
+  title: `Mobile & Camera Repair in Faridabad | Screen & Battery Fix | Mobitel`,
+  description: `Best mobile and camera repair shop in Faridabad. iPhone, Samsung & camera lens repair from ₹799. Screen & battery replacement. Same-day service. 90-day warranty. Book online now!`,
   keywords: [
-    "mobile repair Faridabad", "phone screen replacement Faridabad", "battery replacement Faridabad",
+    "mobile repair Faridabad", "camera repair shop in Faridabad", "camera repair near me", 
+    "phone screen replacement Faridabad", "battery replacement Faridabad",
     "iPhone repair Faridabad", "Samsung repair Faridabad", "doorstep phone repair Faridabad",
     "mobile repair near me", "phone repair shop Faridabad", "smartphone repair Faridabad", "Mobitel",
-    "phone repair Ballabhgarh", "mobile repair NIT Faridabad"
+    "phone repair Ballabhgarh", "mobile repair NIT Faridabad", "electronics repair Faridabad"
   ],
   authors: [{ name: "Mobitel Team" }],
   creator: "Mobitel",
   publisher: "Mobitel Services",
   alternates: { canonical: '/' },
   openGraph: {
-    title: "Mobile Repair in Faridabad — Same Day Service | Mobitel",
-    description: "Professional phone repair in Faridabad. Screen, battery, charging port & more. Starting ₹499. 90-day warranty.",
+    title: "Mobile & Camera Repair in Faridabad — Same Day Service | Mobitel",
+    description: "Professional phone and camera repair in Faridabad. Screen, battery, charging port, camera lens & more. Starting ₹499. 90-day warranty.",
     url: 'https://www.mobitel.in',
     siteName: 'Mobitel',
     images: [
@@ -35,7 +36,7 @@ export const metadata = {
         url: 'https://www.mobitel.in/banners/banner1.png',
         width: 1200,
         height: 630,
-        alt: 'Mobitel Mobile Repair Service in Faridabad',
+        alt: 'Mobitel Mobile and Camera Repair Service in Faridabad',
       },
     ],
     locale: 'en_IN',
@@ -43,8 +44,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Mobile Repair in Faridabad | Mobitel',
-    description: 'Affordable & fast smartphone repair in Faridabad. Screen, battery & more. Book now!',
+    title: 'Mobile & Camera Repair in Faridabad | Mobitel',
+    description: 'Affordable & fast smartphone and camera repair in Faridabad. Screen, battery, lens & more. Book now!',
     images: ['https://www.mobitel.in/banners/banner1.png'],
   },
   robots: {

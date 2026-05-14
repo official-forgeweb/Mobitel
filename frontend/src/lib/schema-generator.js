@@ -14,11 +14,11 @@ import { BUSINESS, LOCATION, CONTACT, WORKING_HOURS, SOCIAL_LINKS, RATINGS, PRIC
 export function generateLocalBusinessSchema() {
   return {
     "@context": "https://schema.org",
-    "@type": "MobilePhoneRepairShop",
+    "@type": ["MobilePhoneRepairShop", "ElectronicsRepairShop"],
     "@id": `${BUSINESS.website}/#business`,
     name: BUSINESS.name,
     legalName: BUSINESS.legalName,
-    description: `${BUSINESS.name} is ${LOCATION.city}'s trusted mobile phone repair service. Expert technicians, genuine parts, 90-day warranty. Screen replacement, battery replacement, water damage repair and more for all smartphone brands.`,
+    description: `${BUSINESS.name} is ${LOCATION.city}'s trusted mobile phone and electronics repair service. Expert technicians, genuine parts, 90-day warranty. Phone screen replacement, battery replacement, camera lens repair, and more for all brands.`,
     url: BUSINESS.website,
     logo: BUSINESS.logo,
     image: BUSINESS.image,

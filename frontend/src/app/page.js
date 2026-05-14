@@ -14,14 +14,14 @@ const FAQ = dynamic(() => import("@/components/FAQ"), { ssr: true });
 export const revalidate = 60;
 
 export const metadata = {
-  title: `Mobile Repair in ${LOCATION.city} | Screen & Battery Replacement | Mobitel`,
-  description: `Best mobile phone repair service in ${LOCATION.city}. iPhone & Samsung screen replacement from ₹999. Battery replacement from ₹499. Same-day doorstep repair. 90-day warranty. Trusted by 250+ customers. Book online now!`,
+  title: `Mobile & Camera Repair in ${LOCATION.city} | Screen & Battery Replacement | Mobitel`,
+  description: `Best mobile phone and camera repair service in ${LOCATION.city}. iPhone & Samsung screen replacement from ₹999. Camera lens repair. Same-day doorstep repair. 90-day warranty. Trusted by 250+ customers. Book online now!`,
   alternates: {
     canonical: 'https://www.mobitel.in',
   },
   openGraph: {
-    title: `Mobile Repair in ${LOCATION.city} — Same Day Service | Mobitel`,
-    description: `Professional phone repair in ${LOCATION.city}. Screen, battery, charging port & more. Starting ₹499. 90-day warranty.`,
+    title: `Mobile & Camera Repair in ${LOCATION.city} — Same Day Service | Mobitel`,
+    description: `Professional phone and camera repair in ${LOCATION.city}. Screen, battery, camera lens, charging port & more. Starting ₹499. 90-day warranty.`,
     url: 'https://www.mobitel.in',
     images: [{ url: 'https://www.mobitel.in/banners/banner1.png' }]
   }
@@ -55,7 +55,7 @@ export default async function Home() {
       {/* FAQ Schema for homepage */}
       <JsonLd data={generateFAQSchema(homepageFaqs)} />
 
-      <h1 className="sr-only">Professional Mobile Phone Repair Service in {LOCATION.city} — Mobitel</h1>
+      <h1 className="sr-only">Professional Mobile Phone & Camera Repair Service in {LOCATION.city} — Mobitel</h1>
       <BannerCarousel data={cmsData?.bannerCarousel} />
       <BrandCategories data={cmsData?.brandCategories} />
 
@@ -87,7 +87,7 @@ export default async function Home() {
           <div className="text-center mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold text-dark">Areas We Serve in {LOCATION.city}</h2>
             <p className="text-body text-sm mt-2 max-w-lg mx-auto leading-relaxed">
-              Doorstep phone repair across all major areas of {LOCATION.city}. Our technicians come to you — no need to travel.
+              Doorstep phone and camera repair across all major areas of {LOCATION.city}. Our technicians come to you — no need to travel.
             </p>
           </div>
           <div className="flex flex-wrap justify-center gap-3">
