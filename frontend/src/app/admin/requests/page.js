@@ -109,14 +109,16 @@ export default function RequestsAdminPage() {
                                         </td>
                                         <td className="p-4 align-top max-w-[250px]">
                                             <div className="font-medium text-gray-900 capitalize flex items-center gap-1.5">
-                                                {req.serviceType === 'home' ? '🏠 Home Service' : '🏪 Shop Visit'}
+                                                {req.address && req.address !== 'Shop Visit' ? '🏠 Home Service' : '🏪 Shop Visit'}
                                             </div>
                                             <div className="text-gray-500 text-xs mt-1">
-                                                {req.preferredDate} at {req.preferredTime}
+                                                {req.preferredDate || 'N/A'} {req.preferredTime ? `at ${req.preferredTime}` : ''}
                                             </div>
-                                            {req.serviceType === 'home' && (
-                                                <div className="text-gray-400 text-xs mt-1 truncate" title={req.address}>
-                                                    {req.address} - {req.pincode}
+                                            {req.address && req.address !== 'Shop Visit' && (
+                                                <div className="text-gray-600 text-xs mt-1 bg-blue-50 p-2 rounded border border-blue-100" title={req.address}>
+                                                    <div className="font-medium text-gray-900">📍 {req.address}</div>
+                                                    {req.landmark && <div className="text-[11px] text-gray-500">Landmark: {req.landmark}</div>}
+                                                    {req.pincode && <div className="text-[11px] text-gray-500">Pincode: {req.pincode}</div>}
                                                 </div>
                                             )}
                                         </td>

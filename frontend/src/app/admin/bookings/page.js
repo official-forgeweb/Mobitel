@@ -180,6 +180,11 @@ export default function BookingsPage() {
                                         <td className="p-3">
                                             <div className="text-gray-900 font-medium truncate max-w-[120px] sm:max-w-none">{b.customerName}</div>
                                             <div className="text-[11px] text-gray-400">{b.phone}</div>
+                                            {b.address && b.address !== 'Shop Visit' && (
+                                                <div className="text-[10px] text-blue-600 font-semibold truncate max-w-[150px]" title={b.address}>
+                                                    📍 {b.address}
+                                                </div>
+                                            )}
                                         </td>
                                         <td className="p-3 text-gray-600 hidden sm:table-cell">{b.brand} {b.model}</td>
                                         <td className="p-3"><span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide ${statusColor(b.status)}`}>{b.status}</span></td>
@@ -231,6 +236,39 @@ export default function BookingsPage() {
                                 <div><span className="text-gray-500 block text-xs">Issue</span>{selected.issue || 'N/A'}</div>
                                 <div><span className="text-gray-500 block text-xs">Preferred Date</span>{selected.preferredDate || 'N/A'}</div>
                                 <div><span className="text-gray-500 block text-xs">Preferred Time</span>{selected.preferredTime || 'N/A'}</div>
+                            </div>
+
+                            {/* Address & Delivery Details */}
+                            <div className="bg-blue-50/60 rounded-xl p-4 border border-blue-100 text-sm shadow-xs">
+                                <div className="flex items-center justify-between mb-2 border-b border-blue-100 pb-2">
+                                    <h4 className="font-bold text-gray-800 flex items-center gap-1.5 text-xs uppercase tracking-wider">
+                                        <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                        Delivery / Customer Address
+                                    </h4>
+                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                                        selected.address && selected.address !== 'Shop Visit' ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-700'
+                                    }`}>
+                                        {selected.address && selected.address !== 'Shop Visit' ? 'Home Delivery' : 'Shop Visit'}
+                                    </span>
+                                </div>
+                                <div className="space-y-1 text-xs">
+                                    <p className="text-gray-900 font-semibold text-sm leading-relaxed">
+                                        {selected.address || 'No specific address provided (Shop Visit)'}
+                                    </p>
+                                    {selected.landmark && (
+                                        <p className="text-gray-600">
+                                            <span className="font-semibold text-gray-700">Landmark:</span> {selected.landmark}
+                                        </p>
+                                    )}
+                                    {selected.pincode && (
+                                        <p className="text-gray-600">
+                                            <span className="font-semibold text-gray-700">Pincode:</span> {selected.pincode}
+                                        </p>
+                                    )}
+                                </div>
                             </div>
 
                             {/* Payment Info */}

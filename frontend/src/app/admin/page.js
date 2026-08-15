@@ -96,6 +96,11 @@ export default function AdminDashboard() {
                                             <td className="p-3">
                                                 <div className="font-semibold text-gray-900 truncate max-w-[100px] sm:max-w-none">{isBooking ? item.customerName : item.user}</div>
                                                 <div className="sm:hidden text-[10px] text-gray-400 font-mono mt-0.5">{isBooking ? item.trackingToken : ''}</div>
+                                                {isBooking && item.address && item.address !== 'Shop Visit' && (
+                                                    <div className="text-[10px] text-blue-600 font-semibold truncate max-w-[140px]" title={item.address}>
+                                                        📍 {item.address}
+                                                    </div>
+                                                )}
                                             </td>
                                             <td className="p-3 text-gray-600 hidden md:table-cell">{isBooking ? `${item.brand} ${item.model}` : item.action?.substring(0, 30)}</td>
                                             <td className="p-3">
