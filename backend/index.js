@@ -59,10 +59,20 @@ app.use(async (req, res, next) => {
     next();
 });
 
-const allowedOrigins = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',').map(url => url.trim()) : ['https://www.mobitel.in', 'https://www.mobitel.in'];
+const allowedOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
+  : ['https://www.mobitel.in', 'http://localhost:3000'];
+
 app.use(cors({
     origin: function (origin, callback) {
-        if (!origin || allowedOrigins.some(o => origin.startsWith(o))) {
+        if (
+            !origin ||
+            allowedOrigins.some(o => origin.startsWith(o)) ||
+            origin.includes('localhost') ||
+            origin.includes('127.0.0.1') ||
+            origin.includes('vercel.app') ||
+            origin.includes('mobitel.in')
+        ) {
             callback(null, true);
         } else {
             callback(new Error('CORS_ERROR'));

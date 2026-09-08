@@ -35,22 +35,22 @@ export default function QuickActions() {
 
 
 
-  // Initial Data Fetch
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
+        const safeFetch = (url) => fetch(url).catch(() => null);
         const [bRes, mRes, sRes, pRes] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/brands?active=true`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/device-models?active=true`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/services?active=true`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/razorpay/payment-settings`)
+          safeFetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/brands?active=true`),
+          safeFetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/device-models?active=true`),
+          safeFetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/services?active=true`),
+          safeFetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/razorpay/payment-settings`)
         ]);
-        setBrands(await bRes.json());
-        setAllModels(await mRes.json());
-        setServices(await sRes.json());
-        setPaymentSettings(await pRes.json());
+        if (bRes && bRes.ok) setBrands(await bRes.json());
+        if (mRes && mRes.ok) setAllModels(await mRes.json());
+        if (sRes && sRes.ok) setServices(await sRes.json());
+        if (pRes && pRes.ok) setPaymentSettings(await pRes.json());
       } catch (err) {
-        console.error("Failed to fetch form data", err);
+        // Safe catch
       }
     };
     fetchInitialData();

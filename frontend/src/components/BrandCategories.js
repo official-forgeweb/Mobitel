@@ -130,7 +130,7 @@ export default function BrandCategories({ data }) {
   const [repairIssuesList, setRepairIssuesList] = useState([]);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/brands?active=true`).then(r => r.json()).then(setBrandsList).catch(console.error);
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/brands?active=true`).then(r => r.ok ? r.json() : []).then(setBrandsList).catch(() => setBrandsList([]));
   }, []);
 
   // Fetch specific services for the selected model
@@ -139,9 +139,9 @@ export default function BrandCategories({ data }) {
       if (selectedModel._id) {
         setIsLoadingModels(true); // Re-use loading state for issues
         fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/pricing/model/${selectedBrand._id}/${selectedModel._id}`)
-          .then(r => r.json())
+          .then(r => r.ok ? r.json() : [])
           .then(data => {
-            if (data && data.length > 0) {
+            if (Array.isArray(data) && data.length > 0) {
               const modelServices = data.map(p => ({
                 ...p.serviceId,
                 rawPrice: p.price || p.serviceId?.defaultPrice || 0,
@@ -152,34 +152,39 @@ export default function BrandCategories({ data }) {
             } else {
               // Fallback to default services if no specific pricing exists
               fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/services?active=true`)
-                .then(r => r.json())
+                .then(r => r.ok ? r.json() : [])
                 .then(svcs => {
-                   setRepairIssuesList(svcs.map(s => ({
+                   const list = Array.isArray(svcs) ? svcs : [];
+                   setRepairIssuesList(list.map(s => ({
                       ...s,
                       rawPrice: s.defaultPrice || 0,
                       price: (s.defaultPrice > 0 ? `₹${s.defaultPrice}` : 'Upon Inspection'),
                       time: '45-60 Mins'
                    })));
-                });
+                })
+                .catch(() => setRepairIssuesList([]));
             }
             setIsLoadingModels(false);
           })
           .catch(err => {
             console.error(err);
             setIsLoadingModels(false);
+            setRepairIssuesList([]);
           });
       } else {
         // "Other Model" selected - show all services
         fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/services?active=true`)
-          .then(r => r.json())
+          .then(r => r.ok ? r.json() : [])
           .then(svcs => {
-             setRepairIssuesList(svcs.map(s => ({
+             const list = Array.isArray(svcs) ? svcs : [];
+             setRepairIssuesList(list.map(s => ({
                 ...s,
                 rawPrice: s.defaultPrice || 0,
                 price: (s.defaultPrice > 0 ? `₹${s.defaultPrice}` : 'Upon Inspection'),
                 time: '45-60 Mins'
              })));
-          });
+          })
+          .catch(() => setRepairIssuesList([]));
       }
     }
   }, [selectedModel, selectedBrand]);
@@ -195,13 +200,14 @@ export default function BrandCategories({ data }) {
       if (selectedBrand._id) {
         setIsLoadingModels(true);
         fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/device-models?brandId=${selectedBrand._id}&active=true`)
-          .then(r => r.json())
+          .then(r => r.ok ? r.json() : [])
           .then(data => {
-            setModelsList(data);
+            setModelsList(Array.isArray(data) ? data : []);
             setIsLoadingModels(false);
           })
           .catch(err => {
             console.error(err);
+            setModelsList([]);
             setIsLoadingModels(false);
           });
       } else {

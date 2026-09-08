@@ -81,14 +81,18 @@ function CheckoutContent() {
       .catch(err => console.error("Error fetching settings:", err));
 
     fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/shops?active=true`)
-      .then(res => res.json())
+      .then(res => res.ok ? res.json() : [])
       .then(data => {
-          setShopLocations(data);
-          if (data && data.length > 0 && searchParams.get('visitType') !== "Home Service") {
-              setFormData(prev => ({ ...prev, shopId: data[0]._id || data[0].id }));
+          const list = Array.isArray(data) ? data : [];
+          setShopLocations(list);
+          if (list.length > 0 && searchParams.get('visitType') !== "Home Service") {
+              setFormData(prev => ({ ...prev, shopId: list[0]._id || list[0].id }));
           }
       })
-      .catch(err => console.error("Error fetching shops:", err));
+      .catch(err => {
+          console.error("Error fetching shops:", err);
+          setShopLocations([]);
+      });
   }, []);
 
   // Track Google Maps API readiness via custom event from Script onReady
