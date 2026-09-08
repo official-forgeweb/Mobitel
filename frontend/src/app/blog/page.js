@@ -30,7 +30,8 @@ async function getBlogPosts(page = 1) {
 
 export default async function BlogPage() {
   const data = await getBlogPosts();
-  const { posts, pagination } = data;
+  const posts = Array.isArray(data?.posts) ? data.posts : [];
+  const pagination = data?.pagination || { page: 1, pages: 1, total: 0 };
 
   const breadcrumbs = [
     { name: "Home", url: "https://www.mobitel.in" },

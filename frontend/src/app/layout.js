@@ -79,7 +79,7 @@ export default async function RootLayout({ children }) {
       cmsData = await res.json();
     }
   } catch (error) {
-    console.error("Failed to fetch layout CMS data:", error.message);
+    // Silent fallback for CMS data when backend is unreachable locally
   }
 
   const localBusinessSchema = generateLocalBusinessSchema();

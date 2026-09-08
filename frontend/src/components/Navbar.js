@@ -61,16 +61,17 @@ export default function Navbar() {
     const timer = setTimeout(async () => {
       setIsSearching(true);
       try {
+        const safeFetch = (url) => fetch(url).catch(() => null);
         const [modelsRes, servicesRes] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/device-models?active=true`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/services?active=true`)
+          safeFetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/device-models?active=true`),
+          safeFetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/services?active=true`)
         ]);
-        const models = await modelsRes.json();
-        const services = await servicesRes.json();
+        const models = (modelsRes && modelsRes.ok) ? await modelsRes.json() : [];
+        const services = (servicesRes && servicesRes.ok) ? await servicesRes.json() : [];
 
         setSearchResults({
-          models: models.filter(m => m.name.toLowerCase().includes(query) || (m.brandId && m.brandId.name && m.brandId.name.toLowerCase().includes(query))).slice(0, 5),
-          services: services.filter(s => s.name.toLowerCase().includes(query)).slice(0, 5)
+          models: Array.isArray(models) ? models.filter(m => m.name.toLowerCase().includes(query) || (m.brandId && m.brandId.name && m.brandId.name.toLowerCase().includes(query))).slice(0, 5) : [],
+          services: Array.isArray(services) ? services.filter(s => s.name.toLowerCase().includes(query)).slice(0, 5) : []
         });
       } catch (err) {
         console.error("Search error", err);
@@ -105,28 +106,27 @@ export default function Navbar() {
 
   // GPS location
   useEffect(() => {
-    if (!("geolocation" in navigator)) { setLocation("GPS unavailable"); return; }
+    if (!("geolocation" in navigator)) { setLocation("Faridabad, Haryana"); return; }
     navigator.geolocation.getCurrentPosition(
       async ({ coords: { latitude, longitude } }) => {
         try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/location?lat=${latitude}&lon=${longitude}`);
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://www.mobitel.in'}/api/location?lat=${latitude}&lon=${longitude}`).catch(() => null);
+          if (!res || !res.ok) { setLocation("Faridabad, Haryana"); return; }
           const data = await res.json();
           if (data && data.display_name) {
             let cleanAddress = data.display_name;
-            // If it starts with a plus code like '87CQ+H58, ', remove it for a cleaner UI
             if (cleanAddress.match(/^[A-Z0-9]{4}\+[A-Z0-9]{2,3},\s/)) {
               cleanAddress = cleanAddress.replace(/^[A-Z0-9]{4}\+[A-Z0-9]{2,3},\s/, '');
             }
             setLocation(cleanAddress);
           } else {
-            setLocation("Unknown Location");
+            setLocation("Faridabad, Haryana");
           }
-        } catch (err) { 
-          console.error("Navbar location error:", err);
-          setLocation("Location error"); 
+        } catch (err) {
+          setLocation("Faridabad, Haryana");
         }
       },
-      () => setLocation("Location denied"),
+      () => setLocation("Faridabad, Haryana"),
       { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
     );
   }, []);

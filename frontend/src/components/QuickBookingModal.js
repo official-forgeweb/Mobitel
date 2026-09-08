@@ -50,10 +50,15 @@ export default function QuickBookingModal({ isOpen, onClose, initialData }) {
     setLoadingBrands(true);
     try {
       const res = await fetch(`${API}/api/brands`);
-      const data = await res.json();
-      setBrands(data.filter(b => b.isActive));
+      if (res.ok) {
+        const data = await res.json();
+        setBrands(Array.isArray(data) ? data.filter(b => b.isActive) : []);
+      } else {
+        setBrands([]);
+      }
     } catch (err) {
       console.error("Error fetching brands:", err);
+      setBrands([]);
     } finally {
       setLoadingBrands(false);
     }
@@ -63,10 +68,16 @@ export default function QuickBookingModal({ isOpen, onClose, initialData }) {
     setLoadingModels(true);
     try {
       const res = await fetch(`${API}/api/device-models?brandId=${brandId}&active=true`);
-      const data = await res.json();
-      setModels([...data, { _id: 'other', name: 'Other / Unlisted Model' }]);
+      if (res.ok) {
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : [];
+        setModels([...list, { _id: 'other', name: 'Other / Unlisted Model' }]);
+      } else {
+        setModels([{ _id: 'other', name: 'Other / Unlisted Model' }]);
+      }
     } catch (err) {
       console.error("Error fetching models:", err);
+      setModels([{ _id: 'other', name: 'Other / Unlisted Model' }]);
     } finally {
       setLoadingModels(false);
     }
@@ -78,7 +89,10 @@ export default function QuickBookingModal({ isOpen, onClose, initialData }) {
       let data = [];
       if (modelId !== 'other') {
         const res = await fetch(`${API}/api/pricing/model/${brandId}/${modelId}`);
-        if (res.ok) data = await res.json();
+        if (res.ok) {
+          const resData = await res.json();
+          if (Array.isArray(resData)) data = resData;
+        }
       }
       
       if (data && data.length > 0) {
@@ -86,13 +100,18 @@ export default function QuickBookingModal({ isOpen, onClose, initialData }) {
       } else {
         // Fallback to default services if no specific pricing
         const svcRes = await fetch(`${API}/api/services?active=true`);
-        const svcs = await svcRes.json();
-        const fallback = svcs.map(s => ({
-          _id: s._id,
-          serviceId: s,
-          price: s.defaultPrice || 0,
-          estimatedTime: '45-60 Mins'
-        }));
+        let fallback = [];
+        if (svcRes.ok) {
+          const svcs = await svcRes.json();
+          if (Array.isArray(svcs)) {
+            fallback = svcs.map(s => ({
+              _id: s._id,
+              serviceId: s,
+              price: s.defaultPrice || 0,
+              estimatedTime: '45-60 Mins'
+            }));
+          }
+        }
         
         fallback.push({
           _id: 'other_issue',
@@ -105,6 +124,7 @@ export default function QuickBookingModal({ isOpen, onClose, initialData }) {
       }
     } catch (err) {
       console.error("Error fetching pricing:", err);
+      setPricing([]);
     } finally {
       setLoadingServices(false);
     }
