@@ -22,8 +22,29 @@ const createBooking = async (req, res) => {
             attempts++;
         } while (attempts < 10);
 
+        let shopName = req.body.shopName || '';
+        let shopAddress = req.body.shopAddress || '';
+        let shopContact = req.body.shopContact || '';
+
+        if (req.body.shopId && (!shopName || !shopAddress)) {
+            try {
+                const Shop = require('../models/Shop');
+                const shop = await Shop.findById(req.body.shopId);
+                if (shop) {
+                    shopName = shop.name || shopName;
+                    shopAddress = shop.address || shopAddress;
+                    shopContact = shop.contact || shopContact;
+                }
+            } catch (shopErr) {
+                console.error('[Shop Lookup Warning]', shopErr.message);
+            }
+        }
+
         const booking = new Booking({
             ...req.body,
+            shopName,
+            shopAddress,
+            shopContact,
             trackingToken,
             status: 'Received'
         });
@@ -78,9 +99,16 @@ const trackBooking = async (req, res) => {
             updatedBy: u.updatedBy?.name || 'System'
         }));
 
-        // Fetch shop details if this is a Shop Visit booking
+        // Fetch shop details if this is a Shop Visit booking or shop details exist
         let shopDetails = null;
-        if (booking.shopId && booking.address === 'Shop Visit') {
+        if (booking.shopName) {
+            shopDetails = {
+                name: booking.shopName,
+                address: booking.shopAddress || '',
+                contact: booking.shopContact || ''
+            };
+        }
+        if (!shopDetails && booking.shopId) {
             try {
                 const Shop = require('../models/Shop');
                 const shop = await Shop.findById(booking.shopId);
@@ -162,8 +190,30 @@ const getAllBookings = async (req, res) => {
             Booking.countDocuments(filter)
         ]);
 
+        // Enrich bookings with shop details for any records missing shopName
+        let enrichedBookings = bookings;
+        try {
+            const Shop = require('../models/Shop');
+            const shops = await Shop.find().lean();
+            const shopMap = {};
+            shops.forEach(s => { shopMap[s._id.toString()] = s; });
+
+            enrichedBookings = bookings.map(b => {
+                const item = b.toObject ? b.toObject() : { ...b };
+                if (item.shopId && shopMap[item.shopId.toString()]) {
+                    const s = shopMap[item.shopId.toString()];
+                    if (!item.shopName) item.shopName = s.name;
+                    if (!item.shopAddress) item.shopAddress = s.address;
+                    if (!item.shopContact) item.shopContact = s.contact;
+                }
+                return item;
+            });
+        } catch (e) {
+            console.error('Error enriching shops in getAllBookings:', e.message);
+        }
+
         res.json({
-            bookings,
+            bookings: enrichedBookings,
             total,
             page: parseInt(page),
             totalPages: Math.ceil(total / parseInt(limit))
@@ -182,9 +232,39 @@ const getBookingById = async (req, res) => {
 
         if (!booking) return res.status(404).json({ error: 'Booking not found' });
 
+        const bookingObj = booking.toObject ? booking.toObject() : { ...booking };
+
+        let shopDetails = null;
+        if (bookingObj.shopId) {
+            try {
+                const Shop = require('../models/Shop');
+                const shop = await Shop.findById(bookingObj.shopId);
+                if (shop) {
+                    bookingObj.shopName = bookingObj.shopName || shop.name;
+                    bookingObj.shopAddress = bookingObj.shopAddress || shop.address;
+                    bookingObj.shopContact = bookingObj.shopContact || shop.contact;
+                    shopDetails = {
+                        name: shop.name,
+                        address: shop.address,
+                        contact: shop.contact
+                    };
+                }
+            } catch (shopErr) {
+                console.error('Error fetching shop for booking:', shopErr.message);
+            }
+        }
+        if (!shopDetails && bookingObj.shopName) {
+            shopDetails = {
+                name: bookingObj.shopName,
+                address: bookingObj.shopAddress,
+                contact: bookingObj.shopContact
+            };
+        }
+        bookingObj.shopDetails = shopDetails;
+
         const updates = await BookingUpdate.find({ bookingId: booking._id }).sort({ createdAt: 1 });
 
-        res.json({ booking, updates });
+        res.json({ booking: bookingObj, updates });
     } catch (err) {
         console.error('Error fetching booking:', err);
         res.status(500).json({ error: 'Failed to fetch booking' });
@@ -388,6 +468,27 @@ const getBookingStats = async (req, res) => {
             ])
         ]);
 
+        let enrichedRecent = recentBookings;
+        try {
+            const Shop = require('../models/Shop');
+            const shops = await Shop.find().lean();
+            const shopMap = {};
+            shops.forEach(s => { shopMap[s._id.toString()] = s; });
+
+            enrichedRecent = recentBookings.map(b => {
+                const item = b.toObject ? b.toObject() : { ...b };
+                if (item.shopId && shopMap[item.shopId.toString()]) {
+                    const s = shopMap[item.shopId.toString()];
+                    if (!item.shopName) item.shopName = s.name;
+                    if (!item.shopAddress) item.shopAddress = s.address;
+                    if (!item.shopContact) item.shopContact = s.contact;
+                }
+                return item;
+            });
+        } catch (e) {
+            console.error('Error enriching recent bookings in stats:', e.message);
+        }
+
         res.json({
             today: todayCount,
             week: weekCount,
@@ -396,7 +497,7 @@ const getBookingStats = async (req, res) => {
             inProgress: inProgressCount,
             completed: completedCount,
             total: totalCount,
-            recentBookings,
+            recentBookings: enrichedRecent,
             workers: workerStats
         });
     } catch (err) {

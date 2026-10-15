@@ -363,6 +363,8 @@ function CheckoutContent() {
     }
 
     try {
+      const selectedShop = shopLocations.find(s => (s._id || s.id) === formData.shopId);
+
       const payload = {
         customerName: formData.name,
         phone: formData.phone,
@@ -377,6 +379,9 @@ function CheckoutContent() {
         landmark: formData.landmark,
         pincode: formData.pincode,
         shopId: queryDetails.visitType === "Shop Visit" ? formData.shopId : "",
+        shopName: (queryDetails.visitType === "Shop Visit" && selectedShop) ? selectedShop.name : "",
+        shopAddress: (queryDetails.visitType === "Shop Visit" && selectedShop) ? selectedShop.address : "",
+        shopContact: (queryDetails.visitType === "Shop Visit" && selectedShop) ? (selectedShop.contact || "") : "",
         payment_mode: formData.payment_mode,
         total_amount: queryDetails.price || 0,
         brandId: queryDetails.brandId,

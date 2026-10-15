@@ -13,6 +13,7 @@ export default function BookingsPage() {
     const [loading, setLoading] = useState(true);
     const [filters, setFilters] = useState({ status: '', priority: '', search: '' });
     const [partners, setPartners] = useState([]);
+    const [shops, setShops] = useState([]);
     const [selected, setSelected] = useState(null); // booking detail view
     const [updates, setUpdates] = useState([]);
     const [showNoteModal, setShowNoteModal] = useState(false);
@@ -44,7 +45,20 @@ export default function BookingsPage() {
         } catch (err) { console.error(err); }
     };
 
-    useEffect(() => { fetchBookings(1); fetchPartners(); }, []);
+    const fetchShops = async () => {
+        try {
+            const res = await fetch(`${API}/api/shops?active=true`);
+            const data = await res.json();
+            setShops(Array.isArray(data) ? data : []);
+        } catch (err) { console.error(err); }
+    };
+
+    const getShopObj = (shopId) => {
+        if (!shopId) return null;
+        return shops.find(s => (s._id || s.id) === shopId || (s._id && s._id.toString() === shopId.toString()));
+    };
+
+    useEffect(() => { fetchBookings(1); fetchPartners(); fetchShops(); }, []);
     useEffect(() => { const t = setTimeout(() => fetchBookings(1), 300); return () => clearTimeout(t); }, [filters]);
 
     const viewBooking = async (id) => {
@@ -180,9 +194,13 @@ export default function BookingsPage() {
                                         <td className="p-3">
                                             <div className="text-gray-900 font-medium truncate max-w-[120px] sm:max-w-none">{b.customerName}</div>
                                             <div className="text-[11px] text-gray-400">{b.phone}</div>
-                                            {b.address && b.address !== 'Shop Visit' && (
+                                            {b.address && b.address !== 'Shop Visit' ? (
                                                 <div className="text-[10px] text-blue-600 font-semibold truncate max-w-[150px]" title={b.address}>
-                                                    📍 {b.address}
+                                                    🏠 {b.address}
+                                                </div>
+                                            ) : (
+                                                <div className="text-[10px] text-amber-800 font-bold truncate max-w-[150px]" title={b.shopName || getShopObj(b.shopId)?.name || 'Shop Visit'}>
+                                                    🏪 {b.shopName || getShopObj(b.shopId)?.name || 'Shop Visit'}
                                                 </div>
                                             )}
                                         </td>
@@ -239,37 +257,78 @@ export default function BookingsPage() {
                             </div>
 
                             {/* Address & Delivery Details */}
-                            <div className="bg-blue-50/60 rounded-xl p-4 border border-blue-100 text-sm shadow-xs">
-                                <div className="flex items-center justify-between mb-2 border-b border-blue-100 pb-2">
-                                    <h4 className="font-bold text-gray-800 flex items-center gap-1.5 text-xs uppercase tracking-wider">
-                                        <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        </svg>
-                                        Delivery / Customer Address
-                                    </h4>
-                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                                        selected.address && selected.address !== 'Shop Visit' ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-700'
-                                    }`}>
-                                        {selected.address && selected.address !== 'Shop Visit' ? 'Home Delivery' : 'Shop Visit'}
-                                    </span>
+                            {selected.address === 'Shop Visit' || selected.shopName || selected.shopId ? (
+                                <div className="bg-amber-50/70 rounded-xl p-4 border border-amber-200 text-sm shadow-xs">
+                                    <div className="flex items-center justify-between mb-2.5 border-b border-amber-200 pb-2">
+                                        <h4 className="font-bold text-gray-800 flex items-center gap-1.5 text-xs uppercase tracking-wider">
+                                            <svg className="w-4 h-4 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                            </svg>
+                                            Delivery / Customer Address
+                                        </h4>
+                                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300">
+                                            🏪 Shop Visit
+                                        </span>
+                                    </div>
+                                    <div className="space-y-1.5 text-xs">
+                                        <div className="text-gray-900 font-bold text-sm flex items-center gap-1.5">
+                                            <span className="text-primary font-extrabold text-base">🏪</span>
+                                            <span className="text-primary font-bold">
+                                                {selected.shopName || selected.shopDetails?.name || getShopObj(selected.shopId)?.name || 'Store Selected (Shop Visit)'}
+                                            </span>
+                                        </div>
+                                        {(selected.shopAddress || selected.shopDetails?.address || getShopObj(selected.shopId)?.address) && (
+                                            <p className="text-gray-600 leading-relaxed">
+                                                <span className="font-semibold text-gray-700">📍 Address:</span>{' '}
+                                                {selected.shopAddress || selected.shopDetails?.address || getShopObj(selected.shopId)?.address}
+                                            </p>
+                                        )}
+                                        {(selected.shopContact || selected.shopDetails?.contact || getShopObj(selected.shopId)?.contact) && (
+                                            <p className="text-gray-600">
+                                                <span className="font-semibold text-gray-700">📞 Phone:</span>{' '}
+                                                <a href={`tel:${selected.shopContact || selected.shopDetails?.contact || getShopObj(selected.shopId)?.contact}`} className="text-primary font-bold hover:underline">
+                                                    {selected.shopContact || selected.shopDetails?.contact || getShopObj(selected.shopId)?.contact}
+                                                </a>
+                                            </p>
+                                        )}
+                                        {selected.address && selected.address !== 'Shop Visit' && (
+                                            <p className="text-[11px] text-gray-500 pt-1 border-t border-amber-200">
+                                                <span className="font-medium text-gray-600">Note:</span> {selected.address}
+                                            </p>
+                                        )}
+                                    </div>
                                 </div>
-                                <div className="space-y-1 text-xs">
-                                    <p className="text-gray-900 font-semibold text-sm leading-relaxed">
-                                        {selected.address || 'No specific address provided (Shop Visit)'}
-                                    </p>
-                                    {selected.landmark && (
-                                        <p className="text-gray-600">
-                                            <span className="font-semibold text-gray-700">Landmark:</span> {selected.landmark}
+                            ) : (
+                                <div className="bg-blue-50/60 rounded-xl p-4 border border-blue-100 text-sm shadow-xs">
+                                    <div className="flex items-center justify-between mb-2 border-b border-blue-100 pb-2">
+                                        <h4 className="font-bold text-gray-800 flex items-center gap-1.5 text-xs uppercase tracking-wider">
+                                            <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
+                                            Delivery / Customer Address
+                                        </h4>
+                                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700">
+                                            🏠 Home Delivery
+                                        </span>
+                                    </div>
+                                    <div className="space-y-1 text-xs">
+                                        <p className="text-gray-900 font-semibold text-sm leading-relaxed">
+                                            {selected.address || 'Home Delivery'}
                                         </p>
-                                    )}
-                                    {selected.pincode && (
-                                        <p className="text-gray-600">
-                                            <span className="font-semibold text-gray-700">Pincode:</span> {selected.pincode}
-                                        </p>
-                                    )}
+                                        {selected.landmark && (
+                                            <p className="text-gray-600">
+                                                <span className="font-semibold text-gray-700">Landmark:</span> {selected.landmark}
+                                            </p>
+                                        )}
+                                        {selected.pincode && (
+                                            <p className="text-gray-600">
+                                                <span className="font-semibold text-gray-700">Pincode:</span> {selected.pincode}
+                                            </p>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
                             {/* Payment Info */}
                             {selected.payment_mode && (
