@@ -14,6 +14,9 @@ const RequestSchema = new mongoose.Schema({
     landmark: String,
     pincode: String,
     shopId: String,
+    shopName: String,
+    shopAddress: String,
+    shopContact: String,
     status: { type: String, default: 'Pending' }
 }, { timestamps: true });
 

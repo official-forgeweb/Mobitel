@@ -55,6 +55,24 @@ const createOrder = async (req, res) => {
             pincode, shopId, payment_mode, total_amount, brandId, modelId, serviceId
         } = req.body;
 
+        let shopName = req.body.shopName || '';
+        let shopAddress = req.body.shopAddress || '';
+        let shopContact = req.body.shopContact || '';
+
+        if (shopId && (!shopName || !shopAddress)) {
+            try {
+                const Shop = require('../models/Shop');
+                const shop = await Shop.findById(shopId);
+                if (shop) {
+                    shopName = shop.name || shopName;
+                    shopAddress = shop.address || shopAddress;
+                    shopContact = shop.contact || shopContact;
+                }
+            } catch (shopErr) {
+                console.error('[Shop Lookup Warning]', shopErr.message);
+            }
+        }
+
         // Validate required fields
         if (!customerName || !phone || !brand || !model || !serviceType || !payment_mode || total_amount === undefined || !preferredDate || !preferredTime) {
             return res.status(400).json({ error: 'Missing required fields' });
@@ -153,7 +171,8 @@ const createOrder = async (req, res) => {
             const booking = new Booking({
                 trackingToken,
                 customerName, phone, email, brand, model, serviceType,
-                issue, preferredDate, preferredTime, address, landmark, pincode, shopId,
+                issue, preferredDate, preferredTime, address, landmark, pincode,
+                shopId, shopName, shopAddress, shopContact,
                 status: 'Received',
                 payment_mode,
                 payment_status: 'pending',
@@ -206,7 +225,8 @@ const createOrder = async (req, res) => {
         const booking = new Booking({
             trackingToken,
             customerName, phone, email, brand, model, serviceType,
-            issue, preferredDate, preferredTime, address, landmark, pincode, shopId,
+            issue, preferredDate, preferredTime, address, landmark, pincode,
+            shopId, shopName, shopAddress, shopContact,
             status: 'Received',
             payment_mode,
             payment_status: 'pending',

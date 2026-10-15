@@ -13,8 +13,29 @@ const getRequests = async (req, res) => {
 
 const addRequest = async (req, res) => {
     try {
+        let shopName = req.body.shopName || '';
+        let shopAddress = req.body.shopAddress || '';
+        let shopContact = req.body.shopContact || '';
+
+        if (req.body.shopId && (!shopName || !shopAddress)) {
+            try {
+                const Shop = require('../models/Shop');
+                const shop = await Shop.findById(req.body.shopId);
+                if (shop) {
+                    shopName = shop.name || shopName;
+                    shopAddress = shop.address || shopAddress;
+                    shopContact = shop.contact || shopContact;
+                }
+            } catch (shopErr) {
+                console.error('[Shop Lookup Warning in requests]', shopErr.message);
+            }
+        }
+
         const newRequest = new Request({
-            ...req.body
+            ...req.body,
+            shopName,
+            shopAddress,
+            shopContact
         });
 
         await newRequest.save();
@@ -22,9 +43,8 @@ const addRequest = async (req, res) => {
         // -------------------------
         // Send email to customer
         // -------------------------
-        const customerEmail = req.body.email; // Attempt to get customer email if passed in form
+        const customerEmail = req.body.email;
 
-        // If the email was passed from frontend (Needs to be added later to the frontend form, checking optionally here)
         if (customerEmail && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
@@ -34,14 +54,23 @@ const addRequest = async (req, res) => {
                 }
             });
 
+            const shopInfoHtml = (shopName || shopAddress) ? `
+                <div style="background: #fdf2f0; border-left: 4px solid #800000; padding: 12px; margin: 12px 0;">
+                    <p style="margin: 2px 0; font-weight: bold; color: #800000;">🏪 Selected Store: ${shopName || 'Mobitel Service Center'}</p>
+                    ${shopAddress ? `<p style="margin: 2px 0; font-size: 13px;">📍 ${shopAddress}</p>` : ''}
+                    ${shopContact ? `<p style="margin: 2px 0; font-size: 13px;">📞 ${shopContact}</p>` : ''}
+                </div>
+            ` : '';
+
             const mailOptions = {
                 from: process.env.EMAIL_USER,
                 to: customerEmail,
                 subject: 'Mobitel - Repair Request Received',
                 html: `<h3>Thank you for choosing Mobitel, ${req.body.customerName || 'Customer'}!</h3>
                        <p>We have successfully received your repair request for your <b>${req.body.brand} ${req.body.model}</b>.</p>
-                       <p><strong>Issue:</strong> ${req.body.issue}<br>
-                       <strong>Service Type:</strong> ${req.body.serviceType}</p>
+                       <p><strong>Issue:</strong> ${req.body.issue || 'N/A'}<br>
+                       <strong>Service Type:</strong> ${req.body.serviceType || 'Repair'}</p>
+                       ${shopInfoHtml}
                        <p>Our team will review your request and a technician will contact you shortly.</p>
                        <p>Best regards,<br>The Mobitel Team</p>`
             };
@@ -51,6 +80,21 @@ const addRequest = async (req, res) => {
                 console.log(`[Email] Customer repair receipt sent to ${customerEmail}`);
             } catch (mailErr) {
                 console.error(`[Email Failed] Could not send receipt to ${customerEmail}`, mailErr);
+            }
+
+            // Also alert admin if configured
+            if (process.env.ADMIN_EMAIL) {
+                transporter.sendMail({
+                    from: process.env.EMAIL_USER,
+                    to: process.env.ADMIN_EMAIL,
+                    subject: `New Request: ${req.body.brand} ${req.body.model} (${req.body.customerName})`,
+                    html: `<h3>New Repair Request</h3>
+                           <p><strong>Customer:</strong> ${req.body.customerName} (${req.body.phone})</p>
+                           <p><strong>Device:</strong> ${req.body.brand} ${req.body.model}</p>
+                           <p><strong>Service:</strong> ${req.body.serviceType}</p>
+                           ${shopName ? `<p><strong>Shop:</strong> ${shopName}</p>` : ''}
+                           ${req.body.address ? `<p><strong>Address:</strong> ${req.body.address}</p>` : ''}`
+                }).catch(err => console.error('[Admin Email Error]', err));
             }
         }
 

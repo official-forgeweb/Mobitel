@@ -114,7 +114,13 @@ export default function RequestsAdminPage() {
                                             <div className="text-gray-500 text-xs mt-1">
                                                 {req.preferredDate || 'N/A'} {req.preferredTime ? `at ${req.preferredTime}` : ''}
                                             </div>
-                                            {req.address && req.address !== 'Shop Visit' && (
+                                            {(!req.address || req.address === 'Shop Visit' || req.shopName) ? (
+                                                <div className="text-gray-700 text-xs mt-1 bg-amber-50 p-2 rounded border border-amber-200">
+                                                    <div className="font-bold text-amber-900">🏪 {req.shopName || 'Shop Visit'}</div>
+                                                    {req.shopAddress && <div className="text-[11px] text-gray-600">📍 {req.shopAddress}</div>}
+                                                    {req.shopContact && <div className="text-[11px] text-gray-600">📞 {req.shopContact}</div>}
+                                                </div>
+                                            ) : (
                                                 <div className="text-gray-600 text-xs mt-1 bg-blue-50 p-2 rounded border border-blue-100" title={req.address}>
                                                     <div className="font-medium text-gray-900">📍 {req.address}</div>
                                                     {req.landmark && <div className="text-[11px] text-gray-500">Landmark: {req.landmark}</div>}
