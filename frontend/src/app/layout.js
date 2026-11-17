@@ -1,4 +1,5 @@
 import { Poppins } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import ClientLayoutWrapper from "@/components/ClientLayoutWrapper";
 import { BUSINESS, LOCATION, CONTACT } from "@/lib/seo-config";
@@ -92,6 +93,19 @@ export default async function RootLayout({ children }) {
         <link rel="preconnect" href="https://www.mobitel.in" />
         <JsonLd data={localBusinessSchema} />
         <JsonLd data={webSiteSchema} />
+        {/* Google Tag (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-ZSP43NP6DH"
+          strategy="afterInteractive"
+        />
+        <Script id="google-tag-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-ZSP43NP6DH');
+          `}
+        </Script>
       </head>
       <body className={`${poppins.variable} font-sans transition-colors duration-500`} suppressHydrationWarning>
         <div className="min-h-screen bg-surface flex flex-col">
